@@ -34,6 +34,13 @@ class Analyzer:
     def run_chi_squared(self, data_a, data_b):
         return stats.chi2_contingency(data_a, data_b)
 
+    def run_least_square_line(self, data_a, data_b):
+        A = np.vstack([data_a, np.ones(len(data_a))]).T
+        data_b = data_b[:, np.newaxis]
+        alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),data_b)
+        line = data_a, alpha[0]*data_a + alpha[1]
+        return alpha
+
     def run_correlation_coeff(self, data_a, data_b):
         return stats.pearsonr(data_a, data_b)
 
