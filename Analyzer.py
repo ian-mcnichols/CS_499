@@ -6,11 +6,16 @@ import scipy.stats as stats
 class Analyzer:
     def __init__(self, data_type):
         self.data_type = data_type
+        self.plot_output = True
 
     def set_rows(self, row_start, row_end):
         self.rows = range(row_start, row_end)
+
     def set_cols(self, col_start, col_end):
         self.cols = range(col_start, col_end)
+
+    def toggle_plotting(self):
+        self.plot_output = not self.plot_output
 
     def run_mean(self, data):
         return np.mean(data)
