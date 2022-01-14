@@ -1,5 +1,10 @@
 Initial README for CS 499.
 
+# Dependencies
+* python 3.9
+* numpy 1.21.2
+* scipy 1.7.3
+
 # Necessary operations
 * mean -> numpy
 * median -> numpy
