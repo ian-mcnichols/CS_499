@@ -7,6 +7,11 @@ class Analyzer:
     def __init__(self, data_type):
         self.data_type = data_type
 
+    def set_rows(self, new_rows):
+        self.rows = new_rows
+    def set_cols(self, new_cols):
+        self.cols = new_cols
+
     def run_mean(self, data):
         return np.mean(data)
 
