@@ -29,6 +29,7 @@ class Analyzer:
             if display_data.shape[0] != 2:
                 raise Exception("Invalid shape for XY chart data {}".format(display_data.shape))
             plt.figure()
+            plt.title(title)
             plt.plot(display_data[0], display_data[1])
             plt.show()
         else:
@@ -46,11 +47,11 @@ class Analyzer:
         output = np.mode(data)
         return output
 
-    def run_stand_dev(self, data):
+    def run_stand_dev(self, data):  # No plotting
         standard_deviation = statistics.stdev(data)
         return standard_deviation
 
-    def run_variance(self, data):
+    def run_variance(self, data):  # No plotting
         return statistics.variance(data)
 
     def run_percentiles(self, data):
@@ -65,13 +66,19 @@ class Analyzer:
         return percentile_data
 
     def run_probability_dist(self, data):
-        return stats.norm(data)
+        x = np.linspace(min(data), max(data), len(data))
+        mu, std = stats.norm.fit(data)
+        snd = stats.norm(mu, std)
+        if self.plot_output:
+            self.plot_chart([x, snd.pdf(x)], "XY chart", "Probability Distribution")
+        return snd.pdf(x), mu, std
 
-    def run_binomial_dist(self, data_a, data_b):
-        return stats.binom.stats(data_a, data_b)
+    def run_binomial_dist(self, data):
+        # TODO: Add logic
+        return
 
-    def run_chi_squared(self, data_a, data_b):
-        return stats.chi2_contingency(data_a, data_b)
+    def run_chi_squared(self, data):
+        return stats.chi2_contingency(data[0], data[1])
 
     def run_least_square_line(self, data_a, data_b):
         A = np.vstack([data_a, np.ones(len(data_a))]).T
@@ -93,10 +100,11 @@ class Analyzer:
 if __name__ == "__main__":
     import Data
 
-    my_data = Data.Data("Test_Data/FrequencyDataTest.csv", "Frequency")
+    my_data = Data.Data("Test_Data/IntervalDataTest.csv", "Interval")
     my_data.read_data()
-    print("my data expected: ", my_data.expected)
+    print("my data expected: ", my_data.pretest)
     my_analyzer = Analyzer(my_data.data_type)
-    print(my_analyzer.run_mean(my_data.expected))
-    print(my_analyzer.run_stand_dev(my_data.expected))
-    print(my_analyzer.run_percentiles(my_data.expected))
+    #print(my_analyzer.run_mean(my_data.expected))
+    #print(my_analyzer.run_stand_dev(my_data.expected))
+    #print(my_analyzer.run_percentiles(my_data.expected))
+    print(my_analyzer.run_chi_squared([my_data.pretest, my_data.posttest]))
