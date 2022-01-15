@@ -1,6 +1,7 @@
 import numpy as np
 import statistics
 import scipy.stats as stats
+import matplotlib.pyplot as plt
 
 
 class Analyzer:
@@ -8,32 +9,60 @@ class Analyzer:
         self.data_type = data_type
         self.plot_output = True
 
-    def set_rows(self, row_start, row_end):
-        self.rows = range(row_start, row_end)
-
-    def set_cols(self, col_start, col_end):
-        self.cols = range(col_start, col_end)
-
     def toggle_plotting(self):
         self.plot_output = not self.plot_output
 
-    def run_mean(self, data):
-        return np.mean(data)
+    def plot_chart(self, data, plot_type, title):
+        if plot_type == "horizontal bar chart":
+            print("plotting horizontal bar chart")
+        elif plot_type == "vertical bar chart":
+            plt.figure()
+            plt.bar(data[0], data[1], width=5)
+            plt.title(title)
+            plt.show()
+        elif plot_type == "pie chart":
+            print("plotting pie chart")
+        elif plot_type == "normal distribution curve":
+            print("plotting normal distribution curve")
+        elif plot_type == "XY chart":
+            display_data = np.array(data)
+            if display_data.shape[0] != 2:
+                raise Exception("Invalid shape for XY chart data {}".format(display_data.shape))
+            plt.figure()
+            plt.plot(display_data[0], display_data[1])
+            plt.show()
+        else:
+            raise Exception("Invalid chart type {}".format(plot_type))
 
-    def run_median(self, data):
-        return np.median(data)
+    def run_mean(self, data):  # No plotting needed here
+        output = np.mean(data)
+        return output
 
-    def run_mode(self, data):
-        return np.mode(data)
+    def run_median(self, data): # No plotting
+        output = np.median(data)
+        return output
+
+    def run_mode(self, data): # No plotting
+        output = np.mode(data)
+        return output
 
     def run_stand_dev(self, data):
-        return statistics.stdev(data)
+        standard_deviation = statistics.stdev(data)
+        return standard_deviation
 
     def run_variance(self, data):
         return statistics.variance(data)
 
-    def run_percentiles(self, data, percent):
-        return np.percentile(data, percent)
+    def run_percentiles(self, data):
+        # Gets the percentile of the data at 0-100 percent in steps of 10
+        percentiles = [x*10 for x in range(11)]
+        percentile_data = []
+        for i in percentiles:
+            print('i:', i)
+            percentile_data.append(np.percentile(data, i))
+        if self.plot_output:
+            self.plot_chart([percentiles, percentile_data], "vertical bar chart", "Percentiles")
+        return percentile_data
 
     def run_probability_dist(self, data):
         return stats.norm(data)
@@ -64,9 +93,10 @@ class Analyzer:
 if __name__ == "__main__":
     import Data
 
-    my_data = Data.Data("//alam01/alam01/slow02/imcnichols/Homework/CS 499/Test_Data/FrequencyDataTest.csv",
-                        "Frequency")
+    my_data = Data.Data("Test_Data/FrequencyDataTest.csv", "Frequency")
     my_data.read_data()
     print("my data expected: ", my_data.expected)
     my_analyzer = Analyzer(my_data.data_type)
     print(my_analyzer.run_mean(my_data.expected))
+    print(my_analyzer.run_stand_dev(my_data.expected))
+    print(my_analyzer.run_percentiles(my_data.expected))
