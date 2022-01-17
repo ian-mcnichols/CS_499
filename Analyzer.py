@@ -80,7 +80,9 @@ class Analyzer:
     def run_chi_squared(self, data):
         return stats.chi2_contingency(data[0], data[1])
 
-    def run_least_square_line(self, data_a, data_b):
+    def run_least_square_line(self, data):
+        data_a = data[0]
+        data_b = data[1]
         A = np.vstack([data_a, np.ones(len(data_a))]).T
         data_b = data_b[:, np.newaxis]
         alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),data_b)
