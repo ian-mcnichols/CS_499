@@ -32,14 +32,12 @@ def main():
         do_plot = input("Would you like to plot outputs? y/n:  ")
         do_save = input("Would you like to save the plots as png's? y/n:  ")
         for function_to_run in functions_to_run:
-            #TODO: add logic
-            data = Analyzer.function_to_run # TODO: Make this call the function, not .<string type>
+            data = Analyzer.run_function(function_to_run) # TODO: Add this logic over in Analyzer
             if do_plot:
                 plot_types = available_graphs[functions_to_run]
                 for plot_type in plot_types:
                     visualize.plot_chart(data, plot_type, "<insert title>")
             continue
-        
     return
 
 if __name__ == "__main__":
