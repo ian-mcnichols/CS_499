@@ -60,8 +60,39 @@ def run_correlation_coeff(data):
 def run_rank_sum(data):
     return stats.ranksums(data)
 
-def spearman_rank_corr_coeff(data):
+def run_spearman_rank_corr_coeff(data):
     return stats.spearmanr(data[0], data[1])
+
+
+def run_function(function_name, data):
+    if function_name == "mean":
+        return run_mean(data)
+    elif function_name == "median":
+        return run_median(data)
+    elif function_name == "mode":
+        return run_mode(data)
+    elif function_name == "standard deviation":
+        return run_stand_dev(data)
+    elif function_name == "variance":
+        return run_variance(data)
+    elif function_name == "percentiles":
+        return run_percentiles(data)
+    elif function_name == "probability distribution":
+        return run_probability_dist(data)
+    elif function_name == "binomial distribution":
+        return run_binomial_dist(data)
+    elif function_name == "chi squared":
+        return run_chi_squared(data)
+    elif function_name == "least square":
+        return run_least_square_line(data)
+    elif function_name == "correlation coefficient":
+        return run_correlation_coeff(data)
+    elif function_name == "rank sum":
+        return run_rank_sum(data)
+    elif function_name == "spearman rank coefficient":
+        return run_spearman_rank_corr_coeff(data)
+    else:
+        raise Exception("Unknown function type {}".format(function_name))
 
 
 if __name__ == "__main__":
