@@ -1,5 +1,7 @@
+from tkinter import ANCHOR
 from Data import Data
-from Analyzer import Analyzer
+import Analyzer
+import visualize
 
 
 def main():
@@ -27,8 +29,18 @@ def main():
             my_functions = available_functions[data_type]
             my_data = Data(filepath=data_file, data_type=data_type)
             my_analyzer = Analyzer(data_type)
-        function_to_run = input("Enter the function to run on this data: ")
-    
+        functions_to_run = input("Enter the functions to run on this data: ")
+        do_plot = input("Would you like to plot outputs? y/n:  ")
+        do_save = input("Would you like to save the plots as png's? y/n:  ")
+        for function_to_run in functions_to_run:
+            #TODO: add logic
+            data = Analyzer.function_to_run # TODO: Make this call the function, not .<string type>
+            if do_plot:
+                plot_types = available_graphs[functions_to_run]
+                for plot_type in plot_types:
+                    visualize.plot_chart(data, plot_type, "<insert title>")
+            continue
+        
     return
 
 if __name__ == "__main__":
