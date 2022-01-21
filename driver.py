@@ -1,4 +1,3 @@
-from tkinter import ANCHOR
 from Data import Data
 import Analyzer
 import visualize
