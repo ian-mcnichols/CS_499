@@ -27,7 +27,6 @@ def main():
             data_type = input("Enter data type:  ")
             my_functions = available_functions[data_type]
             my_data = Data(filepath=data_file, data_type=data_type)
-            my_analyzer = Analyzer(data_type)
         functions_to_run = input("Enter the functions to run on this data: ")
         do_plot = input("Would you like to plot outputs? y/n:  ")
         do_save = input("Would you like to save the plots as png's? y/n:  ")
