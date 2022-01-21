@@ -26,7 +26,6 @@ def main():
             data_type = input("Enter data type:  ")
             my_functions = available_functions[data_type]
             my_data = Data(filepath=data_file, data_type=data_type)
-            my_analyzer = Analyzer(data_type)
         function_to_run = input("Enter the function to run on this data: ")
     
     return
