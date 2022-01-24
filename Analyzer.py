@@ -4,99 +4,95 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 
-class Analyzer:
-    def __init__(self, data_type):
-        self.data_type = data_type
-        self.plot_output = True
+def run_mean(data):
+    output = np.mean(data)
+    return output
 
-    def toggle_plotting(self):
-        self.plot_output = not self.plot_output
+def run_median(data): 
+    output = np.median(data)
+    return output
 
-    def plot_chart(self, data, plot_type, title):
-        if plot_type == "horizontal bar chart":
-            print("plotting horizontal bar chart")
-        elif plot_type == "vertical bar chart":
-            plt.figure()
-            plt.bar(data[0], data[1], width=5)
-            plt.title(title)
-            plt.show()
-        elif plot_type == "pie chart":
-            print("plotting pie chart")
-        elif plot_type == "normal distribution curve":
-            print("plotting normal distribution curve")
-        elif plot_type == "XY chart":
-            display_data = np.array(data)
-            if display_data.shape[0] != 2:
-                raise Exception("Invalid shape for XY chart data {}".format(display_data.shape))
-            plt.figure()
-            plt.title(title)
-            plt.plot(display_data[0], display_data[1])
-            plt.show()
-        else:
-            raise Exception("Invalid chart type {}".format(plot_type))
+def run_mode(data):
+    output = np.mode(data)
+    return output
 
-    def run_mean(self, data):  # No plotting needed here
-        output = np.mean(data)
-        return output
+def run_stand_dev(data):
+    standard_deviation = statistics.stdev(data)
+    return standard_deviation
 
-    def run_median(self, data): # No plotting
-        output = np.median(data)
-        return output
+def run_variance(data):
+    return statistics.variance(data)
 
-    def run_mode(self, data): # No plotting
-        output = np.mode(data)
-        return output
+def run_percentiles(data):
+    # Gets the percentile of the data at 0-100 percent in steps of 10
+    percentiles = [x*10 for x in range(11)]
+    percentile_data = []
+    for i in percentiles:
+        print('i:', i)
+        percentile_data.append(np.percentile(data, i))
+    return percentile_data
 
-    def run_stand_dev(self, data):  # No plotting
-        standard_deviation = statistics.stdev(data)
-        return standard_deviation
+def run_probability_dist(data):
+    x = np.linspace(min(data), max(data), len(data))
+    mu, std = stats.norm.fit(data)
+    snd = stats.norm(mu, std)
+    return snd.pdf(x), mu, std
 
-    def run_variance(self, data):  # No plotting
-        return statistics.variance(data)
+def run_binomial_dist(data):
+    # TODO: Add logic
+    return
 
-    def run_percentiles(self, data):
-        # Gets the percentile of the data at 0-100 percent in steps of 10
-        percentiles = [x*10 for x in range(11)]
-        percentile_data = []
-        for i in percentiles:
-            print('i:', i)
-            percentile_data.append(np.percentile(data, i))
-        if self.plot_output:
-            self.plot_chart([percentiles, percentile_data], "vertical bar chart", "Percentiles")
-        return percentile_data
+def run_chi_squared(data):
+    return stats.chi2_contingency(data[0], data[1])
 
-    def run_probability_dist(self, data):
-        x = np.linspace(min(data), max(data), len(data))
-        mu, std = stats.norm.fit(data)
-        snd = stats.norm(mu, std)
-        if self.plot_output:
-            self.plot_chart([x, snd.pdf(x)], "XY chart", "Probability Distribution")
-        return snd.pdf(x), mu, std
+def run_least_square_line(data):
+    data_a = data[0]
+    data_b = data[1]
+    A = np.vstack([data_a, np.ones(len(data_a))]).T
+    data_b = data_b[:, np.newaxis]
+    alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),data_b)
+    line = data_a, alpha[0]*data_a + alpha[1]
+    return alpha
 
-    def run_binomial_dist(self, data):
-        # TODO: Add logic
-        return
+def run_correlation_coeff(data):
+    return stats.pearsonr(data[0], data[1])
 
-    def run_chi_squared(self, data):
-        return stats.chi2_contingency(data[0], data[1])
+def run_rank_sum(data):
+    return stats.ranksums(data)
 
-    def run_least_square_line(self, data):
-        data_a = data[0]
-        data_b = data[1]
-        A = np.vstack([data_a, np.ones(len(data_a))]).T
-        data_b = data_b[:, np.newaxis]
-        alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),data_b)
-        line = data_a, alpha[0]*data_a + alpha[1]
-        return alpha
+def run_spearman_rank_corr_coeff(data):
+    return stats.spearmanr(data[0], data[1])
 
-    def run_correlation_coeff(self, data_a, data_b):
-        return stats.pearsonr(data_a, data_b)
 
-    def run_rank_sum(self, data_a, data_b):
-        return stats.ranksums(data_a, data_b)
-
-    def spearman_rank_corr_coeff(self, data_a, data_b):
-        return stats.spearmanr(data_a, data_b)
+def run_function(function_name, data):
+    if function_name == "mean":
+        return run_mean(data)
+    elif function_name == "median":
+        return run_median(data)
+    elif function_name == "mode":
+        return run_mode(data)
+    elif function_name == "standard deviation":
+        return run_stand_dev(data)
+    elif function_name == "variance":
+        return run_variance(data)
+    elif function_name == "percentiles":
+        return run_percentiles(data)
+    elif function_name == "probability distribution":
+        return run_probability_dist(data)
+    elif function_name == "binomial distribution":
+        return run_binomial_dist(data)
+    elif function_name == "chi squared":
+        return run_chi_squared(data)
+    elif function_name == "least square":
+        return run_least_square_line(data)
+    elif function_name == "correlation coefficient":
+        return run_correlation_coeff(data)
+    elif function_name == "rank sum":
+        return run_rank_sum(data)
+    elif function_name == "spearman rank coefficient":
+        return run_spearman_rank_corr_coeff(data)
+    else:
+        raise Exception("Unknown function type {}".format(function_name))
 
 
 if __name__ == "__main__":
@@ -105,8 +101,7 @@ if __name__ == "__main__":
     my_data = Data.Data("Test_Data/IntervalDataTest.csv", "Interval")
     my_data.read_data()
     print("my data expected: ", my_data.pretest)
-    my_analyzer = Analyzer(my_data.data_type)
-    #print(my_analyzer.run_mean(my_data.expected))
-    #print(my_analyzer.run_stand_dev(my_data.expected))
-    #print(my_analyzer.run_percentiles(my_data.expected))
-    print(my_analyzer.run_chi_squared([my_data.pretest, my_data.posttest]))
+    #print(run_mean(my_data.expected))
+    #print(run_stand_dev(my_data.expected))
+    #print(run_percentiles(my_data.expected))
+    print(run_chi_squared([my_data.pretest, my_data.posttest]))

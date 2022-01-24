@@ -1,5 +1,6 @@
 from Data import Data
-from Analyzer import Analyzer
+import Analyzer
+import visualize
 
 
 def main():
@@ -25,10 +26,24 @@ def main():
             data_file = input("Enter data file:  ")
             data_type = input("Enter data type:  ")
             my_functions = available_functions[data_type]
-            my_data = Data(filepath=data_file, data_type=data_type)
-            my_analyzer = Analyzer(data_type)
-        function_to_run = input("Enter the function to run on this data: ")
-    
+            my_data = Data(data_type=data_type)
+            my_data.read_data_file(data_file)
+
+        functions_to_run = input("Enter the functions to run on this data: ").split(", ")
+        do_plot = input("Would you like to plot outputs? y/n:  ")
+        do_save = input("Would you like to save the plots as png's? y/n:  ")
+        for function_to_run in functions_to_run:
+            if function_to_run not in available_functions[data_type]:
+                print("Unable to perform function {} on data type {}".format(function_to_run, data_type))
+                continue
+            output = Analyzer.run_function(function_to_run, my_data.data)
+            print("Function output: ", output)
+            if do_plot:
+                plot_types = available_graphs[function_to_run]
+                run_plots = input("Which plot would you like to run out of the available: ", plot_types).split(", ")
+                for plot_type in run_plots:
+                    visualize.plot_chart(output, plot_type, "<insert title>")
+            continue
     return
 
 if __name__ == "__main__":
