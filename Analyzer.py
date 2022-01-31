@@ -58,11 +58,19 @@ def run_binomial_dist(data):
 
 
 def run_chi_squared(data):
-    if len(data.shape) < 2:
+    if len(data.shape) != 2:
+        raise Exception("Data shape not accepted {}".format(str(data.shape)))
+    if data.shape[1] == 2:
+        data_a = data[:,0]
+        data_b = data[:,1]
+    elif data.shape[0] == 2:
+        data_a = data[0,:]
+        data_b = data[1,:]
+    else:
         raise Exception("Data shape not accepted {}".format(str(data.shape)))
     chi_squared_test = 0
-    for i in range(data.shape[0]):
-        chi_squared_test += (data[i][1] - data[i][0])**2 / data[i][0]
+    for i in range(len(data_a)):
+        chi_squared_test += (data_b[i] - data_a[i])**2 / data_a[i]
     return chi_squared_test
 
 
