@@ -67,10 +67,16 @@ def run_chi_squared(data):
 
 
 def run_least_square_line(data):
-    if len(data.shape) < 2:
+    if len(data.shape) != 2:
         raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    data_a = data[:,0]
-    data_b = data[:,1]
+    if data.shape[1] == 2:
+        data_a = data[:,0]
+        data_b = data[:,1]
+    elif data.shape[0] == 2:
+        data_a = data[0,:]
+        data_b = data[1,:]
+    else:
+        raise Exception("Data shape not accepted {}".format(str(data.shape)))
     A = np.vstack([data_a, np.ones(len(data_a))]).T
     data_b = data_b[:, np.newaxis]
     alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),data_b)
