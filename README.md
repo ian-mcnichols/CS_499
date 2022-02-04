@@ -22,6 +22,7 @@ The class to read in or take in data from numpy array or csv/tab-delimited file.
 * Python 3.x (3.6-3.9 is best)
 * Numpy 1.21.x
 * Scipy 1.7.x
+* Matplotlib
 - These can be installed using conda install or pip install. The internet should have specific install instructions.
 
 ## Operations: 
