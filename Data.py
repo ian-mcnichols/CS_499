@@ -2,7 +2,10 @@ import numpy as np
 
 
 class Data: # TODO: Find a better way to get the numerical data's rows/cols than try catch blocks
+    # Class to read in data from a file or be handed data as a numpy
+    # then have the data accessible as a numpy array
     def __init__(self, data_type):
+        # sets the data type
         self.data_type = data_type
         self.data = None
 
@@ -11,20 +14,21 @@ class Data: # TODO: Find a better way to get the numerical data's rows/cols than
             # Find file formatting from first line
             file_lines = freq_file.readlines()
             sections = file_lines[0]
-            if len(sections.split(",")) > 1:
+            if len(sections.split(",")) > 1: # if the line is split by commas, csv
                 delimiter = ","
-            elif len(sections.split("\t")) > 1:
+            elif len(sections.split("\t")) > 1: # if the line is split by tabs, tdv
                 delimiter = "\t"
             else:
                 raise Exception("File is not comma separated or tab delineated.")
             # Read in data
             cols = []
+            # iterate over the columns to grab the data
             for i in range(len(sections.split(delimiter))):
-                try:
+                try: # append the data if it's all floats
                     random_line = file_lines[1]
                     x = float(random_line.split(delimiter)[i].strip())
                     cols.append(i)
-                except ValueError:
+                except ValueError: # if it's a label, skip over
                     continue
             data_array = np.zeros((len(file_lines), len(cols)))
             delete_rows = []
