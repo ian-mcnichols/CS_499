@@ -1,5 +1,6 @@
 from numpy.core.defchararray import index
 
+
 class Data:
     def __init__(self, data_type):
         self.data_type = data_type
