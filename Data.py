@@ -2,51 +2,42 @@ from numpy.core.defchararray import index
 
 
 class Data:
-    def __init__(self, data_type):
-        self.data_type = data_type
-        # Ordinal data variables
-        self.SD = []
-        self.D = []
-        self.N = []
-        self.A = []
-        self.SA = []
-        # Frequency data variables
-        self.expected = []
-        self.actual = []
-        # Interval data variables
-        self.pretest = []
-        self.posttest = []
+    def __init__(self, file_name):
+        # Initialize to none
+        self.data_type = "Null"
+        self.data_np = None
+        # have to have a way to tell it it is gui input
+        if file_name == "GUI":
+            self.get_data()
+        else:
+            # Read in the given file
+            self.read_data_file(filepath=file_name)
+
     def read_data_file(self, filepath):
-        with open(filepath, "r") as freq_file:
+        with open(filepath, "r") as file:
             # Find file formatting from first line
-            sections = freq_file.readline()
+            sections = file.readline()
             if len(sections.split(",")) > 1:
                 delimiter = ","
             elif len(sections.split("\t")) > 1:
                 delimiter = "\t"
             else:
                 raise Exception("File is not comma separated or tab delineated.")
-            # Read in data
-            while True:
-                next_line = freq_file.readline()
-                # Return if reached the end of file
-                if not next_line:
-                    break
-                # Add data to self variables depending on data type
-                if self.data_type == "Frequency":
-                    self.expected.append(float(next_line.split(delimiter)[1].strip()))
-                    self.actual.append(float(next_line.split(delimiter)[2].strip()))
-                elif self.data_type == "Ordinal":
-                    self.SD.append(float(next_line.split(delimiter)[1].strip()))
-                    self.D.append(float(next_line.split(delimiter)[2].strip()))
-                    self.N.append(float(next_line.split(delimiter)[3].strip()))
-                    self.A.append(float(next_line.split(delimiter)[4].strip()))
-                    self.SA.append(float(next_line.split(delimiter)[5].strip()))
-                elif self.data_type == "Interval":
-                    self.pretest.append(float(next_line.split(delimiter)[1].strip()))
-                    self.posttest.append(float(next_line.split(delimiter)[2].strip()))
-                else:
-                    raise Exception("Bad data type {}".format(self.data_type))
+            # Determine data type
+            if sections.split(delimiter)[0].strip() == "Sample #":
+                self.data_type = "Frequency"
+            elif sections.split(delimiter)[0].strip() == "Subject ID":
+                self.data_type = "Interval"
+            elif sections.split(delimiter)[0].strip() == "Question #":
+                self.data_type = "Ordinal"
+            else:
+                raise Exception("File is not in expected format")
+            file.close()
+        # Read in data as a numpy array
+        self.data_np = np.genfromtxt(filepath, dtype=None, delimiter=', ', skip_header=1, encoding=None)
+        # Set names for columns, striping white space
+        self.data_np.dtype.names = [x.strip() for x in sections.split(delimiter)]
+
         return
 
     def get_data(self, data, labels):
@@ -69,13 +60,9 @@ class Data:
 
 if __name__ == '__main__':
     import numpy as np
-    my_data = Data("Frequency")
-    my_data.read_data_file("/mnt/alam01/slow02/imcnichols/Homework/CS 499/Test_Data/FrequencyDataTest.csv")
-    print("my data expected: ", my_data.expected)
-    my_data = Data("Frequency")
-    my_actual = np.random.rand(100)
-    my_expected = np.random.rand(100)
-    labels = ["Expected", "Actual"]
-    my_data.get_data([my_expected, my_actual], labels)
-    print(my_expected == my_data.expected)
-    print(my_actual == my_data.actual)
+    my_data = Data("Test_Data/IntervalDataTest.csv")
+    print(my_data.data_np)
+    print(my_data.data_type)
+    print(my_data.data_np.dtype.names)
+    print(my_data.data_np[my_data.data_np.dtype.names[1]])
+    # print(my_data.data_np['Expected Freq.'])
