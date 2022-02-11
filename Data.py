@@ -65,4 +65,4 @@ if __name__ == '__main__':
     print(my_data.data_type)
     print(my_data.data_np.dtype.names)
     print(my_data.data_np[my_data.data_np.dtype.names[1]])
-    # print(my_data.data_np['Expected Freq.'])
+    print(my_data.data_np['Pretest'])
