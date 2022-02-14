@@ -26,8 +26,8 @@ def main():
             data_file = input("Enter data file:  ")
             data_type = input("Enter data type:  ")
             my_functions = available_functions[data_type]
-            my_data = Data(data_type=data_type)
-            my_data.read_data_file(data_file)
+            my_data = Data(file_name=data_file)
+            # my_data.read_data_file(data_file)
 
         functions_to_run = input("Enter the functions to run on this data: ").split(", ")
         do_plot = input("Would you like to plot outputs? y/n:  ")
