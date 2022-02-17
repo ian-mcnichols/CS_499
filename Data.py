@@ -1,67 +1,68 @@
-import numpy as np
+from numpy.core.defchararray import index
 
 
-class Data: # TODO: Find a better way to get the numerical data's rows/cols than try catch blocks
-    def __init__(self, data_type):
-        self.data_type = data_type
-        self.data = None
+class Data:
+    def __init__(self, file_name):
+        # Initialize to none
+        self.data_type = "Null"
+        self.data_np = None
+        # have to have a way to tell it it is gui input
+        if file_name == "GUI":
+            self.get_data()
+        else:
+            # Read in the given file
+            self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
-        with open(filepath, "r") as freq_file:
+        with open(filepath, "r") as file:
             # Find file formatting from first line
-            file_lines = freq_file.readlines()
-            sections = file_lines[0]
+            sections = file.readline()
             if len(sections.split(",")) > 1:
                 delimiter = ","
             elif len(sections.split("\t")) > 1:
                 delimiter = "\t"
             else:
                 raise Exception("File is not comma separated or tab delineated.")
-            # Read in data
-            cols = []
-            for i in range(len(sections.split(delimiter))):
-                try:
-                    random_line = file_lines[1]
-                    x = float(random_line.split(delimiter)[i].strip())
-                    cols.append(i)
-                except ValueError:
-                    continue
-            data_array = np.zeros((len(file_lines), len(cols)))
-            delete_rows = []
-            for i, line in enumerate(file_lines):
-                try:
-                    line = line.split(delimiter)
-                    for j, col in enumerate(cols):
-                        data_array[i][j] = line[col]
-                except ValueError:
-                    delete_rows.append(i)
-                    continue
-            for delete_row in delete_rows:
-                data_array = np.delete(data_array, delete_row, axis=0)
-            self.data = data_array
+            # Determine data type
+            if sections.split(delimiter)[0].strip() == "Sample #":
+                self.data_type = "Frequency"
+            elif sections.split(delimiter)[0].strip() == "Subject ID":
+                self.data_type = "Interval"
+            elif sections.split(delimiter)[0].strip() == "Question #":
+                self.data_type = "Ordinal"
+            else:
+                raise Exception("File is not in expected format")
+            file.close()
+        # Read in data as a numpy array
+        self.data_np = np.genfromtxt(filepath, dtype=None, delimiter=', ', skip_header=1, encoding=None)
+        # Set names for columns, striping white space
+        self.data_np.dtype.names = [x.strip() for x in sections.split(delimiter)]
+
         return
 
-    def add_data(self, new_data):
-        new_data = np.array(new_data)
-        if self.data is None:
-            self.data = new_data
+    def get_data(self, data, labels):
+        if self.data_type == "Frequency":
+            self.expected = data[labels.index("Expected")]
+            self.actual = data[labels.index("Actual")]
+        elif self.data_type == "Ordinal":
+            self.SD = data[labels.index("SD")]
+            self.D = data[labels.index("D")]
+            self.N = data[labels.index("N")]
+            self.A = data[labels.index("A")]
+            self.SA = data[labels.index("SA")]
+        elif self.data_type == "Interval":
+            self.pretest = data[labels.index("Pretest")]
+            self.posttest = data[labels.index("Posttest")]
         else:
-            if new_data.shape[0] == self.data.shape[0]:
-                self.data = np.append(self.data, new_data, axis=1)
-            elif new_data.shape[1] == self.data.shape[1]:
-                self.data = np.append(self.data, new_data, axis=0)
-            else:
-                raise Exception("Data to append must match current data's shape on axis 0 or 1")
-
+            raise Exception("Bad data type {}".format(self.data_type))
+        return
 
 
 if __name__ == '__main__':
-    # Testing with a file
-    my_data = Data("Frequency")
-    my_data.add_data(np.random.rand(10, 10))
-    print(my_data.data.shape)
-    my_data.add_data(np.random.rand(10, 2))
-    print(my_data.data.shape)
-    my_data.add_data(np.random.rand(1, 12))
-    print(my_data.data.shape)
-    #my_data.read_data_file("/mnt/alam01/slow02/imcnichols/Homework/CS 499/Test_Data/OrdinalDataTest.csv")
+    import numpy as np
+    my_data = Data("Test_Data/IntervalDataTest.csv")
+    print(my_data.data_np)
+    print(my_data.data_type)
+    print(my_data.data_np.dtype.names)
+    print(my_data.data_np[my_data.data_np.dtype.names[1]])
+    print(my_data.data_np['Pretest'])
