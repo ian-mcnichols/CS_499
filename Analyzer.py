@@ -100,7 +100,9 @@ def run_correlation_coeff(data):
 
 
 def run_rank_sum(data):
-    return stats.ranksums(data)
+    if len(data.shape) != 2:
+        raise Exception("Data shape not accepted {}".format(str(data.shape)))
+    return stats.ranksums(data[0], data[1])
 
 
 def run_spearman_rank_corr_coeff(data):
