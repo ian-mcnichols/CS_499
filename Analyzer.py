@@ -93,7 +93,10 @@ def run_least_square_line(data):
 
 
 def run_correlation_coeff(data):
-    return stats.pearsonr(data[0], data[1])
+    if len(data.shape) != 2:
+        raise Exception("Data shape not accepted {}".format(str(data.shape)))
+    corr_coef = np.corrcoef(data[0], data[1])
+    return corr_coef
 
 
 def run_rank_sum(data):
