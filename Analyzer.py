@@ -104,6 +104,8 @@ def run_rank_sum(data):
 
 
 def run_spearman_rank_corr_coeff(data):
+    if len(data.shape) != 2:
+        raise Exception("Data shape not accepted {}".format(str(data.shape)))
     return stats.spearmanr(data[0], data[1])
 
 
