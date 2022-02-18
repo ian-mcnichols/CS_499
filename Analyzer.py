@@ -4,34 +4,34 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 
-def run_mean(pretest=None, posttest=None, ordinals=None):
+def run_mean(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     # Ordinal and interval
-    if not ordinals:
+    if datatype == "Interval":
         return np.mean(pretest), np.mean(posttest)
-    elif not pretest:
+    elif datatype == "Ordinal":
         return np.mean(ordinals)
     else:
-        raise Exception("No inputs given to run_mean")
+        raise Exception("Bad data type: {}".format(datatype))
 
 
-def run_median(pretest=None, posttest=None, ordinals=None):
+def run_median(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     # Ordinal and interval
-    if not ordinals:
+    if datatype == "Interval":
         return np.mean(pretest), np.mean(posttest)
-    elif not pretest:
+    elif datatype == "Ordinal":
         return np.mean(ordinals)
     else:
-        raise Exception("No inputs given to run_median")
+        raise Exception("Bad data type: {}".format(datatype))
 
 
-def run_mode(pretest=None, posttest=None, ordinals=None):
+def run_mode(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     # Ordinal and interval
-    if not ordinals:
+    if datatype == "Interval":
         return stats.mode(pretest), stats.mode(posttest)
-    elif not pretest:
+    elif datatype == "Ordinal":
         return stats.mode(ordinals)
     else:
-        raise Exception("No inputs given to run_mode")
+        raise Exception("Bad data type: {}".format(datatype))
 
 
 def run_stand_dev(pre_test, post_test):
@@ -58,14 +58,17 @@ def run_percentiles(pre_test, post_test):
     return percentile_data
 
 
-def run_probability_dist(pretest=None, posttest=None, ordinals=None):
+def run_probability_dist(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     # change to histogram output
     # ordinal and interval
-    # TODO: make work for interval data
-    try:
+    # TODO: make work for ordinal data
+    if datatype == "Interval":
         data = posttest - pretest
-    except ValueError:
+    elif datatype == "Ordinal":
         data = ordinals
+    else:
+        raise Exception("Bad data type: {}".format(datatype))
+    print('data:',data)
     x = np.linspace(min(data), max(data), len(data))
     mu, std = stats.norm.fit(data)
     snd = stats.norm(mu, std)
@@ -96,27 +99,27 @@ if __name__ == "__main__":
     import Data
     import visualize
 
-    my_data = Data.Data("Data/IntervalDataTest.csv")
+    my_data = Data.Data("Data/OrdinalDataTest.csv")
     print('data type:', my_data.data_type)
     #print("ordinals: ", my_data.ordinals)
     #print("pretest: ", my_data.pretest)
     if my_data.data_type == 'Interval':
         print("pretest:", my_data.pretest)
         print("postest:", my_data.posttest)
-        print("mean: ", run_mean(my_data.pretest, my_data.posttest))
-        print("median: ", run_median(my_data.pretest, my_data.posttest))
-        print("mode: ", run_mode(my_data.pretest, my_data.posttest))
+        print("mean: ", run_mean(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
+        print("median: ", run_median(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
+        print("mode: ", run_mode(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
         print("standard deviation: ", run_stand_dev(my_data.pretest, my_data.posttest))
         print("variance: ", run_variance(my_data.pretest, my_data.posttest))
         print("percentiles: ", run_percentiles(my_data.pretest, my_data.posttest))
-        print("probability dist: ", run_probability_dist(my_data.pretest, my_data.posttest))
+        print("probability dist: ", run_probability_dist(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
         print("least squared line: ", run_least_square_line(my_data.pretest, my_data.posttest))
         print("correlation coefficient:", run_correlation_coeff(my_data.pretest, my_data.posttest))
         print("spearman coefficient: ", run_spearman_rank_corr_coeff(my_data.pretest, my_data.posttest))
     elif my_data.data_type == "Ordinal":
-        print("mean: ", run_mean(ordinals=my_data.ordinals))
-        print("median: ", run_median(ordinals=my_data.ordinals))
-        print("mode: ", run_mode(ordinals=my_data.ordinals))
-        print("probability dist: ", run_probability_dist(ordinals=my_data.ordinals))
+        print("mean: ", run_mean(ordinals=my_data.ordinals, datatype=my_data.data_type))
+        print("median: ", run_median(ordinals=my_data.ordinals, datatype=my_data.data_type))
+        print("mode: ", run_mode(ordinals=my_data.ordinals, datatype=my_data.data_type))
+        print("probability dist: ", run_probability_dist(ordinals=my_data.ordinals, datatype=my_data.data_type))
 
 
