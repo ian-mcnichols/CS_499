@@ -5,31 +5,37 @@ import matplotlib.pyplot as plt
 
 
 def run_mean(data):
+    # Ordinal and interval
     output = np.mean(data)
     return output
 
 
 def run_median(data):
+    # ordinal and interval
     output = np.median(data)
     return output
 
 
 def run_mode(data):
+    # ordinal and interval
     output = np.mode(data)
     return output
 
 
-def run_stand_dev(data):
-    standard_deviation = np.std(data)
+def run_stand_dev(pre_test, post_test):
+    # interval
+    standard_deviation = np.std(pre_test, post_test)
     return standard_deviation
 
 
-def run_variance(data):
-    variance = np.var(data)
+def run_variance(pre_test, post_test):
+    # interval
+    variance = np.var(pre_test, post_test)
     return variance
 
 
-def run_percentiles(data):
+def run_percentiles(pre_test, post_test):
+    # interval
     # Gets the percentile of the data at 0-100 percent in steps of 10
     percentiles = [x*10 for x in range(11)]
     percentile_data = []
@@ -39,7 +45,8 @@ def run_percentiles(data):
     return percentile_data
 
 
-def run_probability_dist(data):
+def run_probability_dist(pre_test, post_test):
+    # change to histogram output
     if len(data.shape) > 1:
         print("Warning: Cannot run on 2D data. Using first dimension")
     data = data[:,0]
@@ -49,66 +56,24 @@ def run_probability_dist(data):
     return snd.pdf(x), mu, std
 
 
-def run_binomial_dist(data):
-    # TODO: Add logic
-    print('data shape:', data.shape)
-    p = len(np.where(data[:,0] < data[:,1])) / data.shape[0]
-    data_binom = stats.binom.rvs(n=data.shape[0], p=p)
-    return data_binom
-
-
-def run_chi_squared(data):
-    if len(data.shape) != 2:
-        raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    if data.shape[1] == 2:
-        data_a = data[:,0]
-        data_b = data[:,1]
-    elif data.shape[0] == 2:
-        data_a = data[0,:]
-        data_b = data[1,:]
-    else:
-        raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    chi_squared_test = 0
-    for i in range(len(data_a)):
-        chi_squared_test += (data_b[i] - data_a[i])**2 / data_a[i]
-    return chi_squared_test
-
-
-def run_least_square_line(data):
-    if len(data.shape) != 2:
-        raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    if data.shape[1] == 2:
-        data_a = data[:,0]
-        data_b = data[:,1]
-    elif data.shape[0] == 2:
-        data_a = data[0,:]
-        data_b = data[1,:]
-    else:
-        raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    A = np.vstack([data_a, np.ones(len(data_a))]).T
-    data_b = data_b[:, np.newaxis]
-    alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),data_b)
-    line = data_a, alpha[0]*data_a + alpha[1]
+def run_least_square_line(pre_test, post_test):
+    # interval
+    A = np.vstack([pre_test, np.ones(len(pre_test))]).T
+    post_test = post_test[:, np.newaxis]
+    alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),post_test)
+    line = pre_test, alpha[0]*pre_test + alpha[1]
     return line
 
 
-def run_correlation_coeff(data):
-    if len(data.shape) != 2:
-        raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    corr_coef = np.corrcoef(data[0], data[1])
+def run_correlation_coeff(pre_test, post_test):
+    # interval
+    corr_coef = np.corrcoef(pre_test, post_test)
     return corr_coef
 
 
-def run_rank_sum(data):
-    if len(data.shape) != 2:
-        raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    return stats.ranksums(data[0], data[1])
-
-
-def run_spearman_rank_corr_coeff(data):
-    if len(data.shape) != 2:
-        raise Exception("Data shape not accepted {}".format(str(data.shape)))
-    return stats.spearmanr(data[0], data[1])
+def run_spearman_rank_corr_coeff(pre_test, post_test):
+    # interval ? (maybe, can possibly delete)
+    return stats.spearmanr(pre_test, post_test)
 
 
 def run_function(function_name, data):
