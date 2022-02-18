@@ -38,6 +38,8 @@ class Data:
                 self.posttest = np.array([x[2] for x in self.data_np])
             elif sections.split(delimiter)[0].strip() == "Question #":
                 self.data_type = "Ordinal"
+                ordinal_count = len(self.data_np[0]) - 1
+                self.ordinals = np.array([[x[i + 1] for i in range(ordinal_count)] for x in self.data_np])
             else:
                 raise Exception("File is not in expected format")
             file.close()
