@@ -41,7 +41,7 @@ class Data:
                 ordinal_count = len(sections.split(delimiter)) - 1
                 data_line = file.readline()
                 while data_line:
-                    self.ordinals.append([float(data_line.split(delimiter)[i]) for i in range(ordinal_count)])
+                    self.ordinals.append([float(data_line.split(delimiter)[i+1]) for i in range(ordinal_count)])
                     data_line = file.readline()
                 self.ordinals = np.array(self.ordinals)
             else:
