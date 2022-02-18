@@ -61,8 +61,13 @@ def run_percentiles(pre_test, post_test):
 def run_probability_dist(pretest=None, posttest=None, ordinals=None):
     # change to histogram output
     # ordinal and interval
-    x = np.linspace(min(ordinals), max(ordinals), len(ordinals))
-    mu, std = stats.norm.fit(ordinals)
+    # TODO: make work for interval data
+    try:
+        data = posttest - pretest
+    except ValueError:
+        data = ordinals
+    x = np.linspace(min(data), max(data), len(data))
+    mu, std = stats.norm.fit(data)
     snd = stats.norm(mu, std)
     return snd.pdf(x), mu, std
 
