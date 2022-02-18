@@ -1,10 +1,14 @@
 from numpy.core.defchararray import index
+import numpy as np
 
 
 class Data:
     def __init__(self, file_name):
         # Initialize to none
         self.data_type = "Null"
+        self.pretest = None
+        self.posttest = None
+        self.ordinals = None
         self.data_np = None
         # have to have a way to tell it it is gui input
         if file_name == "GUI":
@@ -23,21 +27,20 @@ class Data:
                 delimiter = "\t"
             else:
                 raise Exception("File is not comma separated or tab delineated.")
+            # Read in data as a numpy array
+            self.data_np = np.genfromtxt(filepath, dtype=None, delimiter=', ', skip_header=1, encoding=None)
+            # Set names for columns, striping white space
+            self.data_np.dtype.names = [x.strip() for x in sections.split(delimiter)]
             # Determine data type
-            if sections.split(delimiter)[0].strip() == "Sample #":
-                self.data_type = "Frequency"
-            elif sections.split(delimiter)[0].strip() == "Subject ID":
+            if sections.split(delimiter)[0].strip() == "Subject ID":
                 self.data_type = "Interval"
+                self.pretest = np.array([x[1] for x in self.data_np])
+                self.posttest = np.array([x[2] for x in self.data_np])
             elif sections.split(delimiter)[0].strip() == "Question #":
                 self.data_type = "Ordinal"
             else:
                 raise Exception("File is not in expected format")
             file.close()
-        # Read in data as a numpy array
-        self.data_np = np.genfromtxt(filepath, dtype=None, delimiter=', ', skip_header=1, encoding=None)
-        # Set names for columns, striping white space
-        self.data_np.dtype.names = [x.strip() for x in sections.split(delimiter)]
-
         return
 
     def get_data(self, data, labels):
