@@ -7,9 +7,9 @@ import matplotlib.pyplot as plt
 def run_mean(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     # Ordinal and interval
     if datatype == "Interval":
-        return np.mean(pretest), np.mean(posttest)
+        return [np.mean(pretest), np.mean(posttest)]
     elif datatype == "Ordinal":
-        return np.mean(ordinals)
+        return [np.mean(ordinals[x] for x in ordinals)]
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
@@ -93,6 +93,43 @@ def run_correlation_coeff(pre_test, post_test):
 def run_spearman_rank_corr_coeff(pre_test, post_test):
     # interval ? (maybe, can possibly delete)
     return stats.spearmanr(pre_test, post_test)
+
+
+def run_function(function_name, *argv):
+    pretest = None
+    posttest = None
+    ordinals = None
+    if len(argv) > 1:
+        data_type = "interval"
+        pretest = argv[0]
+        posttest = argv[1]
+    elif len(argv) == 1:
+        data_type = "ordinal"
+        ordinals = argv[0]
+    else:
+        raise Exception("Unknown input types {}".format(argv))
+    if function_name == "mean":
+        return run_mean(pretest, posttest, ordinals, datatype=data_type)
+    elif function_name == "median":
+        return run_median(pretest, posttest, ordinals, datatype=data_type)
+    elif function_name == "mode":
+        return run_mode(pretest, posttest, ordinals, datatype=data_type)
+    elif function_name == "stand_dev":
+        return run_stand_dev(pretest, posttest)
+    elif function_name == "variance":
+        return run_variance(pretest, posttest)
+    elif function_name == "percentiles":
+        return run_percentiles(pretest, posttest)
+    elif function_name == "lsr":
+        return run_least_square_line(pretest, posttest)
+    elif function_name == "prob_dist":
+        return run_probability_dist(pretest, posttest, ordinals, datatype=data_type)
+    elif function_name == "corr_coeff":
+        return  run_correlation_coeff(pretest, posttest)
+    elif function_name == "spearman_coeff":
+        return run_spearman_rank_corr_coeff(pretest, posttest)
+    else:
+        raise Exception("Function does not exist: {}".format(function_name))
 
 
 if __name__ == "__main__":
