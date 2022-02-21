@@ -4,9 +4,13 @@ import visualize
 
 
 def main():
-    available_functions = {"Frequency": [], # We need more info on the statistical functions.
-                           "Ordinal": [], 
-                           "Interval": []}
+    available_functions = {"Ordinal": ['mean', 'median', 'mode',
+                                       'distribution'],
+                           "Interval": ['mean', 'median', 'mode',
+                                        'stand_dev', 'variance',
+                                        'percentiles', 'lsr',
+                                        'prob_dist', 'corr_coeff',
+                                        'spearman_coeff']}
     available_graphs = {"mean": [],
                         "median": [],
                         "mode": [],
@@ -14,11 +18,8 @@ def main():
                         "variance": [],
                         "percentiles": ['vertical bar'],
                         "prob_dist": ['XY chart'],
-                        "binomial_dist": [],
-                        "chi_squared": [],
                         "least_square_line": [],
                         "corr_coeff": [],
-                        "rank_sum": [],
                         "spearman_rank": []}
     while True:
         enter_file = input("Would you like to add data by file? y/n:  ")
