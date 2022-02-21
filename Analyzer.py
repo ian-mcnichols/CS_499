@@ -9,7 +9,7 @@ def run_mean(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     if datatype == "Interval":
         return [np.mean(pretest), np.mean(posttest)]
     elif datatype == "Ordinal":
-        return [np.mean(ordinals[x] for x in ordinals)]
+        return np.mean(ordinals)
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
