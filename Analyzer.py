@@ -157,6 +157,15 @@ def run_spearman_rank_corr_coeff(pre_test, post_test):
 
 
 def run_function(function_name, *argv):
+    """Driver to run any stats operation given a function and data
+
+    :param function_name: string, operation to run on the data
+    :param argv: data_type : string, 'interval' or 'ordinal'
+                 pretest : numpy array of size [N] (if interval)
+                 posttest : numpy array of size [N] (if interval)
+                 ordinals: numpy array of size [NxM] (if ordinal)
+    :return: function corresponding to operation type
+    """
     pretest = None
     posttest = None
     ordinals = None
