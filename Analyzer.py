@@ -115,7 +115,12 @@ def run_probability_dist(pretest=None, posttest=None, ordinals=None, datatype="I
 
 
 def run_least_square_line(pre_test, post_test):
-    # interval
+    """Calculates the least square regression line of correlation between pretest and posttest
+
+    :param pre_test: numpy array of size [N]
+    :param post_test: numpy array of size [N]
+    :return:
+    """
     A = np.vstack([pre_test, np.ones(len(pre_test))]).T
     post_test = post_test[:, np.newaxis]
     alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),post_test)
@@ -124,14 +129,31 @@ def run_least_square_line(pre_test, post_test):
 
 
 def run_correlation_coeff(pre_test, post_test):
-    # interval
-    corr_coef = np.corrcoef(pre_test, post_test)
+    """Return Pearson product-moment correlation coefficient
+
+    :param pre_test: numpy array of size [N]
+    :param post_test: numpy array of size [N]
+    :return: float, the minimum value of the correlation coefficient matrix
+    """
+    # take the first value of the correlation matrix
+    corr_coef = np.corrcoef(pre_test, post_test)[1][0]
     return corr_coef
 
 
 def run_spearman_rank_corr_coeff(pre_test, post_test):
-    # interval ? (maybe, can possibly delete)
-    return stats.spearmanr(pre_test, post_test)
+    """Calculates a Spearman rank-order correlation coefficient and the p-value to test for non-correlation.
+
+    :param pre_test: numpy array of size [N]
+    :param post_test: numpy array of size [N]
+    :return: rho : float or ndarray (2-D square) Spearman correlation matrix or correlation coefficient
+                    (if only 2 variables are given as parameters. Correlation matrix is square with length equal to
+                     total number of variables (columns or rows) in a and b combined.
+
+    :return: p-value : float The two-sided p-value for a hypothesis test whose null hypothesis is that two sets of
+                       data are uncorrelated, has same dimension as rho.
+
+    """
+    return stats.spearmanr(pre_test, post_test)[0], stats.spearmanr(pre_test, post_test)[1]
 
 
 def run_function(function_name, *argv):
@@ -175,7 +197,7 @@ if __name__ == "__main__":
     import Data
     import visualize
 
-    my_data = Data.Data("Data/OrdinalDataTest.csv")
+    my_data = Data.Data("Data/IntervalDataTest.csv")
     print('data type:', my_data.data_type)
     #print("ordinals: ", my_data.ordinals)
     #print("pretest: ", my_data.pretest)
