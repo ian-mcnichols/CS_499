@@ -5,29 +5,56 @@ import matplotlib.pyplot as plt
 
 
 def run_mean(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
+    """Calculates the mean of the given data
+
+    :param pretest: numpy array of pre-test data
+    :param posttest: numpy array of post-test data
+    :param ordinals: numpy array of ordinal data
+    :param datatype: "interval" or "ordinal"
+    :return: if interval: mean of posttest, mean of pretest, mean of difference
+             if ordinal: average max. number of votes on the most popular answer
+    """
     # Ordinal and interval
     if datatype == "Interval":
-        return [np.mean(pretest), np.mean(posttest)]
+        return [np.mean(pretest), np.mean(posttest), np.mean(posttest - pretest)]
     elif datatype == "Ordinal":
-        return np.mean(ordinals)
+        return np.mean([x.max() for x in ordinals])
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
 
 def run_median(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
-    # Ordinal and interval
+    """Calculates the median on a given dataset
+
+    :param pretest: numpy array of pre-test data
+    :param posttest: numpy array of post-test data
+    :param ordinals: numpy array of ordinal data
+    :param datatype: "interval" or "ordinal"
+    :return: interval-list, the median of the pretest, posttest, and change
+             ordinals-int, the index of the column that is the median for all the questions
+    """
     if datatype == "Interval":
-        return np.mean(pretest), np.mean(posttest)
+        return [np.median(pretest), np.median(posttest), np.median(posttest - pretest)]
     elif datatype == "Ordinal":
-        return np.mean(ordinals)
+        print('ordinals shape:', ordinals.shape)
+        columns = [sum(ordinals[:,i]) for i in range(ordinals.shape[1])]
+        return np.where(columns == max(columns))[0][0]  # I think there is a better way to do this
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
 
 def run_mode(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
-    # Ordinal and interval
+    """Calculates the mode of a given dataset
+
+    :param pretest: numpy array of pre-test data
+    :param posttest: numpy array of post-test data
+    :param ordinals: numpy array of ordinal data
+    :param datatype: "interval" or "ordinal"
+    :return: interval-the mode of the pretest, posttest, and change
+             ordinals-the mode of all of it. TODO: figure out what this should be
+    """
     if datatype == "Interval":
-        return stats.mode(pretest), stats.mode(posttest)
+        return [stats.mode(pretest), stats.mode(posttest), stats.mode(posttest-pretest)]
     elif datatype == "Ordinal":
         return stats.mode(ordinals)
     else:
@@ -35,26 +62,39 @@ def run_mode(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
 
 
 def run_stand_dev(pre_test, post_test):
-    # interval
-    standard_deviation = np.std(np.stack([pre_test, post_test]))
+    """calculates the standard deviation of interval data
+
+    :param pre_test: numpy array of size [N]
+    :param post_test: numpy array of size [N]
+    :return: float, standard deviation of the change in data
+    """
+    standard_deviation = np.std(post_test-pre_test)
     return standard_deviation
 
 
 def run_variance(pre_test, post_test):
-    # interval
-    variance = np.var(np.stack([pre_test, post_test]))
+    """calculates the variance of interval data
+
+    :param pre_test: numpy array of size [N]
+    :param post_test: numpy array of size [N]
+    :return: float, variance of the change in data
+    """
+    variance = np.var(post_test-pre_test)
     return variance
 
 
 def run_percentiles(pre_test, post_test):
-    # interval
-    # TODO: figure out pretest/posttest
-    # Gets the percentile of the data at 0-100 percent in steps of 10
+    """Calculates the percentiles of interval data
+
+    :param pre_test: numpy array of size [N]
+    :param post_test: numpy array of size [N]
+    :return: [10] list of floats, the 10-100th percentile of the change in pre-post test data
+    """
+    change_data = post_test - pre_test
     percentiles = [x*10 for x in range(11)]
     percentile_data = []
     for i in percentiles:
-        print('i:', i)
-        percentile_data.append(np.percentile(pre_test, i))
+        percentile_data.append(np.percentile(change_data, i))
     return percentile_data
 
 
@@ -65,10 +105,9 @@ def run_probability_dist(pretest=None, posttest=None, ordinals=None, datatype="I
     if datatype == "Interval":
         data = posttest - pretest
     elif datatype == "Ordinal":
-        data = ordinals
+        data = ordinals[0]
     else:
         raise Exception("Bad data type: {}".format(datatype))
-    print('data:',data)
     x = np.linspace(min(data), max(data), len(data))
     mu, std = stats.norm.fit(data)
     snd = stats.norm(mu, std)
@@ -154,9 +193,8 @@ if __name__ == "__main__":
         print("correlation coefficient:", run_correlation_coeff(my_data.pretest, my_data.posttest))
         print("spearman coefficient: ", run_spearman_rank_corr_coeff(my_data.pretest, my_data.posttest))
     elif my_data.data_type == "Ordinal":
+        print('ordinals:', my_data.ordinals)
         print("mean: ", run_mean(ordinals=my_data.ordinals, datatype=my_data.data_type))
         print("median: ", run_median(ordinals=my_data.ordinals, datatype=my_data.data_type))
         print("mode: ", run_mode(ordinals=my_data.ordinals, datatype=my_data.data_type))
         print("probability dist: ", run_probability_dist(ordinals=my_data.ordinals, datatype=my_data.data_type))
-
-
