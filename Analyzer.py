@@ -169,11 +169,11 @@ def run_function(function_name, *argv):
     posttest = None
     ordinals = None
     if len(argv) > 1:
-        data_type = "interval"
+        data_type = "Interval"
         pretest = argv[0]
         posttest = argv[1]
     elif len(argv) == 1:
-        data_type = "ordinal"
+        data_type = "Ordinal"
         ordinals = argv[0]
     else:
         raise Exception("Unknown input types {}".format(argv))
