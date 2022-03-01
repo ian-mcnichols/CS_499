@@ -1,4 +1,6 @@
 from numpy.core.defchararray import index
+import pandas as pd
+import numpy as np
 
 
 class Data:
@@ -6,6 +8,7 @@ class Data:
         # Initialize to none
         self.data_type = "Null"
         self.data_np = None
+        self.results = {}
         # have to have a way to tell it it is gui input
         if file_name == "GUI":
             self.get_data()
@@ -57,10 +60,12 @@ class Data:
             raise Exception("Bad data type {}".format(self.data_type))
         return
 
+    def add_result(self, function_ran, output):
+        self.results.update({function_ran: output})
 
 if __name__ == '__main__':
     import numpy as np
-    my_data = Data("Test_Data/IntervalDataTest.csv")
+    my_data = Data("IntervalDataTest.csv")
     print(my_data.data_np)
     print(my_data.data_type)
     print(my_data.data_np.dtype.names)
