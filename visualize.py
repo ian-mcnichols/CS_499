@@ -1,5 +1,28 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
+
+
+def build_csv(self, output_file_name, data):
+    if output_file_name.endswith('.csv') is False:
+        output_file_name += ".csv"
+    with open(output_file_name, 'w', newline='') as csv_file:
+        write = csv.DictWriter(csv_file, fieldnames=['Function', 'Value'])
+        write.writeheader()
+        for function in data.results:
+            write.writerow({'Function': function, 'Value': data[function]})
+
+
+def build_text(self, output_file_name, data):
+    if output_file_name.endswith('.txt') is False:
+        output_file_name += ".txt"
+    #  Build text
+
+
+def save_jpeg(self, output_file_name):  # Static function, outputs one graph at a time. Reliant on plt state
+    if output_file_name.endswith('.jpeg') is False:
+        output_file_name += ".jpeg"
+    plt.savefig(output_file_name)
 
 
 def plot_chart(data, plot_type, title):
