@@ -4,6 +4,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 
 
+
 def run_mean(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     """Calculates the mean of the given data
 
@@ -210,20 +211,21 @@ if __name__ == "__main__":
     #print("ordinals: ", my_data.ordinals)
     #print("pretest: ", my_data.pretest)
     if my_data.data_type == 'Interval':
-        print("pretest:", my_data.pretest)
-        print("postest:", my_data.posttest)
-        print("mean: ", run_mean(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
-        print("median: ", run_median(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
-        print("mode: ", run_mode(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
-        print("standard deviation: ", run_stand_dev(my_data.pretest, my_data.posttest))
-        print("variance: ", run_variance(my_data.pretest, my_data.posttest))
-        print("percentiles: ", run_percentiles(my_data.pretest, my_data.posttest))
-        print("probability dist: ", run_probability_dist(my_data.pretest, my_data.posttest, datatype=my_data.data_type))
-        print("least squared line: ", run_least_square_line(my_data.pretest, my_data.posttest))
-        print("correlation coefficient:", run_correlation_coeff(my_data.pretest, my_data.posttest))
-        print("spearman coefficient: ", run_spearman_rank_corr_coeff(my_data.pretest, my_data.posttest))
+        print("pretest:", my_data.data_np['Pretest'])
+        print("posttest:", my_data.data_np['Posttest'])
+        print("mean: ", run_mean(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
+        print("median: ", run_median(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
+        print("mode: ", run_mode(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
+        print("standard deviation: ", run_stand_dev(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+        print("variance: ", run_variance(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+        print("percentiles: ", run_percentiles(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+        print("probability dist: ",
+          run_probability_dist(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
+        print("least squared line: ", run_least_square_line(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+        print("correlation coefficient:", run_correlation_coeff(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+        print("spearman coefficient: ",
+          run_spearman_rank_corr_coeff(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
     elif my_data.data_type == "Ordinal":
-        print('ordinals:', my_data.ordinals)
         print("mean: ", run_mean(ordinals=my_data.ordinals, datatype=my_data.data_type))
         print("median: ", run_median(ordinals=my_data.ordinals, datatype=my_data.data_type))
         print("mode: ", run_mode(ordinals=my_data.ordinals, datatype=my_data.data_type))
