@@ -1,11 +1,14 @@
 from numpy.core.defchararray import index
+import numpy as np
 
 
 class Data:
     def __init__(self, file_name):
         # Initialize to none
         self.data_type = "Null"
-        self.data_np = None
+        self.pretest = []
+        self.posttest = []
+        self.ordinals = []
         # have to have a way to tell it it is gui input
         if file_name == "GUI":
             self.get_data()
@@ -24,20 +27,26 @@ class Data:
             else:
                 raise Exception("File is not comma separated or tab delineated.")
             # Determine data type
-            if sections.split(delimiter)[0].strip() == "Sample #":
-                self.data_type = "Frequency"
-            elif sections.split(delimiter)[0].strip() == "Subject ID":
+            if sections.split(delimiter)[0].strip() == "Subject ID":
                 self.data_type = "Interval"
+                data_line = file.readline()
+                while data_line:
+                    self.pretest.append(float(data_line.split(delimiter)[1].strip()))
+                    self.posttest.append(float(data_line.split(delimiter)[2].strip()))
+                    data_line = file.readline()
+                self.pretest = np.array(self.pretest)
+                self.posttest = np.array(self.posttest)
             elif sections.split(delimiter)[0].strip() == "Question #":
                 self.data_type = "Ordinal"
+                ordinal_count = len(sections.split(delimiter)) - 1
+                data_line = file.readline()
+                while data_line:
+                    self.ordinals.append([float(data_line.split(delimiter)[i+1]) for i in range(ordinal_count)])
+                    data_line = file.readline()
+                self.ordinals = np.array(self.ordinals)
             else:
                 raise Exception("File is not in expected format")
             file.close()
-        # Read in data as a numpy array
-        self.data_np = np.genfromtxt(filepath, dtype=None, delimiter=', ', skip_header=1, encoding=None)
-        # Set names for columns, striping white space
-        self.data_np.dtype.names = [x.strip() for x in sections.split(delimiter)]
-
         return
 
     def get_data(self, data, labels):
