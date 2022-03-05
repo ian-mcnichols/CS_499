@@ -16,9 +16,9 @@ def run_mean(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
              if ordinal: average max. number of votes on the most popular answer
     """
     # Ordinal and interval
-    if datatype == "Interval":
+    if datatype.lower() == "interval":
         return [np.mean(pretest), np.mean(posttest), np.mean(posttest - pretest)]
-    elif datatype == "Ordinal":
+    elif datatype.lower() == "ordinal":
         return np.mean([x.max() for x in ordinals])
     else:
         raise Exception("Bad data type: {}".format(datatype))
@@ -34,10 +34,9 @@ def run_median(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     :return: interval-list, the median of the pretest, posttest, and change
              ordinals-int, the index of the column that is the median for all the questions
     """
-    if datatype == "Interval":
+    if datatype.lower() == "interval":
         return [np.median(pretest), np.median(posttest), np.median(posttest - pretest)]
-    elif datatype == "Ordinal":
-        print('ordinals shape:', ordinals.shape)
+    elif datatype.lower() == "ordinal":
         columns = [sum(ordinals[:,i]) for i in range(ordinals.shape[1])]
         return np.where(columns == max(columns))[0][0]  # I think there is a better way to do this
     else:
@@ -54,10 +53,10 @@ def run_mode(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     :return: interval-the mode of the pretest, posttest, and change
              ordinals-the mode of all of it. TODO: figure out what this should be
     """
-    if datatype == "Interval":
-        return [stats.mode(pretest), stats.mode(posttest), stats.mode(posttest-pretest)]
-    elif datatype == "Ordinal":
-        return stats.mode(ordinals)
+    if datatype.lower() == "interval":
+        return [stats.mode(pretest)[0][0], stats.mode(posttest)[0][0], stats.mode(posttest-pretest)[0][0]]
+    elif datatype.lower() == "ordinal":
+        return stats.mode(ordinals)[0][0]
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
