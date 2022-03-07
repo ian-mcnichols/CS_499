@@ -76,11 +76,13 @@ class StatsOperator(QWidget):
         # Data range option:
         self.dataRange_group = QGroupBox("Data Range:")
         self.dataRange_layout = QGridLayout()
-        self.dataRange_group.setLayout(self.dataRange_layout)
         self.allOfFile_radiobttn = QRadioButton("All of file")
         self.allOfFile_radiobttn.setChecked(True)
-        self.dataRange_layout.addWidget(self.allOfFile_radiobttn)
+        self.dataRange_layout.addWidget(self.allOfFile_radiobttn, 0, 0)
+        self.partialRange_radiobttn = QRadioButton("Partial range")
+        self.dataRange_layout.addWidget(self.partialRange_radiobttn, 1, 0)
 
+        self.dataRange_group.setLayout(self.dataRange_layout)
         self.partialRange_layout = QGridLayout()
         self.rowTxtbx_lbl = QLabel()
         self.rowTxtbx_lbl.setText("Rows")
@@ -102,12 +104,6 @@ class StatsOperator(QWidget):
         self.maxColumn_txtbx.setPlaceholderText("Max column number")
         self.partialRange_layout.addWidget(self.maxColumn_txtbx, 4, 3)
         self.dataRange_layout.addLayout(self.partialRange_layout, 4, 1)
-
-        self.allOfFile_radiobttn = QRadioButton("All of file")
-        self.allOfFile_radiobttn.setChecked(True)
-        self.dataRange_layout.addWidget(self.allOfFile_radiobttn, 0, 0)
-        self.partialRange_radiobttn = QRadioButton("Partial range")
-        self.dataRange_layout.addWidget(self.partialRange_radiobttn, 1, 0)
 
         # Output option:
         self.output_group = QGroupBox("Output:")
