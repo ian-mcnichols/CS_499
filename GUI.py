@@ -82,9 +82,6 @@ class StatsOperator(QWidget):
         self.dataRange_layout.addWidget(self.allOfFile_radiobttn)
 
         self.partialRange_layout = QGridLayout()
-        self.partialRange_radiobttn = QRadioButton("Partial range")
-        self.partialRange_layout.addWidget(self.partialRange_radiobttn, 0, 0)
-
         self.rowTxtbx_lbl = QLabel()
         self.rowTxtbx_lbl.setText("Rows")
         self.partialRange_layout.addWidget(self.rowTxtbx_lbl, 1, 1)
