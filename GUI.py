@@ -1,163 +1,193 @@
 import sys
+import numpy as np
+import PyQt5.QtCore
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
     QRadioButton, QPushButton, QHBoxLayout
 
+import Data
+import Analyzer
+
+class StatsOperator(QWidget):
+    def __init__(self):
+        self.app = QApplication([])
+        super(StatsOperator, self).__init__()
+        self.w = QWidget()                               # Base widget
+        self.w.resize(500, 600)                          # Window default size
+        self.w.setWindowTitle("Statistical Analyzer")    # Window title
+        self.app.setStyle("Fusion")                      # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
+        self.initUI()
+        self.operations = []
+        self.display = False
+        self.save = False
+        self.range_rows = None
+        self.range_cols = None
+        self.pretest = None
+        self.posttest = None
+        self.ordinals = None
+        self.filename = None
+        self.datatype = None
+
+    def initUI(self):
+        # File name option:
+        self.fileName_lbl = QLabel(self.w)
+        self.fileName_lbl.setText("File name: ")
+        self.fileName_lbl.show()
+
+        self.fileName_txtbx = QLineEdit(self.w)
+        self.fileName_txtbx.setPlaceholderText("Enter file name")
+        self.fileName_txtbx.show()
+        self.fileName_lbl.setBuddy(self.fileName_lbl)
+
+        self.fileName_layout = QHBoxLayout()
+        self.fileName_layout.addWidget(self.fileName_lbl)
+        self.fileName_layout.addWidget(self.fileName_txtbx)
+
+        self.submit_bttn = QPushButton("Submit")
+        self.fileName_layout.addWidget(self.submit_bttn)
+        self.submit_bttn.clicked.connect(self.load_file)
+
+        # Operation options:
+        self.operations_group = QGroupBox("Operations:")
+        self.vertLay = QVBoxLayout()
+        self.operations_group.setLayout(self.vertLay)
+
+        self.mean_chckbx = QCheckBox("Mean")
+        self.vertLay.addWidget(self.mean_chckbx)
+        self.median_chckbx = QCheckBox("Median")
+        self.vertLay.addWidget(self.median_chckbx)
+        self.mode_chckbx = QCheckBox("Mode")
+        self.vertLay.addWidget(self.mode_chckbx)
+        self.stand_dev_chckbx = QCheckBox("Standard deviation")
+        self.vertLay.addWidget(self.stand_dev_chckbx)
+        self.variance_chckbx = QCheckBox("Variance")
+        self.vertLay.addWidget(self.variance_chckbx)
+        self.coeff_var_chckbx = QCheckBox("Coefficient of variance")
+        self.vertLay.addWidget(self.coeff_var_chckbx)
+        self.percentiles_chckbx = QCheckBox("Percentiles")
+        self.vertLay.addWidget(self.percentiles_chckbx)
+        self.prob_dist_chckbx = QCheckBox("Probability distribution")
+        self.vertLay.addWidget(self.prob_dist_chckbx)
+        self.least_square_chckbx = QCheckBox("Least square line")
+        self.vertLay.addWidget(self.least_square_chckbx)
+        self.corr_coeff_chckbx = QCheckBox("Correlation coefficient")
+        self.vertLay.addWidget(self.corr_coeff_chckbx)
+        self.sign_test_chckbx = QCheckBox("Sign test")
+        self.vertLay.addWidget(self.sign_test_chckbx)
+        self.rank_sum_chckbx = QCheckBox("Rank sum test")
+        self.vertLay.addWidget(self.rank_sum_chckbx)
+        self.spearman_chckbx = QCheckBox("Spearman rank correction coefficient")
+        self.vertLay.addWidget(self.spearman_chckbx)
+
+        # Data range option:
+        self.dataRange_group = QGroupBox("Data Range:")
+        self.dataRange_layout = QGridLayout()
+        self.dataRange_group.setLayout(self.dataRange_layout)
+
+        self.allOfFile_radiobttn = QRadioButton("All of file")
+        self.allOfFile_radiobttn.setChecked(True)
+        self.dataRange_layout.addWidget(self.allOfFile_radiobttn, 0, 0)
+        self.partialRange_radiobttn = QRadioButton("Partial range")
+        self.dataRange_layout.addWidget(self.partialRange_radiobttn, 1, 0)
+
+        # Output option:
+        self.output_group = QGroupBox("Output:")
+        self.output_layout = QVBoxLayout()
+        self.output_group.setLayout(self.output_layout)
+        # Display results
+        self.displayResults_chckbx = QCheckBox("Display results")
+        self.output_layout.addWidget(self.displayResults_chckbx)
+        self.displayResults_chckbx.toggled.connect(self.toggle_display)
+        # Save results to file
+        self.saveResults_chckbx = QCheckBox("Save results to computer")
+        self.output_layout.addWidget(self.saveResults_chckbx)
+        self.saveResults_chckbx.toggled.connect(self.toggle_save)
+
+        # Calculate results button:
+        self.calcResults_bttn = QPushButton("Calculate Results")
+        self.calcResults_bttn.clicked.connect(self.run_calculations)
+
+        # Main app layout:
+        self.appLayout = QGridLayout(self.w)
+        self.appLayout.addLayout(self.fileName_layout, 0, 0, 1, 0)
+        self.appLayout.addWidget(self.operations_group, 1, 1, 2, 1)
+        self.appLayout.addWidget(self.dataRange_group, 1, 0)
+        self.appLayout.addWidget(self.output_group, 2, 0)
+        self.appLayout.addWidget(self.calcResults_bttn, 3, 0, 3, 2)
+
+        # have the operations checkboxes update automatically
+        for checkbox in [
+            self.mean_chckbx,
+            self.median_chckbx,
+            self.mode_chckbx,
+            self.stand_dev_chckbx,
+            self.variance_chckbx,
+            self.coeff_var_chckbx,
+            self.percentiles_chckbx,
+            self.prob_dist_chckbx,
+            self.least_square_chckbx,
+            self.corr_coeff_chckbx,
+            self.sign_test_chckbx,
+            self.rank_sum_chckbx,
+            self.spearman_chckbx
+        ]:
+            checkbox.stateChanged.connect(self.update_operations)
+
+    def start_GUI(self):
+        self.w.show()
+        sys.exit(self.app.exec_())       # Run the app until the user closes
+
+    def load_file(self):
+        filename = self.fileName_txtbx.text()
+        print("loading file {}!".format(filename))
+        my_data = Data.Data(filename)
+        self.datatype = my_data.data_type
+        if self.datatype == 'Interval':
+            self.pretest = my_data.data_np["Pretest"]
+            self.posttest = my_data.data_np["Posttest"]
+            print("My data:", self.pretest, self.posttest)
+        else:
+            print("no ordinals yet")
+
+    def run_calculations(self):
+        print("running calculations!")
+        for calculation in self.operations:
+            print("running {}".format(calculation))
+        return
+
+    def toggle_display(self):
+        self.display = not self.display
+        print("display is set to: ", self.display)
+
+    def toggle_save(self):
+        self.save = not self.save
+        print("save output is set to: ", self.save)
+
+    def update_operations(self):
+        checkboxes = (
+            self.mean_chckbx,
+            self.median_chckbx,
+            self.mode_chckbx,
+            self.stand_dev_chckbx,
+            self.variance_chckbx,
+            self.coeff_var_chckbx,
+            self.percentiles_chckbx,
+            self.prob_dist_chckbx,
+            self.least_square_chckbx,
+            self.corr_coeff_chckbx,
+            self.sign_test_chckbx,
+            self.rank_sum_chckbx,
+            self.spearman_chckbx
+        )
+        for checkbox in checkboxes:
+            if checkbox.isChecked() and checkbox.text() not in self.operations:
+                self.operations.append(checkbox.text())
+                print("operations: ", self.operations)
+            elif not checkbox.isChecked() and checkbox.text() in self.operations:
+                self.operations.remove(checkbox.text())
+                print("operations: ", self.operations)
+
 
 if __name__ == "__main__":
-    app = QApplication([])                      # Needed for UI
-    w = QWidget()                               # Base widget
-    w.resize(500, 500)                          # Window default size
-    w.setWindowTitle("Statistical Analyzer")    # Window title
-    app.setStyle("Fusion")                      # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
-
-    # File name option:
-    fileName_lbl = QLabel(w)
-    fileName_lbl.setText("File name: ")
-    fileName_lbl.show()
-
-    fileName_txtbx = QLineEdit(w)
-    fileName_txtbx.setPlaceholderText("Enter file name")
-    fileName_txtbx.show()
-    fileName_lbl.setBuddy(fileName_lbl)
-
-    fileName_layout = QHBoxLayout()
-    fileName_layout.addWidget(fileName_lbl)
-    fileName_layout.addWidget(fileName_txtbx)
-
-    submit_bttn = QPushButton("Submit")
-    fileName_layout.addWidget(submit_bttn)
-
-    # Operation options:
-    operations_group = QGroupBox("Operations:")
-    vertLay = QVBoxLayout()
-    operations_group.setLayout(vertLay)
-
-    mean_chckbx = QCheckBox("Mean")
-    vertLay.addWidget(mean_chckbx)
-    median_chckbx = QCheckBox("Median")
-    vertLay.addWidget(median_chckbx)
-    mode_chckbx = QCheckBox("Mode")
-    vertLay.addWidget(mode_chckbx)
-    range_chckbx = QCheckBox("Range")
-    vertLay.addWidget(range_chckbx)
-    stndrddev_chckbx = QCheckBox("Standard deviation")
-    vertLay.addWidget(stndrddev_chckbx)
-    variance_chckbx = QCheckBox("Variance")
-    vertLay.addWidget(variance_chckbx)
-    coeffvar_chckbx = QCheckBox("Coefficient of variance")
-    vertLay.addWidget(coeffvar_chckbx)
-    percentile_chckbx = QCheckBox("Percentiles")
-    vertLay.addWidget(percentile_chckbx)
-    #operation_chckbx = QCheckBox("Probability distribution")
-    #vertLay.addWidget(operation_chckbx)
-    #operation_chckbx = QCheckBox("Binomial distribution")
-    #vertLay.addWidget(operation_chckbx)
-    leastsqr_chckbx = QCheckBox("Least square line")
-    vertLay.addWidget(leastsqr_chckbx)
-    chi_chckbx = QCheckBox("Chi square")
-    vertLay.addWidget(chi_chckbx)
-    #operation_chckbx = QCheckBox("Correlation coefficient")
-    #vertLay.addWidget(operation_chckbx)
-    #operation_chckbx = QCheckBox("Sign test")
-    #vertLay.addWidget(operation_chckbx)
-    #operation_chckbx = QCheckBox("Rank sum test")
-    #vertLay.addWidget(operation_chckbx)
-    #operation_chckbx = QCheckBox("Spearman rank correction coefficient")
-    #vertLay.addWidget(operation_chckbx)
-
-    # Data range option:
-    dataRange_group = QGroupBox("Data Range:")
-    dataRange_layout = QVBoxLayout()
-    dataRange_group.setLayout(dataRange_layout)
-
-    allOfFile_radiobttn = QRadioButton("All of file")
-    allOfFile_radiobttn.setChecked(True)
-    dataRange_layout.addWidget(allOfFile_radiobttn)
-
-    partialRange_layout = QGridLayout()
-    partialRange_radiobttn = QRadioButton("Partial range")
-    partialRange_layout.addWidget(partialRange_radiobttn, 0, 0)
-
-    rowTxtbx_lbl = QLabel()
-    rowTxtbx_lbl.setText("Rows")
-    partialRange_layout.addWidget(rowTxtbx_lbl, 1, 1)
-    minRow_txtbx = QLineEdit()
-    minRow_txtbx.setPlaceholderText("Min row number")
-    partialRange_layout.addWidget(minRow_txtbx, 2, 1)
-    maxRow_txtbx = QLineEdit()
-    maxRow_txtbx.setPlaceholderText("Max row number")
-    partialRange_layout.addWidget(maxRow_txtbx, 2, 3)
-
-    columnTxtbx_lbl = QLabel()
-    columnTxtbx_lbl.setText("Columns")
-    partialRange_layout.addWidget(columnTxtbx_lbl, 3, 1)
-    minColumn_txtbx = QLineEdit()
-    minColumn_txtbx.setPlaceholderText("Min column number")
-    partialRange_layout.addWidget(minColumn_txtbx, 4, 1)
-    maxColumn_txtbx = QLineEdit()
-    maxColumn_txtbx.setPlaceholderText("Max column number")
-    partialRange_layout.addWidget(maxColumn_txtbx, 4, 3)
-    dataRange_layout.addLayout(partialRange_layout)
-
-    # Data type option:
-    dataType_group = QGroupBox("Data Type: ")
-    dataType_layout = QVBoxLayout()
-    dataType_group.setLayout(dataType_layout)
-
-    ordinal_radiobttn = QRadioButton("Ordinal data")
-    ordinal_radiobttn.setChecked(True)
-    range_chckbx.setDisabled(True)      # since ordinal is checked by default, disable range option by default
-    dataType_layout.addWidget(ordinal_radiobttn)
-    interval_radiobttn = QRadioButton("Interval data")
-    dataType_layout.addWidget(interval_radiobttn)
-
-    # Set default disables (all of file option selected by default)
-    columnTxtbx_lbl.setDisabled(True)
-    rowTxtbx_lbl.setDisabled(True)
-    maxRow_txtbx.setDisabled(True)
-    minRow_txtbx.setDisabled(True)
-    maxColumn_txtbx.setDisabled(True)
-    minColumn_txtbx.setDisabled(True)
-
-    # Output option:
-    output_group = QGroupBox("Output:")
-    output_layout = QVBoxLayout()
-    output_group.setLayout(output_layout)
-
-    displayResults_chckbx = QCheckBox("Display results")
-    output_layout.addWidget(displayResults_chckbx)
-    saveResults_chckbx = QCheckBox("Save results to computer")
-    output_layout.addWidget(saveResults_chckbx)
-
-    # Calculate results button:
-    calcResults_bttn = QPushButton("Calculate Results")
-
-    # Main app layout:
-    appLayout = QGridLayout(w)
-    appLayout.addLayout(fileName_layout, 0, 0, 1, 0)
-    appLayout.addWidget(operations_group, 1, 1, 3, 1)
-    appLayout.addWidget(dataRange_group, 1, 0)
-    appLayout.addWidget(dataType_group, 2, 0)
-    appLayout.addWidget(output_group, 3, 0)
-    appLayout.addWidget(calcResults_bttn, 4, 0, 4, 2)
-
-    # Disable operations depending on data type
-    ordinal_radiobttn.toggled.connect(stndrddev_chckbx.setEnabled)
-    ordinal_radiobttn.toggled.connect(variance_chckbx.setEnabled)
-    ordinal_radiobttn.toggled.connect(coeffvar_chckbx.setEnabled)
-    ordinal_radiobttn.toggled.connect(percentile_chckbx.setEnabled)
-    ordinal_radiobttn.toggled.connect(leastsqr_chckbx.setEnabled)
-
-    # Disable data range options based on selection
-    allOfFile_radiobttn.toggled.connect(columnTxtbx_lbl.setDisabled)
-    allOfFile_radiobttn.toggled.connect(rowTxtbx_lbl.setDisabled)
-    allOfFile_radiobttn.toggled.connect(maxRow_txtbx.setDisabled)
-    allOfFile_radiobttn.toggled.connect(minRow_txtbx.setDisabled)
-    allOfFile_radiobttn.toggled.connect(maxColumn_txtbx.setDisabled)
-    allOfFile_radiobttn.toggled.connect(minColumn_txtbx.setDisabled)
-
-    interval_radiobttn.toggled.connect(range_chckbx.setEnabled)
-
-    w.show()
-
-    sys.exit(app.exec_())       # Run the app until the user closes
+    #app = QApplication(sys.argv)
+    myGUI = StatsOperator()
+    myGUI.start_GUI()
