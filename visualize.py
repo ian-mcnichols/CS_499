@@ -3,7 +3,7 @@ import numpy as np
 import csv
 
 
-def build_csv(self, output_file_name, data):
+def build_csv(output_file_name, data):
     if output_file_name.endswith('.csv') is False:
         output_file_name += ".csv"
     with open(output_file_name, 'w', newline='') as csv_file:
@@ -13,7 +13,7 @@ def build_csv(self, output_file_name, data):
             write.writerow({'Function': function, 'Value': data[function]})
 
 
-def build_text(self, output_file_name, data):
+def build_text(output_file_name, data):
     if output_file_name.endswith('.txt') is False:
         output_file_name += ".txt"
     #  Build text
