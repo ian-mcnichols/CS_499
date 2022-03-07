@@ -8,14 +8,15 @@ import Data
 import Analyzer
 import visualize
 
+
 class StatsOperator(QWidget):
     def __init__(self):
         self.app = QApplication([])
         super(StatsOperator, self).__init__()
-        self.w = QWidget()                               # Base widget
-        self.w.resize(500, 600)                          # Window default size
-        self.w.setWindowTitle("Statistical Analyzer")    # Window title
-        self.app.setStyle("Fusion")                      # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
+        self.w = QWidget()  # Base widget
+        self.w.resize(500, 600)  # Window default size
+        self.w.setWindowTitle("Statistical Analyzer")  # Window title
+        self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.initUI()
         self.operations = []
         self.results = {}
@@ -27,7 +28,8 @@ class StatsOperator(QWidget):
         self.posttest = None
         self.ordinals = None
         self.filename = None
-        self.datatype = None
+        self.datatype = "Interval"
+        self.data_loaded = False
 
     def initUI(self):
         # All the formatting and button/widget declarations go here
@@ -114,19 +116,19 @@ class StatsOperator(QWidget):
         self.dataRange_layout.addLayout(self.partialRange_layout, 1, 1)
 
         # Range options disabled if using all of file
-        self.allOfFile_radiobttn.toggled.connect(lambda:self.columnTxtbx_lbl.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda:self.rowTxtbx_lbl.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda:self.maxRow_txtbx.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda:self.minRow_txtbx.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda:self.maxColumn_txtbx.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda:self.minColumn_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.columnTxtbx_lbl.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.rowTxtbx_lbl.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.maxRow_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.minRow_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.maxColumn_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(True))
         # Range options enabled otherwise
-        self.partialRange_radiobttn.toggled.connect(lambda:self.columnTxtbx_lbl.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda:self.rowTxtbx_lbl.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda:self.maxRow_txtbx.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda:self.minRow_txtbx.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda:self.maxColumn_txtbx.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda:self.minColumn_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.columnTxtbx_lbl.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.rowTxtbx_lbl.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.maxRow_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.minRow_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.maxColumn_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(False))
 
         # Data type option:
         self.dataType_group = QGroupBox("Data Type: ")
@@ -137,21 +139,23 @@ class StatsOperator(QWidget):
         self.dataType_layout.addWidget(self.interval_radiobttn)
         self.interval_radiobttn.setChecked(True)
         # Operations on for Interval data
-        self.interval_radiobttn.toggled.connect(lambda:self.stand_dev_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.variance_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.percentiles_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.least_square_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.corr_coeff_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.spearman_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.least_square_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.corr_coeff_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(self.set_datatype_interval)
 
         self.ordinal_radiobttn = QRadioButton("Ordinal data")
         # These operations are off if ordinal data is selected
-        self.ordinal_radiobttn.toggled.connect(lambda:self.stand_dev_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda:self.variance_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda:self.percentiles_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda:self.least_square_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda:self.corr_coeff_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda:self.spearman_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.least_square_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.corr_coeff_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(True))
+        self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
         # Output option:
@@ -197,7 +201,7 @@ class StatsOperator(QWidget):
 
     def start_GUI(self):
         self.w.show()
-        sys.exit(self.app.exec_())       # Run the app until the user closes
+        sys.exit(self.app.exec_())  # Run the app until the user closes
 
     # Specific functions that correspond to GUI widgets go under here
     def load_file(self):
@@ -211,17 +215,24 @@ class StatsOperator(QWidget):
             print("My data:", self.pretest, self.posttest)
         else:
             print("no ordinals yet")
+        self.data_loaded = True
 
     def run_calculations(self):
         print("running calculations!")
+        if not self.data_loaded:
+            self.load_file()
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
+                print("pretest:", self.pretest)
+                print("posttest:", self.posttest)
                 output = Analyzer.run_function(calculation, pretest=self.pretest,
-                                                posttest=self.posttest, data_type="Interval")
+                                               posttest=self.posttest, data_type="Interval")
                 print("Results:", output)
-            else:
+            elif self.datatype == "Ordinal":
                 output = Analyzer.run_function(calculation, ordinals=self.ordinals, data_type="Ordinal")
+            else:
+                raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
         if self.save:
             visualize.build_csv("Results.csv", self.results)
@@ -258,6 +269,13 @@ class StatsOperator(QWidget):
             elif not checkbox.isChecked() and checkbox.text() in self.operations:
                 self.operations.remove(checkbox.text())
                 print("operations: ", self.operations)
+
+    # datatype toggle functions
+    def set_datatype_interval(self):
+        self.datatype = "Interval"
+
+    def set_datatype_ordinal(self):
+        self.datatype = "Ordinal"
 
 
 if __name__ == "__main__":
