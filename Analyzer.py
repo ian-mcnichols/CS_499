@@ -156,7 +156,7 @@ def run_spearman_rank_corr_coeff(pre_test, post_test):
     return stats.spearmanr(pre_test, post_test)[0], stats.spearmanr(pre_test, post_test)[1]
 
 
-def run_function(function_name, *argv):
+def run_function(function_name, pretest=None, posttest=None, ordinals=None, data_type="Interval"):
     """Driver to run any stats operation given a function and data
 
     :param function_name: string, operation to run on the data
@@ -165,18 +165,6 @@ def run_function(function_name, *argv):
                  ordinals: numpy array of size [NxM] (if ordinal)
     :return: function corresponding to operation type
     """
-    pretest = None
-    posttest = None
-    ordinals = None
-    if len(argv) > 1:
-        data_type = "Interval"
-        pretest = argv[0]
-        posttest = argv[1]
-    elif len(argv) == 1:
-        data_type = "Ordinal"
-        ordinals = argv[0]
-    else:
-        raise Exception("Unknown input types {}".format(argv))
     if function_name == "Mean":
         return run_mean(pretest, posttest, ordinals, datatype=data_type)
     elif function_name == "Median":
