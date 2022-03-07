@@ -61,20 +61,14 @@ class StatsOperator(QWidget):
         self.vertLay.addWidget(self.stand_dev_chckbx)
         self.variance_chckbx = QCheckBox("Variance")
         self.vertLay.addWidget(self.variance_chckbx)
-        self.coeff_var_chckbx = QCheckBox("Coefficient of variance")
-        self.vertLay.addWidget(self.coeff_var_chckbx)
         self.percentiles_chckbx = QCheckBox("Percentiles")
         self.vertLay.addWidget(self.percentiles_chckbx)
-        self.prob_dist_chckbx = QCheckBox("Probability distribution")
-        self.vertLay.addWidget(self.prob_dist_chckbx)
         self.least_square_chckbx = QCheckBox("Least square line")
         self.vertLay.addWidget(self.least_square_chckbx)
+        self.prob_dist_chckbx = QCheckBox("Probability distribution")
+        self.vertLay.addWidget(self.prob_dist_chckbx)
         self.corr_coeff_chckbx = QCheckBox("Correlation coefficient")
         self.vertLay.addWidget(self.corr_coeff_chckbx)
-        self.sign_test_chckbx = QCheckBox("Sign test")
-        self.vertLay.addWidget(self.sign_test_chckbx)
-        self.rank_sum_chckbx = QCheckBox("Rank sum test")
-        self.vertLay.addWidget(self.rank_sum_chckbx)
         self.spearman_chckbx = QCheckBox("Spearman rank correction coefficient")
         self.vertLay.addWidget(self.spearman_chckbx)
 
@@ -121,13 +115,10 @@ class StatsOperator(QWidget):
             self.mode_chckbx,
             self.stand_dev_chckbx,
             self.variance_chckbx,
-            self.coeff_var_chckbx,
             self.percentiles_chckbx,
-            self.prob_dist_chckbx,
             self.least_square_chckbx,
+            self.prob_dist_chckbx,
             self.corr_coeff_chckbx,
-            self.sign_test_chckbx,
-            self.rank_sum_chckbx,
             self.spearman_chckbx
         ]:
             checkbox.stateChanged.connect(self.update_operations)
