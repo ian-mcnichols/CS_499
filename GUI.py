@@ -217,12 +217,12 @@ class StatsOperator(QWidget):
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                results = Analyzer.run_function(calculation, self.pretest,
-                                                self.posttest)
-                print("Results:", results)
+                output = Analyzer.run_function(calculation, pretest=self.pretest,
+                                                posttest=self.posttest, data_type="Interval")
+                print("Results:", output)
             else:
-                results = Analyzer.run_function(calculation, self.ordinals)
-            self.results[calculation] = results
+                output = Analyzer.run_function(calculation, ordinals=self.ordinals, data_type="Ordinal")
+            self.results[calculation] = output
         if self.save:
             visualize.build_csv("Results.csv", self.results)
             visualize.build_text("Results.txt", self.results)
