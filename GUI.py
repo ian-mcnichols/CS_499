@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayou
 
 import Data
 import Analyzer
+import visualize
 
 class StatsOperator(QWidget):
     def __init__(self):
@@ -17,6 +18,7 @@ class StatsOperator(QWidget):
         self.app.setStyle("Fusion")                      # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.initUI()
         self.operations = []
+        self.results = {}
         self.display = False
         self.save = False
         self.range_rows = None
@@ -127,7 +129,6 @@ class StatsOperator(QWidget):
         self.partialRange_radiobttn.toggled.connect(lambda:self.minColumn_txtbx.setDisabled(False))
 
         # Data type option:
-        # TODO: Make this show up
         self.dataType_group = QGroupBox("Data Type: ")
         self.dataType_layout = QVBoxLayout()
         self.dataType_group.setLayout(self.dataType_layout)
@@ -220,7 +221,11 @@ class StatsOperator(QWidget):
                                                 self.posttest)
                 print("Results:", results)
             else:
-                Analyzer.run_function(calculation, self.ordinals)
+                results = Analyzer.run_function(calculation, self.ordinals)
+            self.results[calculation] = results
+        if self.save:
+            visualize.build_csv("Results.csv", self.results)
+            visualize.build_text("Results.txt", self.results)
         return
 
     def toggle_display(self):
