@@ -132,7 +132,7 @@ class StatsOperator(QWidget):
     def load_file(self):
         filename = self.fileName_txtbx.text()
         print("loading file {}!".format(filename))
-        my_data = Data.Data(filename)
+        my_data = Data.Data(filename, "Interval")
         self.datatype = my_data.data_type
         if self.datatype == 'Interval':
             self.pretest = my_data.data_np["Pretest"]
@@ -145,6 +145,12 @@ class StatsOperator(QWidget):
         print("running calculations!")
         for calculation in self.operations:
             print("running {}".format(calculation))
+            if self.datatype == "Interval":
+                results = Analyzer.run_function(calculation, self.pretest,
+                                                self.posttest)
+                print("Results:", results)
+            else:
+                Analyzer.run_function(calculation, self.ordinals)
         return
 
     def toggle_display(self):
@@ -180,6 +186,5 @@ class StatsOperator(QWidget):
 
 
 if __name__ == "__main__":
-    #app = QApplication(sys.argv)
     myGUI = StatsOperator()
     myGUI.start_GUI()
