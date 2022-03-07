@@ -138,14 +138,17 @@ class StatsOperator(QWidget):
         self.ordinal_radiobttn.toggled.connect(lambda:self.stand_dev_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda:self.variance_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda:self.percentiles_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda:self.least_square_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda:self.corr_coeff_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda:self.spearman_chckbx.setDisabled(True))
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
         self.interval_radiobttn = QRadioButton("Interval data")
         self.dataType_layout.addWidget(self.interval_radiobttn)
+        # Operations on for Interval data
         self.interval_radiobttn.toggled.connect(lambda:self.stand_dev_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda:self.variance_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda:self.percentiles_chckbx.setDisabled(False))
+        self.ordinal_radiobttn.toggled.connect(lambda:self.least_square_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda:self.corr_coeff_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda:self.spearman_chckbx.setDisabled(False))
 
