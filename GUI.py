@@ -28,6 +28,7 @@ class StatsOperator(QWidget):
         self.datatype = None
 
     def initUI(self):
+        # All the formatting and button/widget declarations go here
         # File name option:
         self.fileName_lbl = QLabel(self.w)
         self.fileName_lbl.setText("File name: ")
@@ -127,6 +128,7 @@ class StatsOperator(QWidget):
         self.w.show()
         sys.exit(self.app.exec_())       # Run the app until the user closes
 
+    # Specific functions that correspond to GUI widgets go under here
     def load_file(self):
         filename = self.fileName_txtbx.text()
         print("loading file {}!".format(filename))
@@ -154,19 +156,18 @@ class StatsOperator(QWidget):
         print("save output is set to: ", self.save)
 
     def update_operations(self):
+        """continually check and review the operations boxes to update the
+        list of operations that will be called"""
         checkboxes = (
             self.mean_chckbx,
             self.median_chckbx,
             self.mode_chckbx,
             self.stand_dev_chckbx,
             self.variance_chckbx,
-            self.coeff_var_chckbx,
             self.percentiles_chckbx,
             self.prob_dist_chckbx,
             self.least_square_chckbx,
             self.corr_coeff_chckbx,
-            self.sign_test_chckbx,
-            self.rank_sum_chckbx,
             self.spearman_chckbx
         )
         for checkbox in checkboxes:
