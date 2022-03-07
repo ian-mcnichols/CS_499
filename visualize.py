@@ -9,7 +9,7 @@ def build_csv(output_file_name, data):
     with open(output_file_name, 'w', newline='') as csv_file:
         write = csv.DictWriter(csv_file, fieldnames=['Function', 'Value'])
         write.writeheader()
-        for function in data.results:
+        for function in data:
             write.writerow({'Function': function, 'Value': data[function]})
 
 
