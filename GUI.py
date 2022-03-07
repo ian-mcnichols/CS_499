@@ -103,7 +103,35 @@ class StatsOperator(QWidget):
         self.maxColumn_txtbx = QLineEdit()
         self.maxColumn_txtbx.setPlaceholderText("Max column number")
         self.partialRange_layout.addWidget(self.maxColumn_txtbx, 4, 3)
-        self.dataRange_layout.addLayout(self.partialRange_layout, 4, 1)
+        self.dataRange_layout.addLayout(self.partialRange_layout, 1, 1)
+
+        # Range options disabled if using all of file
+        self.allOfFile_radiobttn.toggled.connect(lambda:self.columnTxtbx_lbl.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda:self.rowTxtbx_lbl.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda:self.maxRow_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda:self.minRow_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda:self.maxColumn_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda:self.minColumn_txtbx.setDisabled(True))
+
+        self.partialRange_radiobttn.toggled.connect(lambda:self.columnTxtbx_lbl.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda:self.rowTxtbx_lbl.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda:self.maxRow_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda:self.minRow_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda:self.maxColumn_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda:self.minColumn_txtbx.setDisabled(False))
+
+        # Data type option:
+        # TODO: Make this show up
+        self.dataType_group = QGroupBox("Data Type: ")
+        self.dataType_layout = QVBoxLayout()
+        self.dataType_group.setLayout(self.dataType_layout)
+
+        self.ordinal_radiobttn = QRadioButton("Ordinal data")
+        self.ordinal_radiobttn.setChecked(True)
+        #self.range_chckbx.setDisabled(True)  # since ordinal is checked by default, disable range option by default
+        self.dataType_layout.addWidget(self.ordinal_radiobttn)
+        self.interval_radiobttn = QRadioButton("Interval data")
+        self.dataType_layout.addWidget(self.interval_radiobttn)
 
         # Output option:
         self.output_group = QGroupBox("Output:")
