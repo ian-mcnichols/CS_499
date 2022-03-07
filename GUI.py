@@ -132,8 +132,18 @@ class StatsOperator(QWidget):
         self.dataType_layout = QVBoxLayout()
         self.dataType_group.setLayout(self.dataType_layout)
 
+        self.interval_radiobttn = QRadioButton("Interval data")
+        self.dataType_layout.addWidget(self.interval_radiobttn)
+        self.interval_radiobttn.setChecked(True)
+        # Operations on for Interval data
+        self.interval_radiobttn.toggled.connect(lambda:self.stand_dev_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda:self.variance_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda:self.percentiles_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda:self.least_square_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda:self.corr_coeff_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda:self.spearman_chckbx.setDisabled(False))
+
         self.ordinal_radiobttn = QRadioButton("Ordinal data")
-        self.ordinal_radiobttn.setChecked(True)
         # These operations are off if ordinal data is selected
         self.ordinal_radiobttn.toggled.connect(lambda:self.stand_dev_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda:self.variance_chckbx.setDisabled(True))
@@ -142,15 +152,6 @@ class StatsOperator(QWidget):
         self.ordinal_radiobttn.toggled.connect(lambda:self.corr_coeff_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda:self.spearman_chckbx.setDisabled(True))
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
-        self.interval_radiobttn = QRadioButton("Interval data")
-        self.dataType_layout.addWidget(self.interval_radiobttn)
-        # Operations on for Interval data
-        self.interval_radiobttn.toggled.connect(lambda:self.stand_dev_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.variance_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.percentiles_chckbx.setDisabled(False))
-        self.ordinal_radiobttn.toggled.connect(lambda:self.least_square_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.corr_coeff_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda:self.spearman_chckbx.setDisabled(False))
 
         # Output option:
         self.output_group = QGroupBox("Output:")
