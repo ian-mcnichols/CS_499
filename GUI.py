@@ -176,6 +176,7 @@ class StatsOperator(QWidget):
         self.appLayout.addWidget(self.dataRange_group, 1, 0)
         self.appLayout.addWidget(self.output_group, 2, 0)
         self.appLayout.addWidget(self.calcResults_bttn, 3, 0, 3, 2)
+        self.appLayout.addWidget(self.dataType_group, 3, 0)
 
         # have the operations checkboxes update automatically
         for checkbox in [
