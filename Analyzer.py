@@ -177,25 +177,25 @@ def run_function(function_name, *argv):
         ordinals = argv[0]
     else:
         raise Exception("Unknown input types {}".format(argv))
-    if function_name == "mean":
+    if function_name == "Mean":
         return run_mean(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "median":
+    elif function_name == "Median":
         return run_median(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "mode":
+    elif function_name == "Mode":
         return run_mode(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "stand_dev":
+    elif function_name == "Standard deviation":
         return run_stand_dev(pretest, posttest)
-    elif function_name == "variance":
+    elif function_name == "Variance":
         return run_variance(pretest, posttest)
-    elif function_name == "percentiles":
+    elif function_name == "Percentiles":
         return run_percentiles(pretest, posttest)
-    elif function_name == "lsr":
+    elif function_name == "Least square line":
         return run_least_square_line(pretest, posttest)
-    elif function_name == "prob_dist":
+    elif function_name == "Probability distribution":
         return run_probability_dist(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "corr_coeff":
+    elif function_name == "Correlation coefficient":
         return  run_correlation_coeff(pretest, posttest)
-    elif function_name == "spearman_coeff":
+    elif function_name == "Spearman rank correction coefficient":
         return run_spearman_rank_corr_coeff(pretest, posttest)
     else:
         raise Exception("Function does not exist: {}".format(function_name))
