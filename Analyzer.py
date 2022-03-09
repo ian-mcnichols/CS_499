@@ -5,26 +5,30 @@ import matplotlib.pyplot as plt
 
 
 
-def run_mean(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
+def run_mean(data):
     """Calculates the mean of the given data
 
     :param pretest: numpy array of pre-test data
     :param posttest: numpy array of post-test data
-    :param ordinals: numpy array of ordinal data
     :param datatype: "interval" or "ordinal"
-    :return: if interval: mean of posttest, mean of pretest, mean of difference
-             if ordinal: average max. number of votes on the most popular answer
+    :return: mean of posttest, mean of pretest, mean of difference
     """
-    # Ordinal and interval
-    if datatype.lower() == "interval":
-        return [np.mean(pretest), np.mean(posttest), np.mean(posttest - pretest)]
-    elif datatype.lower() == "ordinal":
-        return np.mean([x.max() for x in ordinals])
-    else:
-        raise Exception("Bad data type: {}".format(datatype))
+    results = []
+    max_column = 0
+    # For each column
+    for i in range(1, len(data.dtype.names)):
+        # Get data for column
+        column = data[data.dtype.names[i]]
+        # Run mean function on column data and add to results
+        results.append(np.mean(column))
+        max_column = i
+    # Find mean of difference between first set of data and last
+    difference = data[data.dtype.names[max_column]] - data[data.dtype.names[1]]
+    results.append(np.mean(difference))
+    return results
 
 
-def run_median(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
+def run_median(data, datatype="Interval"):
     """Calculates the median on a given dataset
 
     :param pretest: numpy array of pre-test data
@@ -35,15 +39,41 @@ def run_median(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
              ordinals-int, the index of the column that is the median for all the questions
     """
     if datatype.lower() == "interval":
-        return [np.median(pretest), np.median(posttest), np.median(posttest - pretest)]
+        results = []
+        max_column = 0
+        for i in range(1, len(data.dtype.names)):
+            # Get data for column
+            column = data[data.dtype.names[i]]
+            # Run median function on column data and add to results
+            results.append(np.median(column))
+            max_column = i
+        # Find median of difference between first set of data and last
+        difference = data[data.dtype.names[max_column]] - data[data.dtype.names[1]]
+        results.append(np.median(difference))
+        return results
     elif datatype.lower() == "ordinal":
-        columns = [sum(ordinals[:,i]) for i in range(ordinals.shape[1])]
-        return np.where(columns == max(columns))[0][0]  # I think there is a better way to do this
+        # Array to store mode for each question
+        results = []
+        # Determine median response for each question
+        # For each row/question
+        for i in range(len(data)):
+            # Get row as list
+            row = list(data[i])
+            row_values = []
+            # Add number of responses for each index number to list
+            for j in range(1, len(row)):
+                num_responses = row[j]
+                for x in range(num_responses):
+                    row_values.append(j)
+            # Find median response for each row
+            row_median = np.median(row_values)
+            results.append(row_median)
+        return results
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
 
-def run_mode(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
+def run_mode(data, datatype="Interval"):
     """Calculates the mode of a given dataset
 
     :param pretest: numpy array of pre-test data
@@ -51,12 +81,33 @@ def run_mode(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
     :param ordinals: numpy array of ordinal data
     :param datatype: "interval" or "ordinal"
     :return: interval-the mode of the pretest, posttest, and change
-             ordinals-the mode of all of it. TODO: figure out what this should be
+             ordinals-the mode each row/question
     """
     if datatype.lower() == "interval":
-        return [stats.mode(pretest)[0][0], stats.mode(posttest)[0][0], stats.mode(posttest-pretest)[0][0]]
+        results = []
+        max_column = 0
+        for i in range(1, len(data.dtype.names)):
+            # Get data for column
+            column = data[data.dtype.names[i]]
+            # Run mode function on column data and add to results
+            results.append(stats.mode(column))
+            max_column = i
+        # Find median of difference between first set of data and last
+        difference = data[data.dtype.names[max_column]] - data[data.dtype.names[1]]
+        results.append(stats.mode(difference))
+        return results
     elif datatype.lower() == "ordinal":
-        return stats.mode(ordinals)[0][0]
+        # Array to store mode for each question
+        results_name = []
+        results_number = []
+        # Determine answer with highest number of responses for each question
+        for i in range(len(data)):
+            row = list(data[i])
+            row_mode = max(row[1:])
+            results_name.append(data.dtype.names[row.index(row_mode)])
+            results_number.append(row.index(row_mode))
+        visualize.plot_chart(data, "Vertical Bar Chart", results=results_number, data_type='ordinal')
+        return results_name
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
@@ -156,7 +207,7 @@ def run_spearman_rank_corr_coeff(pre_test, post_test):
     return stats.spearmanr(pre_test, post_test)[0], stats.spearmanr(pre_test, post_test)[1]
 
 
-def run_function(function_name, pretest=None, posttest=None, ordinals=None, data_type="Interval"):
+def run_function(function_name, data, data_type="Interval"):
     """Driver to run any stats operation given a function and data
 
     :param function_name: string, operation to run on the data
@@ -166,25 +217,25 @@ def run_function(function_name, pretest=None, posttest=None, ordinals=None, data
     :return: function corresponding to operation type
     """
     if function_name == "Mean":
-        return run_mean(pretest, posttest, ordinals, datatype=data_type)
+        return run_mean(data)
     elif function_name == "Median":
-        return run_median(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "Mode":
-        return run_mode(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "Standard deviation":
-        return run_stand_dev(pretest, posttest)
-    elif function_name == "Variance":
-        return run_variance(pretest, posttest)
-    elif function_name == "Percentiles":
-        return run_percentiles(pretest, posttest)
-    elif function_name == "Least square line":
-        return run_least_square_line(pretest, posttest)
-    elif function_name == "Probability distribution":
-        return run_probability_dist(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "Correlation coefficient":
-        return  run_correlation_coeff(pretest, posttest)
-    elif function_name == "Spearman rank correction coefficient":
-        return run_spearman_rank_corr_coeff(pretest, posttest)
+        return run_median(data, datatype=data_type)
+    # elif function_name == "Mode":
+    #     return run_mode(pretest, posttest, ordinals, datatype=data_type)
+    # elif function_name == "Standard deviation":
+    #     return run_stand_dev(pretest, posttest)
+    # elif function_name == "Variance":
+    #     return run_variance(pretest, posttest)
+    # elif function_name == "Percentiles":
+    #     return run_percentiles(pretest, posttest)
+    # elif function_name == "Least square line":
+    #     return run_least_square_line(pretest, posttest)
+    # elif function_name == "Probability distribution":
+    #     return run_probability_dist(pretest, posttest, ordinals, datatype=data_type)
+    # elif function_name == "Correlation coefficient":
+    #     return  run_correlation_coeff(pretest, posttest)
+    # elif function_name == "Spearman rank correction coefficient":
+    #     return run_spearman_rank_corr_coeff(pretest, posttest)
     else:
         raise Exception("Function does not exist: {}".format(function_name))
 
@@ -193,27 +244,27 @@ if __name__ == "__main__":
     import Data
     import visualize
 
-    my_data = Data.Data("Data/IntervalDataTest.csv")
+    my_data = Data.Data("Data/OrdinalDataTest.csv", data_type="ordinal")
     print('data type:', my_data.data_type)
+    print(my_data.data_np)
     #print("ordinals: ", my_data.ordinals)
     #print("pretest: ", my_data.pretest)
-    if my_data.data_type == 'Interval':
-        print("pretest:", my_data.data_np['Pretest'])
-        print("posttest:", my_data.data_np['Posttest'])
-        print("mean: ", run_mean(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
-        print("median: ", run_median(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
-        print("mode: ", run_mode(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
-        print("standard deviation: ", run_stand_dev(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
-        print("variance: ", run_variance(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
-        print("percentiles: ", run_percentiles(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
-        print("probability dist: ",
-          run_probability_dist(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
-        print("least squared line: ", run_least_square_line(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
-        print("correlation coefficient:", run_correlation_coeff(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
-        print("spearman coefficient: ",
-          run_spearman_rank_corr_coeff(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
-    elif my_data.data_type == "Ordinal":
-        print("mean: ", run_mean(ordinals=my_data.ordinals, datatype=my_data.data_type))
-        print("median: ", run_median(ordinals=my_data.ordinals, datatype=my_data.data_type))
-        print("mode: ", run_mode(ordinals=my_data.ordinals, datatype=my_data.data_type))
-        print("probability dist: ", run_probability_dist(ordinals=my_data.ordinals, datatype=my_data.data_type))
+    if my_data.data_type == 'interval':
+        # print("pretest:", my_data.data_np['Pretest'], datatype=my_data.data_type)
+        # print("posttest:", my_data.data_np['Posttest'], datatype=my_data.data_type)
+        print("mean: ", run_mean(my_data.data_np))
+        print("median: ", run_median(my_data.data_np, datatype=my_data.data_type))
+        print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
+        # print("standard deviation: ", run_stand_dev(my_data.data_np))
+        # print("variance: ", run_variance(my_data.data_np)
+        # print("percentiles: ", run_percentiles(my_data.data_np)
+        # print("probability dist: ",
+        #   run_probability_dist(my_data.data_np['Pretest'], my_data.data_np['Posttest'], datatype=my_data.data_type))
+        # print("least squared line: ", run_least_square_line(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+        # print("correlation coefficient:", run_correlation_coeff(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+        # print("spearman coefficient: ",
+        #   run_spearman_rank_corr_coeff(my_data.data_np['Pretest'], my_data.data_np['Posttest']))
+    elif my_data.data_type == "ordinal":
+        print("median: ", run_median(my_data.data_np, datatype=my_data.data_type))
+        print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
+        # print("probability dist: ", run_probability_dist(ordinals=my_data.ordinals, datatype=my_data.data_type))
