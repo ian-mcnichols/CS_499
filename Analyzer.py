@@ -66,10 +66,9 @@ def run_stand_dev(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return: float, standard deviation of the change in data
+    :return: list, standard deviation of the pre-test, post-test, and change in data
     """
-    standard_deviation = np.std(post_test-pre_test)
-    return standard_deviation
+    return [np.std(pre_test), np.std(post_test), np.std(post_test-pre_test)]
 
 
 def run_variance(pre_test, post_test):
@@ -77,10 +76,9 @@ def run_variance(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return: float, variance of the change in data
+    :return: list, variance of the pre-test, post-test, and change in data
     """
-    variance = np.var(post_test-pre_test)
-    return variance
+    return [np.var(pre_test), np.var(post_test), np.var(post_test-pre_test)]
 
 
 def run_percentiles(pre_test, post_test):
@@ -88,14 +86,18 @@ def run_percentiles(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return: [10] list of floats, the 10-100th percentile of the change in pre-post test data
+    :return: list of [10] list of floats, the 10-100th percentile of the pre_test, post_test, and change
     """
     change_data = post_test - pre_test
     percentiles = [x*10 for x in range(11)]
-    percentile_data = []
+    pre_percentile = []
+    post_percentile = []
+    change_percentile = []
     for i in percentiles:
-        percentile_data.append(np.percentile(change_data, i))
-    return percentile_data
+        pre_percentile.append(np.percentile(pre_test, i))
+        post_percentile.append(np.percentile(post_test, i))
+        change_percentile.append(np.percentile(change_data, i))
+    return [pre_percentile, post_percentile, change_percentile]
 
 
 def run_probability_dist(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
@@ -119,13 +121,10 @@ def run_least_square_line(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return:
+    :return: slope of LSRL, y-intercept of LSRL
     """
-    A = np.vstack([pre_test, np.ones(len(pre_test))]).T
-    post_test = post_test[:, np.newaxis]
-    alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),post_test)
-    line = pre_test, alpha[0]*pre_test + alpha[1]
-    return line
+    out = stats.linregress(pre_test, post_test)
+    return [out[0], out[1]]
 
 
 def run_correlation_coeff(pre_test, post_test):
@@ -153,7 +152,7 @@ def run_spearman_rank_corr_coeff(pre_test, post_test):
                        data are uncorrelated, has same dimension as rho.
 
     """
-    return stats.spearmanr(pre_test, post_test)[0], stats.spearmanr(pre_test, post_test)[1]
+    return [stats.spearmanr(pre_test, post_test)[0], stats.spearmanr(pre_test, post_test)[1]]
 
 
 def run_function(function_name, pretest=None, posttest=None, ordinals=None, data_type="Interval"):
