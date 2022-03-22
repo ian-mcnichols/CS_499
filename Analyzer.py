@@ -66,10 +66,9 @@ def run_stand_dev(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return: float, standard deviation of the change in data
+    :return: list, standard deviation of the pre-test, post-test, and change in data
     """
-    standard_deviation = np.std(post_test-pre_test)
-    return standard_deviation
+    return [np.std(pre_test), np.std(post_test), np.std(post_test-pre_test)]
 
 
 def run_variance(pre_test, post_test):
@@ -77,10 +76,9 @@ def run_variance(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return: float, variance of the change in data
+    :return: list, variance of the pre-test, post-test, and change in data
     """
-    variance = np.var(post_test-pre_test)
-    return variance
+    return [np.var(pre_test), np.var(post_test), np.var(post_test-pre_test)]
 
 
 def run_percentiles(pre_test, post_test):
@@ -88,14 +86,18 @@ def run_percentiles(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return: [10] list of floats, the 10-100th percentile of the change in pre-post test data
+    :return: list of [10] list of floats, the 10-100th percentile of the pre_test, post_test, and change
     """
     change_data = post_test - pre_test
     percentiles = [x*10 for x in range(11)]
-    percentile_data = []
+    pre_percentile = []
+    post_percentile = []
+    change_percentile = []
     for i in percentiles:
-        percentile_data.append(np.percentile(change_data, i))
-    return percentile_data
+        pre_percentile.append(np.percentile(pre_test, i))
+        post_percentile.append(np.percentile(post_test, i))
+        change_percentile.append(np.percentile(change_data, i))
+    return [pre_percentile, post_percentile, change_percentile]
 
 
 def run_probability_dist(pretest=None, posttest=None, ordinals=None, datatype="Interval"):
@@ -119,13 +121,10 @@ def run_least_square_line(pre_test, post_test):
 
     :param pre_test: numpy array of size [N]
     :param post_test: numpy array of size [N]
-    :return:
+    :return: slope of LSRL, y-intercept of LSRL
     """
-    A = np.vstack([pre_test, np.ones(len(pre_test))]).T
-    post_test = post_test[:, np.newaxis]
-    alpha = np.dot((np.dot(np.linalg.inv(np.dot(A.T,A)),A.T)),post_test)
-    line = pre_test, alpha[0]*pre_test + alpha[1]
-    return line
+    out = stats.linregress(pre_test, post_test)
+    return [out[0], out[1]]
 
 
 def run_correlation_coeff(pre_test, post_test):
@@ -153,10 +152,10 @@ def run_spearman_rank_corr_coeff(pre_test, post_test):
                        data are uncorrelated, has same dimension as rho.
 
     """
-    return stats.spearmanr(pre_test, post_test)[0], stats.spearmanr(pre_test, post_test)[1]
+    return [stats.spearmanr(pre_test, post_test)[0], stats.spearmanr(pre_test, post_test)[1]]
 
 
-def run_function(function_name, *argv):
+def run_function(function_name, pretest=None, posttest=None, ordinals=None, data_type="Interval"):
     """Driver to run any stats operation given a function and data
 
     :param function_name: string, operation to run on the data
@@ -165,37 +164,25 @@ def run_function(function_name, *argv):
                  ordinals: numpy array of size [NxM] (if ordinal)
     :return: function corresponding to operation type
     """
-    pretest = None
-    posttest = None
-    ordinals = None
-    if len(argv) > 1:
-        data_type = "Interval"
-        pretest = argv[0]
-        posttest = argv[1]
-    elif len(argv) == 1:
-        data_type = "Ordinal"
-        ordinals = argv[0]
-    else:
-        raise Exception("Unknown input types {}".format(argv))
-    if function_name == "mean":
+    if function_name == "Mean":
         return run_mean(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "median":
+    elif function_name == "Median":
         return run_median(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "mode":
+    elif function_name == "Mode":
         return run_mode(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "stand_dev":
+    elif function_name == "Standard deviation":
         return run_stand_dev(pretest, posttest)
-    elif function_name == "variance":
+    elif function_name == "Variance":
         return run_variance(pretest, posttest)
-    elif function_name == "percentiles":
+    elif function_name == "Percentiles":
         return run_percentiles(pretest, posttest)
-    elif function_name == "lsr":
+    elif function_name == "Least square line":
         return run_least_square_line(pretest, posttest)
-    elif function_name == "prob_dist":
+    elif function_name == "Probability distribution":
         return run_probability_dist(pretest, posttest, ordinals, datatype=data_type)
-    elif function_name == "corr_coeff":
+    elif function_name == "Correlation coefficient":
         return  run_correlation_coeff(pretest, posttest)
-    elif function_name == "spearman_coeff":
+    elif function_name == "Spearman rank correction coefficient":
         return run_spearman_rank_corr_coeff(pretest, posttest)
     else:
         raise Exception("Function does not exist: {}".format(function_name))

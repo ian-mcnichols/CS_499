@@ -53,11 +53,11 @@ class Data:
     def add_result(self, function_ran, output):
         self.results.update({function_ran: output})
 
-if __name__ == '__main__':
-    import numpy as np
-    my_data = Data("IntervalDataTest.csv")
-    print(my_data.data_np)
-    print(my_data.data_type)
-    print(my_data.data_np.dtype.names)
-    print(my_data.data_np[my_data.data_np.dtype.names[1]])
-    print(my_data.data_np['Pretest'])
+# if __name__ == '__main__':
+#     import numpy as np
+#     my_data = Data("IntervalDataTest.csv")
+#     print(my_data.data_np)
+#     print(my_data.data_type)
+#     print(my_data.data_np.dtype.names)
+#     print(my_data.data_np[my_data.data_np.dtype.names[1]])
+#     print(my_data.data_np['Pretest'])

@@ -3,20 +3,36 @@ import numpy as np
 import csv
 
 
-def build_csv(self, output_file_name, data):
+def build_csv(output_file_name, data):
     if output_file_name.endswith('.csv') is False:
         output_file_name += ".csv"
     with open(output_file_name, 'w', newline='') as csv_file:
-        write = csv.DictWriter(csv_file, fieldnames=['Function', 'Value'])
-        write.writeheader()
-        for function in data.results:
-            write.writerow({'Function': function, 'Value': data[function]})
+        write = csv.writer(csv_file)
+        write.writerow(['Function', 'Value'])
+        for function in data:
+            row = [function]
+            if type(data[function]) is list:
+                for result in data[function]:
+                    row.append(result)
+            else:
+                row.append(data[function])
+            write.writerow(row)
 
 
-def build_text(self, output_file_name, data):
+def build_text(output_file_name, data):
     if output_file_name.endswith('.txt') is False:
         output_file_name += ".txt"
-    #  Build text
+    with open(output_file_name, 'w', newline='') as csv_file:
+        write = csv.writer(csv_file)
+        write.writerow(['Function', 'Value'])
+        for function in data:
+            row = [function]
+            if data[function] is list:
+                for result in data[function]:
+                    row.append(result)
+            else:
+                row.append(data[function])
+            write.writerow(row)
 
 
 def save_jpeg(self, output_file_name):  # Static function, outputs one graph at a time. Reliant on plt state
