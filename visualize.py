@@ -45,6 +45,7 @@ def plot_chart(data, plot_type, results=None, data_type=None):
         ax.set_yticklabels(y_labels)
         plt.margins(x=0.005)
         plt.tight_layout()
+        plt.savefig('Ordinal_Chart.jpg')
         plt.show()
     elif plot_type == "box plot":
         print("plotting box plot")

@@ -24,8 +24,9 @@ class StatsOperator(QWidget):
         self.save = False
         self.range_rows = None
         self.range_cols = None
-        self.pretest = None
-        self.posttest = None
+        # self.pretest = None
+        # self.posttest = None
+        self.my_data = None
         self.ordinals = None
         self.filename = None
         self.datatype = "Interval"
@@ -210,9 +211,11 @@ class StatsOperator(QWidget):
         my_data = Data.Data(filename, "Interval")
         self.datatype = my_data.data_type
         if self.datatype == 'Interval':
-            self.pretest = my_data.data_np["Pretest"]
-            self.posttest = my_data.data_np["Posttest"]
-            print("My data:", self.pretest, self.posttest)
+            # self.pretest = my_data.data_np["Pretest"]
+            # self.posttest = my_data.data_np["Posttest"]
+            # print("My data:", self.pretest, self.posttest)
+            self.my_data = my_data.data_np
+            print("My data: ", self.my_data)
         else:
             print("no ordinals yet")
         self.data_loaded = True
@@ -224,13 +227,13 @@ class StatsOperator(QWidget):
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                print("pretest:", self.pretest)
-                print("posttest:", self.posttest)
-                output = Analyzer.run_function(calculation, pretest=self.pretest,
-                                               posttest=self.posttest, data_type="Interval")
+                # print("pretest:", self.my_data)
+                # print("posttest:", self.posttest)
+                output = Analyzer.run_function(calculation, self.my_data, data_type="Interval")
                 print("Results:", output)
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, ordinals=self.ordinals, data_type="Ordinal")
+                output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal")
+                print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output

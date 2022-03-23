@@ -2,7 +2,7 @@ import numpy as np
 import statistics
 import scipy.stats as stats
 import matplotlib.pyplot as plt
-
+import visualize
 
 
 def run_mean(data):
@@ -220,8 +220,8 @@ def run_function(function_name, data, data_type="Interval"):
         return run_mean(data)
     elif function_name == "Median":
         return run_median(data, datatype=data_type)
-    # elif function_name == "Mode":
-    #     return run_mode(pretest, posttest, ordinals, datatype=data_type)
+    elif function_name == "Mode":
+        return run_mode(data, datatype=data_type)
     # elif function_name == "Standard deviation":
     #     return run_stand_dev(pretest, posttest)
     # elif function_name == "Variance":
