@@ -204,6 +204,7 @@ class StatsOperator(QWidget):
 
     # Specific functions that correspond to GUI widgets go under here
     def load_file(self):
+        """Loads in the user's inputted file and saves data to variable"""
         filename = self.fileName_txtbx.text()
         print("loading file {}!".format(filename))
         if self.datatype == 'Interval':
@@ -216,6 +217,8 @@ class StatsOperator(QWidget):
         self.data_loaded = True
 
     def run_calculations(self):
+        """Iterate over user's selected calculations and run them with the Analyzer.
+        Save or display outputs according to user's choices."""
         print("running calculations!")
         if not self.data_loaded:
             self.load_file()
