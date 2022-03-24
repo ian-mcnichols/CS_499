@@ -24,10 +24,7 @@ class StatsOperator(QWidget):
         self.save = False
         self.range_rows = None
         self.range_cols = None
-        # self.pretest = None
-        # self.posttest = None
         self.my_data = None
-        self.ordinals = None
         self.filename = None
         self.datatype = "Interval"
         self.data_loaded = False
@@ -150,6 +147,7 @@ class StatsOperator(QWidget):
 
         self.ordinal_radiobttn = QRadioButton("Ordinal data")
         # These operations are off if ordinal data is selected
+        self.ordinal_radiobttn.toggled.connect(lambda: self.mean_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(True))
         self.ordinal_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(True))
@@ -227,7 +225,7 @@ class StatsOperator(QWidget):
                 output = Analyzer.run_function(calculation, self.my_data, data_type="Interval")
                 print("Results:", output)
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal")
+                output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal", display=self.display)
                 print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))

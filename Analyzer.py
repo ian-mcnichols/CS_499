@@ -65,7 +65,7 @@ def run_median(data, datatype="Interval"):
         raise Exception("Bad data type: {}".format(datatype))
 
 
-def run_mode(data, datatype="Interval"):
+def run_mode(data, datatype="Interval", display=False):
     """Calculates the mode of a given dataset
 
     :param data: data to run the function on
@@ -97,7 +97,8 @@ def run_mode(data, datatype="Interval"):
             row_mode = max(row[1:])
             results_name.append(data.dtype.names[row.index(row_mode)])
             results_number.append(row.index(row_mode))
-        visualize.plot_chart(data, "Vertical Bar Chart", results=results_number, data_type='ordinal')
+        if display:
+            visualize.plot_chart(data, "Vertical Bar Chart", results=results_number, data_type='ordinal')
         return results_name
     else:
         raise Exception("Bad data type: {}".format(datatype))
@@ -216,7 +217,7 @@ def run_spearman_rank_corr_coeff(data):
             stats.spearmanr(data[data.dtype.names[1]], data[data.dtype.names[-1]])[1]]
 
 
-def run_function(function_name, data, data_type="Interval"):
+def run_function(function_name, data, data_type="Interval", display=False):
     """Driver to run any stats operation given a function and data
 
     :param function_name: string, operation to run on the data
@@ -230,7 +231,7 @@ def run_function(function_name, data, data_type="Interval"):
     elif function_name == "Median":
         return run_median(data, datatype=data_type)
     elif function_name == "Mode":
-        return run_mode(data, datatype=data_type)
+        return run_mode(data, datatype=data_type, display=display)
     elif function_name == "Standard deviation":
         return run_stand_dev(data)
     elif function_name == "Variance":
