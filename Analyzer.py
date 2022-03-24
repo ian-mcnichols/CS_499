@@ -223,9 +223,10 @@ def run_function(function_name, data, data_type="Interval", display=False,
     """Driver to run any stats operation given a function and data
 
     :param function_name: string, operation to run on the data
-    :param argv: pretest : numpy array of size [N] (if interval)
-                 posttest : numpy array of size [N] (if interval)
-                 ordinals: numpy array of size [NxM] (if ordinal)
+    :param argv: data : numpy array of data to run on
+                 data_type : string, "ordinal" or "interval"
+                 display: boolean, whether to display plots
+                 save: boolean, whether to save plots
     :return: function corresponding to operation type
     """
     if function_name == "Mean":
