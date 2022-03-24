@@ -226,7 +226,7 @@ class StatsOperator(QWidget):
                 print("Results:", output)
             elif self.datatype == "Ordinal":
                 output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal",
-                                               display=self.display)
+                                               display=self.display, save=self.save)
                 print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
