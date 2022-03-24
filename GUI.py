@@ -208,16 +208,13 @@ class StatsOperator(QWidget):
     def load_file(self):
         filename = self.fileName_txtbx.text()
         print("loading file {}!".format(filename))
-        my_data = Data.Data(filename, "Interval")
-        self.datatype = my_data.data_type
         if self.datatype == 'Interval':
-            # self.pretest = my_data.data_np["Pretest"]
-            # self.posttest = my_data.data_np["Posttest"]
-            # print("My data:", self.pretest, self.posttest)
+            my_data = Data.Data(filename, "Interval")
             self.my_data = my_data.data_np
             print("My data: ", self.my_data)
         else:
-            print("no ordinals yet")
+            self.my_data = Data.Data(filename, "Ordinal")
+            print("My data: ", self.my_data)
         self.data_loaded = True
 
     def run_calculations(self):
