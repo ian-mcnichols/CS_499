@@ -239,14 +239,6 @@ class StatsOperator(QWidget):
             visualize.build_text("Results.txt", self.results)
         return
 
-    def toggle_display(self):
-        self.display = not self.display
-        print("display is set to: ", self.display)
-
-    def toggle_save(self):
-        self.save = not self.save
-        print("save output is set to: ", self.save)
-
     def update_operations(self):
         """continually check and review the operations boxes to update the
         list of operations that will be called"""
@@ -270,12 +262,20 @@ class StatsOperator(QWidget):
                 self.operations.remove(checkbox.text())
                 print("operations: ", self.operations)
 
-    # datatype toggle functions
+    #  toggle functions
     def set_datatype_interval(self):
         self.datatype = "Interval"
 
     def set_datatype_ordinal(self):
         self.datatype = "Ordinal"
+
+    def toggle_display(self):
+        self.display = not self.display
+        print("display is set to: ", self.display)
+
+    def toggle_save(self):
+        self.save = not self.save
+        print("save output is set to: ", self.save)
 
 
 if __name__ == "__main__":
