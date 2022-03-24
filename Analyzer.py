@@ -81,11 +81,11 @@ def run_mode(data, datatype="Interval"):
             # Get data for column
             column = data[data.dtype.names[i]]
             # Run mode function on column data and add to results
-            results.append(stats.mode(column))
+            results.append(stats.mode(column)[0][0])
             max_column = i
         # Find mode of difference between first set of data and last
         difference = data[data.dtype.names[max_column]] - data[data.dtype.names[1]]
-        results.append(stats.mode(difference))
+        results.append(stats.mode(difference)[0][0])
         return results
     elif datatype.lower() == "ordinal":
         # Array to store mode for each question
