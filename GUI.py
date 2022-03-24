@@ -30,6 +30,7 @@ class StatsOperator(QWidget):
         self.filename = None
         self.datatype = "Interval"
         self.data_loaded = False
+        self.resultsWindow = ResultsDisplay()
 
     def initUI(self):
         # All the formatting and button/widget declarations go here
@@ -190,7 +191,6 @@ class StatsOperator(QWidget):
         self.dataRange_group.setDisabled(True)
         self.output_group.setDisabled(True)
         self.calcResults_bttn.setDisabled(True)
-        # If a valid filename was entered, groups are enabled
 
 
         # have the operations checkboxes update automatically
@@ -255,6 +255,10 @@ class StatsOperator(QWidget):
         if self.save:
             visualize.build_csv("Results.csv", self.results)
             visualize.build_text("Results.txt", self.results)
+
+        if self.display:
+            self.show_results_window()
+
         return
 
     def toggle_display(self):
@@ -300,7 +304,49 @@ class StatsOperator(QWidget):
     def set_datatype_ordinal(self):
         self.datatype = "Ordinal"
 
+    def show_results_window(self):
+        message = "\n\n";
+
+        for i in range(0, len(self.operations), 1):
+            message += "Results from " + self.operations[i]
+            message += "\nPretest: "
+            # TODO Add pre-test results
+            message += "\n"
+            message += "\nPost-test: "
+            # TODO Add post-test results
+            message += "\n\n\n\n"
+
+        self.resultsWindow.result_lbl.setText(message)
+        self.resultsWindow.start()
+
+
+class ResultsDisplay(QWidget):
+    def __init__(self):
+        self.app = QApplication([])
+        super(ResultsDisplay, self).__init__()
+        self.w = QWidget()  # Base widget
+        self.w.resize(500, 600)  # Window default size
+        self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
+        self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
+        self.init_ui()
+
+    def init_ui(self):
+        self.result_lbl = QLabel(self.w)
+        self.result_lbl.setText("Results:")
+        self.result_layout = QVBoxLayout()
+        self.oper_lbl = QLabel(self.w)
+        self.pretest_lbl = QLabel(self.w)
+
+        self.result_layout.addWidget(self.result_lbl)
+        self.result_layout.addWidget(self.pretest_lbl)
+        self.result_layout.addWidget(self.oper_lbl)
+        #TODO Add a scroll bar so user can see all results
+
+    def start(self):
+        self.w.show()
+
 
 if __name__ == "__main__":
     myGUI = StatsOperator()
     myGUI.start_GUI()
+
