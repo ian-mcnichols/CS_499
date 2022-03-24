@@ -224,8 +224,6 @@ class StatsOperator(QWidget):
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                # print("pretest:", self.my_data)
-                # print("posttest:", self.posttest)
                 output = Analyzer.run_function(calculation, self.my_data, data_type="Interval")
                 print("Results:", output)
             elif self.datatype == "Ordinal":
