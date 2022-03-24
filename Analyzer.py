@@ -84,7 +84,7 @@ def run_mode(data, datatype="Interval", display=False, save=True):
             results.append(stats.mode(column)[0][0])
             max_column = i
         # Find mode of difference between first set of data and last
-        difference = data[data.dtype.names[max_column]] - data[data.dtype.names[1]]
+        difference = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
         results.append(stats.mode(difference)[0][0])
         return results
     elif datatype.lower() == "ordinal":
@@ -153,17 +153,17 @@ def run_percentiles(data):
     # Difference between the last column of data and the first column of data
     change_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
     percentiles = [x * 10 for x in range(11)]
-    # # For each column of data, excluding row labels, create an array for the results
-    # column_results = [[] for i in range(1, len(data.dtype.names))]
-    # change_percentile = []
-    # # For each column
-    # for i in range(1, len(data.dtype.names):
-    #     # For each percentile
-    #     # for j in len(percentiles):
-    #     #     column_results[i][j].append(np.percentile(data[data.dtype.names[i]])
-    # for i in percentiles:
-    #     change_percentile.append(np.percentile(change_data, i))
-    # return [column_results, change_percentile]
+    # For each column of data, excluding row labels, create an array for the results
+    column_results = [[] for i in range(1, len(data.dtype.names))]
+    change_percentile = []
+    # For each column
+    for i in range(1, len(data.dtype.names)):
+        # For each percentile
+        for j in percentiles:
+            column_results[i-1].append(np.percentile(data[data.dtype.names[i]], j))
+    for j in percentiles:
+        change_percentile.append(np.percentile(change_data, j))
+    return [column_results, change_percentile]
 
 
 def run_probability_dist(data, datatype="Interval"):
@@ -239,8 +239,8 @@ def run_function(function_name, data, data_type="Interval", display=False,
         return run_stand_dev(data)
     elif function_name == "Variance":
         return run_variance(data)
-    # elif function_name == "Percentiles":
-    #     return run_percentiles(pretest, posttest)
+    elif function_name == "Percentiles":
+        return run_percentiles(data)
     elif function_name == "Least square line":
         return run_least_square_line(data)
     elif function_name == "Probability distribution":
@@ -266,9 +266,8 @@ if __name__ == "__main__":
         print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
         print("standard deviation: ", run_stand_dev(my_data.data_np))
         print("variance: ", run_variance(my_data.data_np))
-        # print("percentiles: ", run_percentiles(my_data.data_np)
-        print("probability dist: ",
-              run_probability_dist(my_data.data_np, datatype=my_data.data_type))
+        print("percentiles: ", run_percentiles(my_data.data_np))
+        print("probability dist: ", run_probability_dist(my_data.data_np, datatype=my_data.data_type))
         print("least squared line: ", run_least_square_line(my_data.data_np))
         print("correlation coefficient:", run_correlation_coeff(my_data.data_np))
         print("spearman coefficient: ",
