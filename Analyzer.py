@@ -141,7 +141,6 @@ def run_variance(data):
     return results_variance
 
 
-
 def run_percentiles(data):
     """Calculates the percentiles of interval data
 
@@ -151,7 +150,7 @@ def run_percentiles(data):
     """
     # Difference between the last column of data and the first column of data
     change_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
-    percentiles = [x*10 for x in range(11)]
+    percentiles = [x * 10 for x in range(11)]
     # # For each column of data, excluding row labels, create an array for the results
     # column_results = [[] for i in range(1, len(data.dtype.names))]
     # change_percentile = []
@@ -241,7 +240,7 @@ def run_function(function_name, data, data_type="Interval"):
     elif function_name == "Probability distribution":
         return run_probability_dist(data, datatype=data_type)
     elif function_name == "Correlation coefficient":
-        return  run_correlation_coeff(data)
+        return run_correlation_coeff(data)
     elif function_name == "Spearman rank correction coefficient":
         return run_spearman_rank_corr_coeff(data)
     else:
@@ -263,11 +262,11 @@ if __name__ == "__main__":
         print("variance: ", run_variance(my_data.data_np))
         # print("percentiles: ", run_percentiles(my_data.data_np)
         print("probability dist: ",
-          run_probability_dist(my_data.data_np, datatype=my_data.data_type))
+              run_probability_dist(my_data.data_np, datatype=my_data.data_type))
         print("least squared line: ", run_least_square_line(my_data.data_np))
         print("correlation coefficient:", run_correlation_coeff(my_data.data_np))
         print("spearman coefficient: ",
-          run_spearman_rank_corr_coeff(my_data.data_np))
+              run_spearman_rank_corr_coeff(my_data.data_np))
     elif my_data.data_type == "ordinal":
         print("median: ", run_median(my_data.data_np, datatype=my_data.data_type))
         print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
