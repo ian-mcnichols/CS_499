@@ -97,9 +97,9 @@ def run_mode(data, datatype="Interval", display=False, save=True):
             row_mode = max(row[1:])
             results_name.append(data.dtype.names[row.index(row_mode)])
             results_number.append(row.index(row_mode))
-        if display:
+        if display or save:
             visualize.plot_chart(data, "Vertical Bar Chart", results=results_number,
-                                 data_type='ordinal', save=save)
+                                 data_type='ordinal', save=save, display=display)
         return results_name
     else:
         raise Exception("Bad data type: {}".format(datatype))

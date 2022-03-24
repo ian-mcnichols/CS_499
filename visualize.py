@@ -25,7 +25,8 @@ def save_jpeg(self, output_file_name):  # Static function, outputs one graph at 
     plt.savefig(output_file_name)
 
 
-def plot_chart(data, plot_type, results=None, data_type=None, save=True):
+def plot_chart(data, plot_type, results=None, data_type=None, save=True,
+               display=True):
     if plot_type == "Vertical Bar Chart":
         fig, ax = plt.subplots(figsize=(15, 8))
         y_labels = []
@@ -47,7 +48,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True):
         plt.tight_layout()
         if save:
             plt.savefig('Ordinal_Chart.jpg')
-        plt.show()
+        if display:
+            plt.show()
     elif plot_type == "box plot":
         print("plotting box plot")
         # Set up labels for x-axis
