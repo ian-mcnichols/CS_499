@@ -179,10 +179,19 @@ class StatsOperator(QWidget):
         self.appLayout = QGridLayout(self.w)
         self.appLayout.addLayout(self.fileName_layout, 0, 0, 1, 0)
         self.appLayout.addWidget(self.operations_group, 1, 1, 2, 1)
-        self.appLayout.addWidget(self.dataRange_group, 1, 0)
-        self.appLayout.addWidget(self.output_group, 2, 0)
+        self.appLayout.addWidget(self.dataRange_group, 2, 0)
+        self.appLayout.addWidget(self.output_group, 3, 0)
         self.appLayout.addWidget(self.calcResults_bttn, 3, 0, 3, 2)
-        self.appLayout.addWidget(self.dataType_group, 3, 0)
+        self.appLayout.addWidget(self.dataType_group, 1, 0)
+
+        # Filename validation
+        # Groups are disabled on startup
+        self.operations_group.setDisabled(True)
+        self.dataRange_group.setDisabled(True)
+        self.output_group.setDisabled(True)
+        self.calcResults_bttn.setDisabled(True)
+        # If a valid filename was entered, groups are enabled
+
 
         # have the operations checkboxes update automatically
         for checkbox in [
@@ -217,6 +226,14 @@ class StatsOperator(QWidget):
             print([my_data.data_np[x] for x in range(1, len(my_data.data_np.dtype.names))])
             print("no ordinals yet")
         self.data_loaded = True
+
+        # Don't allow user to submit file again and enable the groups again
+        self.operations_group.setDisabled(False)
+        self.dataRange_group.setDisabled(False)
+        self.output_group.setDisabled(False)
+        self.fileName_txtbx.setDisabled(True)
+        self.dataType_group.setDisabled(True)
+        self.submit_bttn.setDisabled(True)
 
     def run_calculations(self):
         print("running calculations!")
@@ -270,6 +287,11 @@ class StatsOperator(QWidget):
             elif not checkbox.isChecked() and checkbox.text() in self.operations:
                 self.operations.remove(checkbox.text())
                 print("operations: ", self.operations)
+
+        if not self.operations:
+            self.calcResults_bttn.setDisabled(True)
+        else:
+            self.calcResults_bttn.setDisabled(False)
 
     # datatype toggle functions
     def set_datatype_interval(self):
