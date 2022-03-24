@@ -241,14 +241,16 @@ class StatsOperator(QWidget):
 
     def run_calculations(self):
         """Iterate over user's selected calculations and run them with the Analyzer.
-        Save or display outputs according to user's choices."""
+        Save or display outputs according to user's choices.
+        The bulk of our logic goes here"""
         print("running calculations!")
         if not self.data_loaded:
             self.load_file()
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                output = Analyzer.run_function(calculation, self.my_data, data_type="Interval")
+                output = Analyzer.run_function(calculation, self.my_data, data_type="Interval",
+                                               display=self.display, save=self.save)
                 print("Results:", output)
             elif self.datatype == "Ordinal":
                 output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal",
