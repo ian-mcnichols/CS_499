@@ -107,66 +107,6 @@ def run_mode(data, datatype="Interval", display=False, save=True):
 
 def run_stand_dev(data):
     """calculates the standard deviation of interval data
-
-    :param data: data to run the function on
-    :return: list, standard deviation of each column of data and the change in first and last column of data
-    """
-    results_stand_dev = []
-    max_column = 0
-    for i in range(1, len(data.dtype.names)):
-        # Get data for column
-        column = data[data.dtype.names[i]]
-        # Run standard deviation function on column data and add to results
-        results_stand_dev.append(np.std(column))
-        max_column = i
-    # Find Standard deviation of difference between first set of data and last
-    difference = data[data.dtype.names[max_column]] - data[data.dtype.names[1]]
-    results_stand_dev.append(np.std(difference))
-    return results_stand_dev
-
-
-def run_variance(data):
-    """calculates the variance of interval data
-
-    :param data: data to run function on
-    :return: list, variance of the each column of data and the change in first and last column of data
-    """
-    results_variance = []
-    for i in range(1, len(data.dtype.names)):
-        # Get data for column
-        column = data[data.dtype.names[i]]
-        # Run variation function on column data and add to results
-        results_variance.append(np.var(column))
-    # Find variation of difference between first set of data and last
-    difference = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
-    results_variance.append(np.var(difference))
-    return results_variance
-
-
-def run_percentiles(data):
-    """Calculates the percentiles of interval data
-
-    :param data: data to run the function on
-    :return: [10] list of floats, the 10-100th percentile of each column of data and the change in first and last
-             columns of data
-    """
-    # Difference between the last column of data and the first column of data
-    change_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
-    percentiles = [x * 10 for x in range(11)]
-    # For each column of data, excluding row labels, create an array for the results
-    column_results = [[] for i in range(1, len(data.dtype.names))]
-    change_percentile = []
-    # For each column
-    for i in range(1, len(data.dtype.names)):
-        # For each percentile
-        for j in percentiles:
-            column_results[i-1].append(np.percentile(data[data.dtype.names[i]], j))
-    for j in percentiles:
-        change_percentile.append(np.percentile(change_data, j))
-    return [column_results, change_percentile]
-
-
-def run_probability_dist(data, datatype="Interval"):
     # change to histogram output
     # ordinal and interval
     # TODO: make work for ordinal data
