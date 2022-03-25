@@ -8,11 +8,7 @@ class Data:
         self.data_type = data_type
         self.data_np = None
         self.results = {}
-
-        # have to have a way to tell it it is gui input
-        if file_name == "GUI":
-            self.get_data()
-        else:
+        if file_name != "GUI":
             # Read in the given file
             self.read_data_file(filepath=file_name)
 
@@ -33,31 +29,23 @@ class Data:
             file.close()
         return
 
-    def get_data(self, data, labels):
-        if self.data_type == "Frequency":
-            self.expected = data[labels.index("Expected")]
-            self.actual = data[labels.index("Actual")]
-        elif self.data_type == "Ordinal":
-            self.SD = data[labels.index("SD")]
-            self.D = data[labels.index("D")]
-            self.N = data[labels.index("N")]
-            self.A = data[labels.index("A")]
-            self.SA = data[labels.index("SA")]
-        elif self.data_type == "Interval":
-            self.pretest = data[labels.index("Pretest")]
-            self.posttest = data[labels.index("Posttest")]
+    def get_data(self, data):
+        if self.data_type.lower() == "interval":
+            print("getting intervals")
+            self.data_np = np.dstack([x for x in data])[0]
+        elif self.data_type.lower() == "ordinal":
+            print("getting ordinals")
+            self.data_np = np.stack([x for x in data])
         else:
             raise Exception("Bad data type {}".format(self.data_type))
+        print("my data:", self.data_np)
         return
 
     def add_result(self, function_ran, output):
         self.results.update({function_ran: output})
 
-# if __name__ == '__main__':
-#     import numpy as np
-#     my_data = Data("IntervalDataTest.csv")
-#     print(my_data.data_np)
-#     print(my_data.data_type)
-#     print(my_data.data_np.dtype.names)
-#     print(my_data.data_np[my_data.data_np.dtype.names[1]])
-#     print(my_data.data_np['Pretest'])
+
+if __name__ == '__main__':
+    import numpy as np
+    my_data = Data("GUI", "interval")
+    my_data.get_data([[1, 1, 1, 1, 1], [1, 2, 1, 2, 1]])
