@@ -1,5 +1,3 @@
-from numpy.core.defchararray import index
-import pandas as pd
 import numpy as np
 
 
@@ -54,7 +52,6 @@ class Data:
 
 
 if __name__ == '__main__':
-    import numpy as np
     my_data = Data("GUI", "interval")
     my_data.add_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
                      ['question1', 'question2', 'question3', 'question4', 'question5'])
