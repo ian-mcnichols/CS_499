@@ -20,7 +20,7 @@ class StatsOperator(QWidget):
         self.initUI()
         self.operations = []
         self.results = {}
-        self.display = False
+        self.display = True
         self.save = False
         self.range_rows = None
         self.range_cols = None
@@ -34,6 +34,71 @@ class StatsOperator(QWidget):
 
     def initUI(self):
         # All the formatting and button/widget declarations go here
+        self.file_entry()
+        self.operation_options()
+        self.data_range_options()
+        self.data_type_options()
+        self.output_options()
+        self.calc_button_init()
+        self.main_app_layout()
+
+
+        # Range options disabled if using all of file
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.columnTxtbx_lbl.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.rowTxtbx_lbl.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.maxRow_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.minRow_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.maxColumn_txtbx.setDisabled(True))
+        self.allOfFile_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(True))
+        # Range options enabled otherwise
+        self.partialRange_radiobttn.toggled.connect(lambda: self.columnTxtbx_lbl.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.rowTxtbx_lbl.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.maxRow_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.minRow_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.maxColumn_txtbx.setDisabled(False))
+        self.partialRange_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(False))
+
+        # Operations on for Interval data
+        self.interval_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.least_square_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.corr_coeff_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(False))
+        self.interval_radiobttn.toggled.connect(self.set_datatype_interval)
+        # These operations are off if ordinal data is selected
+        self.ordinal_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.least_square_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.corr_coeff_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(True))
+        self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
+        self.dataType_layout.addWidget(self.ordinal_radiobttn)
+
+        # Filename validation
+        # Groups are disabled on startup
+        self.operations_group.setDisabled(True)
+        self.dataRange_group.setDisabled(True)
+        self.output_group.setDisabled(True)
+        self.calcResults_bttn.setDisabled(True)
+
+        # Have the operations checkboxes update automatically
+        for checkbox in [
+            self.mean_chckbx,
+            self.median_chckbx,
+            self.mode_chckbx,
+            self.stand_dev_chckbx,
+            self.variance_chckbx,
+            self.percentiles_chckbx,
+            self.least_square_chckbx,
+            self.prob_dist_chckbx,
+            self.corr_coeff_chckbx,
+            self.spearman_chckbx
+        ]:
+            checkbox.stateChanged.connect(self.update_operations)
+
+    def file_entry(self):
         # File name option:
         self.fileName_lbl = QLabel(self.w)
         self.fileName_lbl.setText("File name: ")
@@ -52,6 +117,7 @@ class StatsOperator(QWidget):
         self.fileName_layout.addWidget(self.submit_bttn)
         self.submit_bttn.clicked.connect(self.load_file)
 
+    def operation_options(self):
         # Operation options:
         self.operations_group = QGroupBox("Operations:")
         self.vertLay = QVBoxLayout()
@@ -78,6 +144,7 @@ class StatsOperator(QWidget):
         self.spearman_chckbx = QCheckBox("Spearman rank correction coefficient")
         self.vertLay.addWidget(self.spearman_chckbx)
 
+    def data_range_options(self):
         # Data range option:
         self.dataRange_group = QGroupBox("Data Range:")
         self.dataRange_layout = QGridLayout()
@@ -116,21 +183,7 @@ class StatsOperator(QWidget):
         self.partialRange_layout.addWidget(self.maxColumn_txtbx, 4, 3)
         self.dataRange_layout.addLayout(self.partialRange_layout, 1, 1)
 
-        # Range options disabled if using all of file
-        self.allOfFile_radiobttn.toggled.connect(lambda: self.columnTxtbx_lbl.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda: self.rowTxtbx_lbl.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda: self.maxRow_txtbx.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda: self.minRow_txtbx.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda: self.maxColumn_txtbx.setDisabled(True))
-        self.allOfFile_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(True))
-        # Range options enabled otherwise
-        self.partialRange_radiobttn.toggled.connect(lambda: self.columnTxtbx_lbl.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda: self.rowTxtbx_lbl.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda: self.maxRow_txtbx.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda: self.minRow_txtbx.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda: self.maxColumn_txtbx.setDisabled(False))
-        self.partialRange_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(False))
-
+    def data_type_options(self):
         # Data type option:
         self.dataType_group = QGroupBox("Data Type: ")
         self.dataType_layout = QVBoxLayout()
@@ -139,32 +192,16 @@ class StatsOperator(QWidget):
         self.interval_radiobttn = QRadioButton("Interval data")
         self.dataType_layout.addWidget(self.interval_radiobttn)
         self.interval_radiobttn.setChecked(True)
-        # Operations on for Interval data
-        self.interval_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda: self.least_square_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda: self.corr_coeff_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(False))
-        self.interval_radiobttn.toggled.connect(self.set_datatype_interval)
-
         self.ordinal_radiobttn = QRadioButton("Ordinal data")
-        # These operations are off if ordinal data is selected
-        self.ordinal_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda: self.least_square_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda: self.corr_coeff_chckbx.setDisabled(True))
-        self.ordinal_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(True))
-        self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
-        self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
+    def output_options(self):
         # Output option:
         self.output_group = QGroupBox("Output:")
         self.output_layout = QVBoxLayout()
         self.output_group.setLayout(self.output_layout)
         # Display results
         self.displayResults_chckbx = QCheckBox("Display results")
+        self.displayResults_chckbx.setChecked(True)
         self.output_layout.addWidget(self.displayResults_chckbx)
         self.displayResults_chckbx.toggled.connect(self.toggle_display)
         # Save results to file
@@ -172,10 +209,12 @@ class StatsOperator(QWidget):
         self.output_layout.addWidget(self.saveResults_chckbx)
         self.saveResults_chckbx.toggled.connect(self.toggle_save)
 
+    def calc_button_init(self):
         # Calculate results button:
         self.calcResults_bttn = QPushButton("Calculate Results")
         self.calcResults_bttn.clicked.connect(self.run_calculations)
 
+    def main_app_layout(self):
         # Main app layout:
         self.appLayout = QGridLayout(self.w)
         self.appLayout.addLayout(self.fileName_layout, 0, 0, 1, 0)
@@ -184,29 +223,6 @@ class StatsOperator(QWidget):
         self.appLayout.addWidget(self.output_group, 3, 0)
         self.appLayout.addWidget(self.calcResults_bttn, 3, 0, 3, 2)
         self.appLayout.addWidget(self.dataType_group, 1, 0)
-
-        # Filename validation
-        # Groups are disabled on startup
-        self.operations_group.setDisabled(True)
-        self.dataRange_group.setDisabled(True)
-        self.output_group.setDisabled(True)
-        self.calcResults_bttn.setDisabled(True)
-
-
-        # have the operations checkboxes update automatically
-        for checkbox in [
-            self.mean_chckbx,
-            self.median_chckbx,
-            self.mode_chckbx,
-            self.stand_dev_chckbx,
-            self.variance_chckbx,
-            self.percentiles_chckbx,
-            self.least_square_chckbx,
-            self.prob_dist_chckbx,
-            self.corr_coeff_chckbx,
-            self.spearman_chckbx
-        ]:
-            checkbox.stateChanged.connect(self.update_operations)
 
     def start_GUI(self):
         self.w.show()
@@ -344,6 +360,26 @@ class ResultsDisplay(QWidget):
 
     def start(self):
         self.w.show()
+
+
+#class ManualInputWindow(QWidget):
+#    def __init__(self):
+#        self.app = QApplication([])
+#        super(ManualInputWindow, self).__init__()
+#        self.w = QWidget()  # Base widget
+#        self.w.resize(500, 600)  # Window default size
+#        self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
+#        self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
+#        self.init_ui()
+#        self.txtbx;
+#
+#    def init(self):
+#        self.inputLayout = QGridLayout
+#
+#        for i in range(1, 25):
+#            self.txtbx[i] = QLineEdit
+#            self.inputLayout.addWidget(self.txtbx[i], i, 0)
+
 
 
 if __name__ == "__main__":
