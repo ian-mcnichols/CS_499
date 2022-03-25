@@ -9,7 +9,7 @@ class Data:
         self.data_np = None
         self.results = {}
 
-        # have to have a way to tell it it is gui input
+        # have to have a way to tell if it is gui input
         if file_name == "GUI":
             self.get_data()
         else:
