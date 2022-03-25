@@ -31,7 +31,7 @@ class Data:
             file.close()
         return
 
-    def get_data(self, data, columns, rows):
+    def add_data(self, data, columns, rows):
         """Adds data from list of lists"""
         # checking that they're all the same length first
         for x in range(len(data) - 1):
@@ -56,10 +56,10 @@ class Data:
 if __name__ == '__main__':
     import numpy as np
     my_data = Data("GUI", "interval")
-    my_data.get_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
+    my_data.add_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
                      ['question1', 'question2', 'question3', 'question4', 'question5'])
     print("My data:", my_data.data_np)
 
     my_data = Data("GUI", "ordinal")
-    my_data.get_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]])
+    my_data.add_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]], [], [])
     print("My data:", my_data.data_np)
