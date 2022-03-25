@@ -40,9 +40,10 @@ class Data:
                 return
         try:
             self.data_np = np.dstack(data)[0].astype('float')
-            if len(columns) != self.data_np.shape[0] or len(rows) != self.data_np.shape[1]:
-                print("No labels added, dimensions wrong.")
-                return
+            if len(columns) != self.data_np.shape[0]:
+                columns = ["Column {}".format(str(i+1)) for i in range(self.data_np.shape[0])]
+            if len(rows) != self.data_np.shape[1]:
+                rows = ["Row {}".format(str(i+1)) for i in range(self.data_np.shape[1])]
             self.column_labels = columns
             self.row_labels = rows
         except ValueError:
