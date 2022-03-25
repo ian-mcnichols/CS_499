@@ -40,6 +40,9 @@ class Data:
                 return
         try:
             self.data_np = np.dstack(data)[0].astype('float')
+            if len(columns) != self.data_np.shape[0] or len(rows) != self.data_np.shape[1]:
+                print("No labels added, dimensions wrong.")
+                return
             self.column_labels = columns
             self.row_labels = rows
         except ValueError:
@@ -52,7 +55,8 @@ class Data:
 if __name__ == '__main__':
     import numpy as np
     my_data = Data("GUI", "interval")
-    my_data.get_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']])
+    my_data.get_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
+                     ['question1', 'question2', 'question3', 'question4', 'question5'])
     print("My data:", my_data.data_np)
 
     my_data = Data("GUI", "ordinal")
