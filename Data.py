@@ -35,7 +35,7 @@ class Data:
             if len(data[x]) != len(data[x+1]):
                 print("No data added, dimensions wrong.")
                 return
-        self.data_np = np.dstack(data)[0]
+        self.data_np = np.dstack(data)[0].astype('float')
         return
 
     def add_result(self, function_ran, output):
@@ -45,7 +45,7 @@ class Data:
 if __name__ == '__main__':
     import numpy as np
     my_data = Data("GUI", "interval")
-    my_data.get_data([[1, 1, 1, 1, 1], [1, 2, 1, 2, 1]])
+    my_data.get_data([['1', '1', '1', '1', '1'], ['1', '2', '1', '2', '1']])
     print("My data:", my_data.data_np)
 
     my_data = Data("GUI", "ordinal")
