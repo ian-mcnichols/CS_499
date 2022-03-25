@@ -36,13 +36,13 @@ def run_median(data, datatype="Interval"):
     # Array to store results for each set of data
     results = []
     if datatype.lower() == "interval":
-        for i in range(1, len(data.dtype.names)):
+        for i in range(data.shape[0]):
             # Get data for column
-            column = data[data.dtype.names[i]]
+            column = data[i]
             # Run median function on column data and add to results
             results.append(np.median(column))
         # Find median of difference between first set of data and last
-        difference = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
+        difference = data[-1] - data[0]
         results.append(np.median(difference))
         return results
     elif datatype.lower() == "ordinal":
@@ -76,15 +76,13 @@ def run_mode(data, datatype="Interval", display=False, save=True):
     """
     if datatype.lower() == "interval":
         results = []
-        max_column = 0
-        for i in range(1, len(data.dtype.names)):
+        for i in range(data.shape[0]):
             # Get data for column
-            column = data[data.dtype.names[i]]
+            column = data[i]
             # Run mode function on column data and add to results
             results.append(stats.mode(column)[0][0])
-            max_column = i
         # Find mode of difference between first set of data and last
-        difference = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
+        difference = data[-1] - data[0]
         results.append(stats.mode(difference)[0][0])
         return results
     elif datatype.lower() == "ordinal":
@@ -112,15 +110,13 @@ def run_stand_dev(data):
     :return: list, standard deviation of each column of data and the change in first and last column of data
     """
     results_stand_dev = []
-    max_column = 0
-    for i in range(1, len(data.dtype.names)):
+    for i in range(data.shape[0]):
         # Get data for column
-        column = data[data.dtype.names[i]]
+        column = data[i]
         # Run standard deviation function on column data and add to results
         results_stand_dev.append(np.std(column))
-        max_column = i
     # Find Standard deviation of difference between first set of data and last
-    difference = data[data.dtype.names[max_column]] - data[data.dtype.names[1]]
+    difference = data[-1] - data[0]
     results_stand_dev.append(np.std(difference))
     return results_stand_dev
 
@@ -132,13 +128,13 @@ def run_variance(data):
     :return: list, variance of the each column of data and the change in first and last column of data
     """
     results_variance = []
-    for i in range(1, len(data.dtype.names)):
+    for i in range(data.shape[0]):
         # Get data for column
-        column = data[data.dtype.names[i]]
+        column = data[i]
         # Run variation function on column data and add to results
         results_variance.append(np.var(column))
     # Find variation of difference between first set of data and last
-    difference = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
+    difference = data[-1] - data[0]
     results_variance.append(np.var(difference))
     return results_variance
 
@@ -151,16 +147,16 @@ def run_percentiles(data):
              columns of data
     """
     # Difference between the last column of data and the first column of data
-    change_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
+    change_data = data[-1] - data[0]
     percentiles = [x * 10 for x in range(11)]
     # For each column of data, excluding row labels, create an array for the results
-    column_results = [[] for i in range(1, len(data.dtype.names))]
+    column_results = [[] for i in range(data.shape[0])]
     change_percentile = []
     # For each column
-    for i in range(1, len(data.dtype.names)):
+    for i in range(data.shape[0]):
         # For each percentile
         for j in percentiles:
-            column_results[i-1].append(np.percentile(data[data.dtype.names[i]], j))
+            column_results[i].append(np.percentile(data[i], j))
     for j in percentiles:
         change_percentile.append(np.percentile(change_data, j))
     return [column_results, change_percentile]
@@ -171,7 +167,7 @@ def run_probability_dist(data, datatype="Interval"):
     # ordinal and interval
     # TODO: make work for ordinal data
     if datatype == "Interval":
-        dist_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
+        dist_data = data[-1] - data[0]
     elif datatype == "Ordinal":
         print("Not calculated yet.")
         return
@@ -190,7 +186,7 @@ def run_least_square_line(data):
     :param data: data to run the funtion on
     :return: slope of LSRL, y-intercept of LSRL
     """
-    out = stats.linregress(data[data.dtype.names[1]], data[data.dtype.names[-1]])
+    out = stats.linregress(data[0], data[-1])
     return [out[0], out[1]]
 
 
@@ -201,7 +197,7 @@ def run_correlation_coeff(data):
     :return: float, the minimum value of the correlation coefficient matrix
     """
     # take the first value of the correlation matrix
-    corr_coef = np.corrcoef(data[data.dtype.names[1]], data[data.dtype.names[-1]])[1][0]
+    corr_coef = np.corrcoef(data[0], data[-1])[1][0]
     return corr_coef
 
 
@@ -214,8 +210,8 @@ def run_spearman_rank_corr_coeff(data):
     :return: p-value : float The two-sided p-value for a hypothesis test whose null hypothesis is that two sets of
                        data are uncorrelated, has same dimension as rho.
     """
-    return [stats.spearmanr(data[data.dtype.names[1]], data[data.dtype.names[-1]])[0],
-            stats.spearmanr(data[data.dtype.names[1]], data[data.dtype.names[-1]])[1]]
+    return [stats.spearmanr(data[0], data[-1])[0],
+            stats.spearmanr(data[0], data[-1])[1]]
 
 
 def run_function(function_name, data, data_type="Interval", display=False,
