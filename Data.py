@@ -42,7 +42,8 @@ class Data:
         data = [self.data_np[x] for x in column_labels]
         row_labels = [x for x in data[0]]
         data = data[1:]
-        self.data_np = np.dstack(data)[0]
+        print("data:", data)
+        self.data_np = np.array(data) #np.dstack(data)[0]
 
     def get_data(self, data, labels):
         if self.data_type == "Frequency":
@@ -68,3 +69,4 @@ class Data:
 if __name__ == '__main__':
     import numpy as np
     my_data = Data("Data/IntervalDataTest.csv", "interval")
+    print(my_data.data_np)
