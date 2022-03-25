@@ -1,5 +1,5 @@
 from numpy.core.defchararray import index
-import pandas as pd
+#import pandas as pd
 import numpy as np
 
 
@@ -31,7 +31,18 @@ class Data:
             # Set names for columns, striping white space
             self.data_np.dtype.names = [x.strip() for x in sections.split(delimiter)]
             file.close()
+            self._to_numpy()
         return
+
+    def _to_numpy(self):
+        """Converts np.genfromtxt output to numpy array of data and row/column labels"""
+        if self.data_np is None:
+            return
+        column_labels = [x for x in self.data_np.dtype.names]
+        data = [self.data_np[x] for x in column_labels]
+        row_labels = [x for x in data[0]]
+        data = data[1:]
+        self.data_np = np.dstack(data)[0]
 
     def get_data(self, data, labels):
         if self.data_type == "Frequency":
@@ -53,11 +64,7 @@ class Data:
     def add_result(self, function_ran, output):
         self.results.update({function_ran: output})
 
-# if __name__ == '__main__':
-#     import numpy as np
-#     my_data = Data("IntervalDataTest.csv")
-#     print(my_data.data_np)
-#     print(my_data.data_type)
-#     print(my_data.data_np.dtype.names)
-#     print(my_data.data_np[my_data.data_np.dtype.names[1]])
-#     print(my_data.data_np['Pretest'])
+
+if __name__ == '__main__':
+    import numpy as np
+    my_data = Data("Data/IntervalDataTest.csv", "interval")
