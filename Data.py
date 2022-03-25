@@ -31,7 +31,10 @@ class Data:
 
     def get_data(self, data):
         # checking that they're all the same length first
-
+        for x in range(len(data) - 1):
+            if len(data[x]) != len(data[x+1]):
+                print("No data added, dimensions wrong.")
+                return
         self.data_np = np.dstack(data)[0]
         return
 
