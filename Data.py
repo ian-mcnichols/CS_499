@@ -7,6 +7,8 @@ class Data:
     def __init__(self, file_name, data_type):
         self.data_type = data_type
         self.data_np = None
+        self.column_labels = None
+        self.row_labels = None
         self.results = {}
         if file_name != "GUI":
             # Read in the given file
@@ -29,7 +31,7 @@ class Data:
             file.close()
         return
 
-    def get_data(self, data):
+    def get_data(self, data, columns, rows):
         """Adds data from list of lists"""
         # checking that they're all the same length first
         for x in range(len(data) - 1):
@@ -38,9 +40,10 @@ class Data:
                 return
         try:
             self.data_np = np.dstack(data)[0].astype('float')
+            self.column_labels = columns
+            self.row_labels = rows
         except ValueError:
             print("No data added, data type wrong.")
-        return
 
     def add_result(self, function_ran, output):
         self.results.update({function_ran: output})
