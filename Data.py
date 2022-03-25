@@ -30,6 +30,7 @@ class Data:
         return
 
     def get_data(self, data):
+        """Adds data from list of lists"""
         # checking that they're all the same length first
         for x in range(len(data) - 1):
             if len(data[x]) != len(data[x+1]):
@@ -48,7 +49,7 @@ class Data:
 if __name__ == '__main__':
     import numpy as np
     my_data = Data("GUI", "interval")
-    my_data.get_data([['1', '1', 'f', '1', '1'], ['1', '2', '1', '2', '1']])
+    my_data.get_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']])
     print("My data:", my_data.data_np)
 
     my_data = Data("GUI", "ordinal")
