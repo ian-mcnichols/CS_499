@@ -14,13 +14,13 @@ def run_mean(data):
     """
     results = []
     # For each column
-    for i in range(1, len(data.dtype.names)):
+    for i in range(data.shape[0]):
         # Get data for column
-        column = data[data.dtype.names[i]]
+        column = data[i]
         # Run mean function on column data and add to results
         results.append(np.mean(column))
     # Find mean of difference between first set of data and last
-    difference = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
+    difference = data[-1] - data[0]
     results.append(np.mean(difference))
     return results
 
