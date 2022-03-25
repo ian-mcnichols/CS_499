@@ -30,15 +30,9 @@ class Data:
         return
 
     def get_data(self, data):
-        if self.data_type.lower() == "interval":
-            print("getting intervals")
-            self.data_np = np.dstack([x for x in data])[0]
-        elif self.data_type.lower() == "ordinal":
-            print("getting ordinals")
-            self.data_np = np.stack([x for x in data])
-        else:
-            raise Exception("Bad data type {}".format(self.data_type))
-        print("my data:", self.data_np)
+        # checking that they're all the same length first
+
+        self.data_np = np.dstack(data)[0]
         return
 
     def add_result(self, function_ran, output):
@@ -49,3 +43,8 @@ if __name__ == '__main__':
     import numpy as np
     my_data = Data("GUI", "interval")
     my_data.get_data([[1, 1, 1, 1, 1], [1, 2, 1, 2, 1]])
+    print("My data:", my_data.data_np)
+
+    my_data = Data("GUI", "ordinal")
+    my_data.get_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]])
+    print("My data:", my_data.data_np)
