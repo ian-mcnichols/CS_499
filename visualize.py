@@ -3,36 +3,63 @@ import numpy as np
 import csv
 
 
-def build_csv(output_file_name, data):
+def build_csv(output_file_name, results, headers, data_type):
+    multi_funcs = ["Mean", "Median", "Mode", "Standard deviation", "Variance"]
     if output_file_name.endswith('.csv') is False:
         output_file_name += ".csv"
     with open(output_file_name, 'w', newline='') as csv_file:
         write = csv.writer(csv_file)
         write.writerow(['Function', 'Value'])
-        for function in data:
-            row = [function]
-            if type(data[function]) is list:
-                for result in data[function]:
-                    row.append(result)
-            else:
-                row.append(data[function])
-            write.writerow(row)
+        if data_type == "Interval":
+            for function in results:
+                row = [function]
+                print(function)
+                if type(results[function]) is list:
+                    if function in multi_funcs:
+                        for i in range(len(results[function])):
+                            if results[function][i] != results[function][-1]:
+                                row = [function + " " + headers[i+1]]
+                            else:
+                                row = [function + " difference"]
+                            row.append(results[function][i])
+                            print(row)
+                            write.writerow(row)
+                    else:
+                        for result in results[function]:
+                            row.append(result)
+                        write.writerow(row)
+                else:
+                    row.append(results[function])
+                    write.writerow(row)
+        else:
+            for function in results:
+                row = [function]
+            # Solve ordinal
+        csv_file.close()
 
 
-def build_text(output_file_name, data):
+def build_text(output_file_name, results, headers, data_type):
     if output_file_name.endswith('.txt') is False:
         output_file_name += ".txt"
     with open(output_file_name, 'w', newline='') as csv_file:
         write = csv.writer(csv_file)
         write.writerow(['Function', 'Value'])
-        for function in data:
-            row = [function]
-            if data[function] is list:
-                for result in data[function]:
-                    row.append(result)
-            else:
-                row.append(data[function])
-            write.writerow(row)
+        if data_type == "Interval":
+            for function in results:
+                row = [function]
+                if type(results[function]) is list:
+                    for i in range(len(results[function])):
+                        if results[function][i] != results[function][-1]:
+                            row = [function + " " + headers[i + 1]]
+                        else:
+                            row = [function + " difference"]
+                        row.append(results[function][i])
+                        write.writerow(row)
+
+                else:
+                    row.append(results[function])
+                    write.writerow(row)
+        csv_file.close()
 
 
 def save_jpeg(self, output_file_name):  # Static function, outputs one graph at a time. Reliant on plt state

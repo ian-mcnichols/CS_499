@@ -25,6 +25,7 @@ class StatsOperator(QWidget):
         self.range_rows = None
         self.range_cols = None
         self.my_data = None
+        self.headers = None
         self.filename = None
         self.datatype = "Interval"
         self.data_loaded = False
@@ -233,6 +234,7 @@ class StatsOperator(QWidget):
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data.data_np
+            self.headers = my_data.data_np.dtype.names
             print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
@@ -244,6 +246,7 @@ class StatsOperator(QWidget):
         Save or display outputs according to user's choices.
         The bulk of our logic goes here"""
         print("running calculations!")
+        self.results = {}
         if not self.data_loaded:
             self.load_file()
         for calculation in self.operations:
@@ -260,8 +263,8 @@ class StatsOperator(QWidget):
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
         if self.save:
-            visualize.build_csv("Results.csv", self.results)
-            visualize.build_text("Results.txt", self.results)
+            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
         return
 
     #  toggle functions
