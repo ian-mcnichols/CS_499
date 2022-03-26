@@ -14,7 +14,7 @@ class StatsOperator(QWidget):
         self.app = QApplication([])
         super(StatsOperator, self).__init__()
         self.w = QWidget()  # Base widget
-        self.w.resize(500, 600)  # Window default size
+        self.w.resize(500, 800)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.initUI()
@@ -31,6 +31,7 @@ class StatsOperator(QWidget):
         self.datatype = "Interval"
         self.data_loaded = False
         self.resultsWindow = ResultsDisplay()
+        self.dataEntryWindow = DataInputWindow()
 
     def initUI(self):
         # All the formatting and button/widget declarations go here
@@ -41,7 +42,6 @@ class StatsOperator(QWidget):
         self.output_options()
         self.calc_button_init()
         self.main_app_layout()
-
 
         # Range options disabled if using all of file
         self.allOfFile_radiobttn.toggled.connect(lambda: self.columnTxtbx_lbl.setDisabled(True))
@@ -76,6 +76,25 @@ class StatsOperator(QWidget):
         self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
+        # When file upload is selected:
+        self.filename_radiobttn.clicked.connect(lambda: self.numRows_lbl.setDisabled(True))
+        self.filename_radiobttn.clicked.connect(lambda: self.numCol_lbl.setDisabled(True))
+        self.filename_radiobttn.clicked.connect(lambda: self.col_txtbx.setDisabled(True))
+        self.filename_radiobttn.clicked.connect(lambda: self.row_txtbx.setDisabled(True))
+        self.filename_radiobttn.clicked.connect(lambda: self.enterData_bttn.setDisabled(True))
+        self.filename_radiobttn.clicked.connect(lambda: self.fileName_lbl.setDisabled(False))
+        self.filename_radiobttn.clicked.connect(lambda: self.fileName_txtbx.setDisabled(False))
+        self.filename_radiobttn.clicked.connect(lambda: self.submit_bttn.setDisabled(False))
+        # When manual data entry is selected:
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.fileName_lbl.setDisabled(True))
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.fileName_txtbx.setDisabled(True))
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.submit_bttn.setDisabled(True))
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.numRows_lbl.setDisabled(False))
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.numCol_lbl.setDisabled(False))
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.col_txtbx.setDisabled(False))
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.row_txtbx.setDisabled(False))
+        self.manual_entry_radiobttn.clicked.connect(lambda: self.enterData_bttn.setDisabled(False))
+
         # Filename validation
         # Groups are disabled on startup
         self.operations_group.setDisabled(True)
@@ -98,24 +117,62 @@ class StatsOperator(QWidget):
         ]:
             checkbox.stateChanged.connect(self.update_operations)
 
+        #show manual entry window if enter data is clicked
+        self.enterData_bttn.clicked.connect(self.display_manual_entry_window)
+
     def file_entry(self):
         # File name option:
+        self.filename_radiobttn = QRadioButton("Enter a csv file")
         self.fileName_lbl = QLabel(self.w)
         self.fileName_lbl.setText("File name: ")
         self.fileName_lbl.show()
-
         self.fileName_txtbx = QLineEdit(self.w)
         self.fileName_txtbx.setPlaceholderText("Enter file name")
         self.fileName_txtbx.show()
         self.fileName_lbl.setBuddy(self.fileName_lbl)
-
         self.fileName_layout = QHBoxLayout()
         self.fileName_layout.addWidget(self.fileName_lbl)
         self.fileName_layout.addWidget(self.fileName_txtbx)
-
         self.submit_bttn = QPushButton("Submit")
         self.fileName_layout.addWidget(self.submit_bttn)
         self.submit_bttn.clicked.connect(self.load_file)
+
+        self.manual_entry_radiobttn = QRadioButton("Manually enter data")
+        self.numRows_lbl = QLabel(self.w)
+        self.numRows_lbl.setText("Number of rows: ")
+        self.row_txtbx = QLineEdit(self.w)
+        self.row_txtbx.setPlaceholderText("Enter a number 1-5")
+        self.numCol_lbl = QLabel(self.w)
+        self.numCol_lbl.setText("Number of columns: ")
+        self.col_txtbx = QLineEdit(self.w)
+        self.col_txtbx.setPlaceholderText("Enter a number 1-5")
+        self.enterData_bttn = QPushButton("Enter data")
+        self.dataRow_txtbx_layout = QHBoxLayout()
+        self.dataRow_txtbx_layout.addWidget(self.numRows_lbl)
+        self.dataRow_txtbx_layout.addWidget(self.row_txtbx)
+        self.dataCol_txtbx_layout = QHBoxLayout()
+        self.dataCol_txtbx_layout.addWidget(self.numCol_lbl)
+        self.dataCol_txtbx_layout.addWidget(self.col_txtbx)
+        self.data_entry_layout = QVBoxLayout()
+        self.data_entry_layout.addLayout(self.dataRow_txtbx_layout)
+        self.data_entry_layout.addLayout(self.dataCol_txtbx_layout)
+        self.data_entry_layout.addWidget(self.enterData_bttn)
+
+        self.data_entry_group = QGroupBox("Data Entry: ")
+        self.entry_group_layout = QVBoxLayout()
+        self.data_entry_group.setLayout(self.entry_group_layout)
+        self.entry_group_layout.addWidget(self.filename_radiobttn)
+        self.entry_group_layout.addLayout(self.fileName_layout)
+        self.entry_group_layout.addWidget(self.manual_entry_radiobttn)
+        self.entry_group_layout.addLayout(self.data_entry_layout)
+
+        # Default options:
+        self.filename_radiobttn.setChecked(True)
+        self.numRows_lbl.setDisabled(True)
+        self.numCol_lbl.setDisabled(True)
+        self.col_txtbx.setDisabled(True)
+        self.row_txtbx.setDisabled(True)
+        self.enterData_bttn.setDisabled(True)
 
     def operation_options(self):
         # Operation options:
@@ -217,7 +274,7 @@ class StatsOperator(QWidget):
     def main_app_layout(self):
         # Main app layout:
         self.appLayout = QGridLayout(self.w)
-        self.appLayout.addLayout(self.fileName_layout, 0, 0, 1, 0)
+        self.appLayout.addWidget(self.data_entry_group, 0, 0, 1, 0)
         self.appLayout.addWidget(self.operations_group, 1, 1, 2, 1)
         self.appLayout.addWidget(self.dataRange_group, 2, 0)
         self.appLayout.addWidget(self.output_group, 3, 0)
@@ -247,7 +304,7 @@ class StatsOperator(QWidget):
         self.operations_group.setDisabled(False)
         self.dataRange_group.setDisabled(False)
         self.output_group.setDisabled(False)
-        self.fileName_txtbx.setDisabled(True)
+        self.data_entry_group.setDisabled(True)
         self.dataType_group.setDisabled(True)
         self.submit_bttn.setDisabled(True)
 
@@ -335,6 +392,12 @@ class StatsOperator(QWidget):
         self.resultsWindow.result_lbl.setText(message)
         self.resultsWindow.start()
 
+    def display_manual_entry_window(self):
+        self.dataEntryWindow.rows = self.row_txtbx.text()
+        self.dataEntryWindow.cols = self.col_txtbx.text()
+
+        self.dataEntryWindow.start()
+
 
 class ResultsDisplay(QWidget):
     def __init__(self):
@@ -362,24 +425,87 @@ class ResultsDisplay(QWidget):
         self.w.show()
 
 
-#class ManualInputWindow(QWidget):
-#    def __init__(self):
-#        self.app = QApplication([])
-#        super(ManualInputWindow, self).__init__()
-#        self.w = QWidget()  # Base widget
-#        self.w.resize(500, 600)  # Window default size
-#        self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
-#        self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
-#        self.init_ui()
-#        self.txtbx;
-#
-#    def init(self):
-#        self.inputLayout = QGridLayout
-#
-#        for i in range(1, 25):
-#            self.txtbx[i] = QLineEdit
-#            self.inputLayout.addWidget(self.txtbx[i], i, 0)
+class DataInputWindow(QWidget):
+    def __init__(self):
+        self.app = QApplication([])
+        super(DataInputWindow, self).__init__()
+        self.w = QWidget()  # Base widget
+        self.w.resize(500, 300)  # Window default size
+        self.w.setWindowTitle("Statistical Analyzer Manual Data Entry")  # Window title
+        self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
+        self.init()
+        self.rows = 0
+        self.cols = 0
 
+    def init(self):
+        self.setup_elements()
+
+    def start(self):
+        self.w.show()
+
+    def setup_elements(self):
+        self.inputLayout = QGridLayout(self.w)
+        self.txtbx1 = QLineEdit()
+        self.txtbx2 = QLineEdit()
+        self.txtbx3 = QLineEdit()
+        self.txtbx4 = QLineEdit()
+        self.txtbx5 = QLineEdit()
+        self.txtbx6 = QLineEdit()
+        self.txtbx7 = QLineEdit()
+        self.txtbx8 = QLineEdit()
+        self.txtbx9 = QLineEdit()
+        self.txtbx10 = QLineEdit()
+        self.txtbx11 = QLineEdit()
+        self.txtbx12 = QLineEdit()
+        self.txtbx13 = QLineEdit()
+        self.txtbx14 = QLineEdit()
+        self.txtbx15 = QLineEdit()
+        self.txtbx16 = QLineEdit()
+        self.txtbx17 = QLineEdit()
+        self.txtbx18 = QLineEdit()
+        self.txtbx19 = QLineEdit()
+        self.txtbx20 = QLineEdit()
+        self.txtbx21 = QLineEdit()
+        self.txtbx22 = QLineEdit()
+        self.txtbx23 = QLineEdit()
+        self.txtbx24 = QLineEdit()
+        self.txtbx25 = QLineEdit()
+
+        self.textBoxes = [
+            [self.txtbx1, self.txtbx2, self.txtbx3, self.txtbx4, self.txtbx5],
+            [self.txtbx6, self.txtbx7, self.txtbx8, self.txtbx9, self.txtbx10],
+            [self.txtbx11, self.txtbx12, self.txtbx13, self.txtbx14, self.txtbx15],
+            [self.txtbx16, self.txtbx17, self.txtbx18, self.txtbx19, self.txtbx20],
+            [self.txtbx21, self.txtbx22, self.txtbx23, self.txtbx24, self.txtbx25]]
+
+        self.inputLayout.addWidget(self.txtbx1, 0, 0)
+        self.inputLayout.addWidget(self.txtbx2, 0, 1)
+        self.inputLayout.addWidget(self.txtbx3, 0, 2)
+        self.inputLayout.addWidget(self.txtbx4, 0, 3)
+        self.inputLayout.addWidget(self.txtbx5, 0, 4)
+        self.inputLayout.addWidget(self.txtbx6, 1, 0)
+        self.inputLayout.addWidget(self.txtbx7, 1, 1)
+        self.inputLayout.addWidget(self.txtbx8, 1, 2)
+        self.inputLayout.addWidget(self.txtbx9, 1, 3)
+        self.inputLayout.addWidget(self.txtbx10, 1, 4)
+        self.inputLayout.addWidget(self.txtbx11, 2, 0)
+        self.inputLayout.addWidget(self.txtbx12, 2, 1)
+        self.inputLayout.addWidget(self.txtbx13, 2, 2)
+        self.inputLayout.addWidget(self.txtbx14, 2, 3)
+        self.inputLayout.addWidget(self.txtbx15, 2, 4)
+        self.inputLayout.addWidget(self.txtbx16, 3, 0)
+        self.inputLayout.addWidget(self.txtbx17, 3, 1)
+        self.inputLayout.addWidget(self.txtbx18, 3, 2)
+        self.inputLayout.addWidget(self.txtbx19, 3, 3)
+        self.inputLayout.addWidget(self.txtbx20, 3, 4)
+        self.inputLayout.addWidget(self.txtbx21, 4, 0)
+        self.inputLayout.addWidget(self.txtbx22, 4, 1)
+        self.inputLayout.addWidget(self.txtbx23, 4, 2)
+        self.inputLayout.addWidget(self.txtbx24, 4, 3)
+        self.inputLayout.addWidget(self.txtbx25, 4, 4)
+
+        self.submitData_bttn = QPushButton("Submit data")
+        self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
 
 if __name__ == "__main__":
