@@ -22,7 +22,6 @@ def build_csv(output_file_name, results, headers, data_type):
                             else:
                                 row = [function + " difference"]
                             row.append(results[function][i])
-                            print(row)
                             write.writerow(row)
                     else:
                         for result in results[function]:
