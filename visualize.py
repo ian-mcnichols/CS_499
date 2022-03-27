@@ -41,12 +41,31 @@ def save_jpeg(self, output_file_name):  # Static function, outputs one graph at 
     plt.savefig(output_file_name)
 
 
-def plot_chart(data, plot_type):
-    if plot_type == "vertical bar chart":
-        plt.figure()
-        plt.bar(data[0], data[1], width=5)
-        plt.title("title")
-        plt.show()
+def plot_chart(data, plot_type, results=None, data_type=None, save=True,
+               display=True):
+    if plot_type == "Vertical Bar Chart":
+        fig, ax = plt.subplots(figsize=(15, 8))
+        y_labels = []
+        y_ticks = []
+        for i in range(1, len(data.dtype.names)):
+            y_ticks.append(i)
+            y_labels.append(data.dtype.names[i] + " - " + str(i))
+        row_labels = []
+        for j in range(len(data)):
+            row_labels.append(j+1)
+        plt.bar(row_labels, results)
+        plt.xlabel('Question Number')
+        plt.ylabel('Response Value')
+        plt.title("Most Common Response for Each Question")
+        plt.xticks(range(min(row_labels), max(row_labels)+1, 1), rotation=45)
+        plt.yticks(y_ticks)
+        ax.set_yticklabels(y_labels)
+        plt.margins(x=0.005)
+        plt.tight_layout()
+        if save:
+            plt.savefig('Ordinal_Chart.jpg')
+        if display:
+            plt.show()
     elif plot_type == "box plot":
         print("plotting box plot")
         # Set up labels for x-axis
@@ -67,7 +86,7 @@ def plot_chart(data, plot_type):
         plt.show()
     elif plot_type == "Histogram":
         print("Plotting Histogram")
-        if data.data_type == "Interval":
+        if data_type == "interval":
             # for each column, create a histogram
             for i in range(1, len(data.data_np.dtype.names)):
                 plt.hist(data.data_np[data.data_np.dtype.names[i]], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -78,23 +97,6 @@ def plot_chart(data, plot_type):
                 plt.title(data.data_np.dtype.names[i] + " Scores Histogram")
                 plt.savefig(data.data_np.dtype.names[i] + ' Histogram.jpg')
                 plt.show()
-    elif plot_type == "XY chart":
-        plt.figure()
-        for data_, plot_type in data:
-            if plot_type == 'line':
-                plt.plot(data_[0], data_[1], 'r')
-            elif plot_type == 'dot':
-                plt.plot(data_[:, 0], data_[:, 1], 'b.')
-        plt.title("title")
-        plt.show()
-    elif plot_type == "Scatter":
-        print("Plotting Scatter Plot")
-        # For interval data
-        color = ['red', 'blue']
-        # x = data.data_np[data.data_np.dtype.names[1]] #pretest
-        # y = x
-        # plt.plot(data.data_np)
-        # x2 = data.data_np[data.data_np.dtype.names[2]] #posttest
-        # plt.show()
+    # elif plot_type == "Stacked Box":
     else:
         raise Exception("Invalid chart type {}".format(plot_type))

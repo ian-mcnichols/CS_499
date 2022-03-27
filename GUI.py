@@ -24,9 +24,7 @@ class StatsOperator(QWidget):
         self.save = False
         self.range_rows = None
         self.range_cols = None
-        self.pretest = None
-        self.posttest = None
-        self.ordinals = None
+        self.my_data = None
         self.filename = None
         self.datatype = "Interval"
         self.data_loaded = False
@@ -251,6 +249,18 @@ class StatsOperator(QWidget):
         self.interval_radiobttn.setChecked(True)
         self.ordinal_radiobttn = QRadioButton("Ordinal data")
 
+        # These operations are off if ordinal data is selected
+        self.ordinal_radiobttn.toggled.connect(lambda: self.mean_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.least_square_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.corr_coeff_chckbx.setDisabled(True))
+        self.ordinal_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(True))
+        self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
+        self.dataType_layout.addWidget(self.ordinal_radiobttn)
+
+
     def output_options(self):
         # Output option:
         self.output_group = QGroupBox("Output:")
@@ -286,18 +296,40 @@ class StatsOperator(QWidget):
         sys.exit(self.app.exec_())  # Run the app until the user closes
 
     # Specific functions that correspond to GUI widgets go under here
+    def update_operations(self):
+        """continually check and review the operations boxes to update the
+        list of operations that will be called"""
+        checkboxes = (
+            self.mean_chckbx,
+            self.median_chckbx,
+            self.mode_chckbx,
+            self.stand_dev_chckbx,
+            self.variance_chckbx,
+            self.percentiles_chckbx,
+            self.prob_dist_chckbx,
+            self.least_square_chckbx,
+            self.corr_coeff_chckbx,
+            self.spearman_chckbx
+        )
+        for checkbox in checkboxes:
+            if checkbox.isChecked() and checkbox.text() not in self.operations:
+                self.operations.append(checkbox.text())
+                print("operations: ", self.operations)
+            elif not checkbox.isChecked() and checkbox.text() in self.operations:
+                self.operations.remove(checkbox.text())
+                print("operations: ", self.operations)
+
     def load_file(self):
+        """Loads in the user's inputted file and saves data to variable"""
         filename = self.fileName_txtbx.text()
         print("loading file {}!".format(filename))
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
-            self.pretest = my_data.data_np["Pretest"]
-            self.posttest = my_data.data_np["Posttest"]
-            print("My data:", self.pretest, self.posttest)
+            self.my_data = my_data.data_np
+            print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
-            print([my_data.data_np[x] for x in range(1, len(my_data.data_np.dtype.names))])
-            print("no ordinals yet")
+            print("My data:", [my_data.data_np[x] for x in range(1, len(my_data.data_np.dtype.names))])
         self.data_loaded = True
 
         # Don't allow user to submit file again and enable the groups again
@@ -309,19 +341,22 @@ class StatsOperator(QWidget):
         self.submit_bttn.setDisabled(True)
 
     def run_calculations(self):
+        """Iterate over user's selected calculations and run them with the Analyzer.
+        Save or display outputs according to user's choices.
+        The bulk of our logic goes here"""
         print("running calculations!")
         if not self.data_loaded:
             self.load_file()
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                print("pretest:", self.pretest)
-                print("posttest:", self.posttest)
-                output = Analyzer.run_function(calculation, pretest=self.pretest,
-                                               posttest=self.posttest, data_type="Interval")
+                output = Analyzer.run_function(calculation, self.my_data, data_type="Interval",
+                                               display=self.display, save=self.save)
                 print("Results:", output)
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, ordinals=self.ordinals, data_type="Ordinal")
+                output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal",
+                                               display=self.display, save=self.save)
+                print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
@@ -334,6 +369,13 @@ class StatsOperator(QWidget):
 
         return
 
+    #  toggle functions
+    def set_datatype_interval(self):
+        self.datatype = "Interval"
+
+    def set_datatype_ordinal(self):
+        self.datatype = "Ordinal"
+
     def toggle_display(self):
         self.display = not self.display
         print("display is set to: ", self.display)
@@ -341,7 +383,7 @@ class StatsOperator(QWidget):
     def toggle_save(self):
         self.save = not self.save
         print("save output is set to: ", self.save)
-
+        
     def update_operations(self):
         """continually check and review the operations boxes to update the
         list of operations that will be called"""
@@ -506,7 +548,6 @@ class DataInputWindow(QWidget):
 
         self.submitData_bttn = QPushButton("Submit data")
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
-
 
 if __name__ == "__main__":
     myGUI = StatsOperator()
