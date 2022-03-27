@@ -173,6 +173,7 @@ def run_probability_dist(data, datatype="Interval"):
     if datatype == "Interval":
         dist_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
     elif datatype == "Ordinal":
+        dist_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
         print("Not calculated yet.")
         return
         dist_data = ordinals[0]

@@ -9,11 +9,10 @@ def build_csv(output_file_name, results, headers, data_type):
         output_file_name += ".csv"
     with open(output_file_name, 'w', newline='') as csv_file:
         write = csv.writer(csv_file)
-        write.writerow(['Function', 'Value'])
         if data_type == "Interval":
+            write.writerow(['Function', 'Value'])
             for function in results:
                 row = [function]
-                print(function)
                 if type(results[function]) is list:
                     if function in multi_funcs:
                         for i in range(len(results[function])):
@@ -30,10 +29,14 @@ def build_csv(output_file_name, results, headers, data_type):
                 else:
                     row.append(results[function])
                     write.writerow(row)
+        # Data is ordinal
         else:
+            write.writerow(['Function', 'Value'])
             for function in results:
-                row = [function]
-            # Solve ordinal
+                if type(results[function]) is list:
+                    for i in range(len(results[function])):
+                        row = [function + " #" + str(i+1), results[function][i]]
+                        write.writerow(row)
         csv_file.close()
 
 
@@ -58,6 +61,13 @@ def build_text(output_file_name, results, headers, data_type):
                 else:
                     row.append(results[function])
                     write.writerow(row)
+        else:
+            write.writerow(['Function', 'Value'])
+            for function in results:
+                if type(results[function]) is list:
+                    for i in range(len(results[function])):
+                        row = [function + " #" + str(i+1), results[function][i]]
+                        write.writerow(row)
         csv_file.close()
 
 

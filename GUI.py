@@ -238,7 +238,9 @@ class StatsOperator(QWidget):
             print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
-            print("My data:", [my_data.data_np[x] for x in range(1, len(my_data.data_np.dtype.names))])
+            self.my_data = my_data.data_np
+            self.headers = my_data.data_np.dtype.names
+            print("My data: ", self.my_data)
         self.data_loaded = True
 
     def run_calculations(self):
