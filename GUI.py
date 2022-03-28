@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import PyQt5.QtCore
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea
 
 import Data
 import Analyzer
@@ -260,7 +260,6 @@ class StatsOperator(QWidget):
         self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
-
     def output_options(self):
         # Output option:
         self.output_group = QGroupBox("Output:")
@@ -325,11 +324,14 @@ class StatsOperator(QWidget):
         print("loading file {}!".format(filename))
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
-            self.my_data = my_data.data_np
-            print("My data: ", self.my_data)
+            self.my_data = my_data
+            self.headers = my_data.data_np.dtype.names
+            print("My data: ", self.my_data.data_np)
         else:
             my_data = Data.Data(filename, "Ordinal")
-            print("My data:", [my_data.data_np[x] for x in range(1, len(my_data.data_np.dtype.names))])
+            self.my_data = my_data
+            self.headers = my_data.data_np.dtype.names
+            print("My data: ", self.my_data.data_np)
         self.data_loaded = True
 
         # Don't allow user to submit file again and enable the groups again
@@ -350,22 +352,35 @@ class StatsOperator(QWidget):
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                output = Analyzer.run_function(calculation, self.my_data, data_type="Interval",
+                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Interval",
                                                display=self.display, save=self.save)
                 print("Results:", output)
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal",
+                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
                                                display=self.display, save=self.save)
                 print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
-        if self.save:
-            visualize.build_csv("Results.csv", self.results)
-            visualize.build_text("Results.txt", self.results)
-
-        if self.display:
+        if self.display and self.save:
+            if self.datatype == "Interval":
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=True)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=True)
+            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
             self.show_results_window()
+        elif self.display is False and self.save:
+            if self.datatype == "Interval":
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=False, save=True)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=False, save=True)
+            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+        elif self.display and self.save is False:
+            if self.datatype == "Interval":
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=False)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=False)
+            self.show_results_window()
+        print("Program Complete")
 
         return
 
@@ -420,16 +435,26 @@ class StatsOperator(QWidget):
         self.datatype = "Ordinal"
 
     def show_results_window(self):
-        message = "\n\n";
+        message = ""
 
-        for i in range(0, len(self.operations), 1):
-            message += "Results from " + self.operations[i]
-            message += "\nPretest: "
-            # TODO Add pre-test results
-            message += "\n"
-            message += "\nPost-test: "
-            # TODO Add post-test results
-            message += "\n\n\n\n"
+        if self.datatype == "Interval":
+            for function in self.results:
+                message += "\n\nResults from " + function + ":\n"
+                if type(self.results[function]) is list:
+                    for i in range(len(self.results[function])):
+                        if self.results[function][i] != self.results[function][-1]:
+                            message += "\t" + self.headers[i + 1] + ": "
+                        else:
+                            message += "\tDifference between first and last column: "
+                        message += str(self.results[function][i]) + "\n"
+                else:
+                    message += "\t" + str(self.results[function]) + "\n"
+        else:
+            for function in self.results:
+                message += "\n\nResults from " + function + ":\n"
+                if type(self.results[function]) is list:
+                    for i in range(len(self.results[function])):
+                        message += "\t #" + str(i+1) + ": " + str(self.results[function][i]) + "\n"
 
         self.resultsWindow.result_lbl.setText(message)
         self.resultsWindow.start()
