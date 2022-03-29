@@ -82,11 +82,11 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         fig, ax = plt.subplots(figsize=(15, 8))
         y_labels = []
         y_ticks = []
-        for i in range(1, len(data.dtype.names)):
+        for i in range(1, len(data.column_labels)):
             y_ticks.append(i)
-            y_labels.append(data.dtype.names[i] + " - " + str(i))
+            y_labels.append(data.column_labels[i] + " - " + str(i))
         row_labels = []
-        for j in range(len(data)):
+        for j in range(len(data.row_labels)):
             row_labels.append(j+1)
         plt.bar(row_labels, results)
         plt.xlabel('Question Number')
@@ -105,13 +105,13 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         print("plotting box plot")
         # Set up labels for x-axis
         labels = []
-        columns = []
-        for i in range(1, len(data.data_np.dtype.names)):
-            labels.append(data.data_np.dtype.names[i])
-            columns.append(data.data_np[data.data_np.dtype.names[i]])
+        column_data = []
+        for i in range(1, len(data.column_labels)):
+            labels.append(data.column_labels[i])
+            column_data.append(data.data_np[i-1])
         # Set up plot and display
         fig, ax = plt.subplots()
-        ax.boxplot(columns)
+        ax.boxplot(column_data)
         # Get current number of labels
         num_labels, curr_labels = plt.xticks()
         # Set labels to column names
@@ -124,15 +124,15 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
     elif plot_type == "Histogram":
         print("Plotting Histogram")
         # for each column, create a histogram
-        for i in range(1, len(data.data_np.dtype.names)):
-            plt.hist(data.data_np[data.data_np.dtype.names[i]], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+        for i in range(1, len(data.column_labels)):
+            plt.hist(data.data_np[i-1], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                      edgecolor='black')
             plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
             plt.xlabel("Scores")
             plt.ylabel("Number of Results")
-            plt.title(data.data_np.dtype.names[i] + " Scores Histogram")
+            plt.title(data.column_labels[i] + " Scores Histogram")
             if save:
-                plt.savefig(data.data_np.dtype.names[i] + ' Histogram.jpg')
+                plt.savefig(data.column_labels[i] + ' Histogram.jpg')
             if display:
                 plt.show()
     else:

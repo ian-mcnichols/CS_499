@@ -325,12 +325,12 @@ class StatsOperator(QWidget):
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data
-            self.headers = my_data.data_np.dtype.names
-            print("My data: ", self.my_data.data_np)
+            self.headers = my_data.column_labels
+            print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
             self.my_data = my_data
-            self.headers = my_data.data_np.dtype.names
+            self.headers = my_data.column_labels
             print("My data: ", self.my_data.data_np)
         self.data_loaded = True
 
@@ -358,6 +358,9 @@ class StatsOperator(QWidget):
             elif self.datatype == "Ordinal":
                 output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
                                                display=self.display, save=self.save)
+                if calculation == "Mode":
+                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
+                                         data_type='ordinal', save=self.save, display=self.display)
                 print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
