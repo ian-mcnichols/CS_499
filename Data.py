@@ -1,5 +1,4 @@
 from numpy.core.defchararray import index
-#import pandas as pd
 import numpy as np
 
 
@@ -7,14 +6,10 @@ class Data:
     def __init__(self, file_name, data_type):
         self.data_type = data_type
         self.data_np = None
-        self.results = {}
-        self.row_labels = None
         self.column_labels = None
-
-        # have to have a way to tell if it is gui input
-        if file_name == "GUI":
-            self.get_data()
-        else:
+        self.row_labels = None
+        self.results = {}
+        if file_name != "GUI":
             # Read in the given file
             self.read_data_file(filepath=file_name)
 
@@ -49,28 +44,39 @@ class Data:
         print("data:", data)
         self.data_np = np.array(data) #np.dstack(data)[0]
 
-    def get_data(self, data, labels):
-        if self.data_type == "Frequency":
-            self.expected = data[labels.index("Expected")]
-            self.actual = data[labels.index("Actual")]
-        elif self.data_type == "Ordinal":
-            self.SD = data[labels.index("SD")]
-            self.D = data[labels.index("D")]
-            self.N = data[labels.index("N")]
-            self.A = data[labels.index("A")]
-            self.SA = data[labels.index("SA")]
-        elif self.data_type == "Interval":
-            self.pretest = data[labels.index("Pretest")]
-            self.posttest = data[labels.index("Posttest")]
-        else:
-            raise Exception("Bad data type {}".format(self.data_type))
-        return
+    def add_data(self, data, columns, rows):
+        """Adds data from list of lists"""
+        # checking that they're all the same length first
+        for x in range(len(data) - 1):
+            if len(data[x]) != len(data[x+1]):
+                print("No data added, dimensions wrong.")
+                return
+        try:
+            self.data_np = np.dstack(data)[0].astype('float')
+            if len(columns) != self.data_np.shape[0]:
+                columns = ["Column {}".format(str(i+1)) for i in range(self.data_np.shape[0])]
+            if len(rows) != self.data_np.shape[1]:
+                rows = ["Row {}".format(str(i+1)) for i in range(self.data_np.shape[1])]
+            self.column_labels = columns
+            self.row_labels = rows
+        except ValueError:
+            print("No data added, data type wrong.")
 
     def add_result(self, function_ran, output):
         self.results.update({function_ran: output})
 
 
 if __name__ == '__main__':
+
     import numpy as np
     my_data = Data("Data/IntervalDataTest.csv", "interval")
     print(my_data.data_np)
+    my_data = Data("GUI", "interval")
+    my_data.add_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
+                     ['question1', 'question2', 'question3', 'question4', 'question5'])
+    print("My data:", my_data.data_np)
+
+    my_data = Data("GUI", "ordinal")
+    my_data.add_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]], [], [])
+    print("My data:", my_data.data_np)
+
