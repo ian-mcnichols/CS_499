@@ -58,6 +58,7 @@ class StatsOperator(QWidget):
         self.partialRange_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(False))
 
         # Operations on for Interval data
+        self.interval_radiobttn.toggled.connect(lambda: self.mean_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(False))
@@ -260,7 +261,6 @@ class StatsOperator(QWidget):
         self.ordinal_radiobttn.toggled.connect(lambda: self.spearman_chckbx.setDisabled(True))
         self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
-
 
     def output_options(self):
         # Output option:
