@@ -91,14 +91,14 @@ def run_mode(data, datatype="Interval", display=False, save=True):
         results_number = []
         # Determine answer with highest number of responses for each question
         for i in range(len(data)):
-            row = list(data[i])
+            row = list(data[:,i])
             row_mode = max(row[1:])
-            results_name.append(data.dtype.names[row.index(row_mode)])
+            #results_name.append(row_names[i])
             results_number.append(row.index(row_mode))
         if display or save:
             visualize.plot_chart(data, "Vertical Bar Chart", results=results_number,
                                  data_type='ordinal', save=save, display=display)
-        return results_name
+        return results_number
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
