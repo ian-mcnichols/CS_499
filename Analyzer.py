@@ -169,10 +169,8 @@ def run_probability_dist(data, datatype="Interval"):
     if datatype == "Interval":
         dist_data = data[-1] - data[0]
     elif datatype == "Ordinal":
-        dist_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
-        print("Not calculated yet.")
-        return
-        dist_data = ordinals[0]
+        print("Not calculated yet")
+        return None, None, None
     else:
         raise Exception("Bad data type: {}".format(datatype))
     x = np.linspace(min(dist_data), max(dist_data), len(dist_data))
