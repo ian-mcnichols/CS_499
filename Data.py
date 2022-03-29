@@ -8,6 +8,8 @@ class Data:
         self.data_type = data_type
         self.data_np = None
         self.results = {}
+        self.row_labels = None
+        self.column_labels = None
 
         # have to have a way to tell if it is gui input
         if file_name == "GUI":
@@ -41,6 +43,8 @@ class Data:
         column_labels = [x for x in self.data_np.dtype.names]
         data = [self.data_np[x] for x in column_labels]
         row_labels = [x for x in data[0]]
+        self.row_labels = row_labels
+        self.column_labels = column_labels
         data = data[1:]
         print("data:", data)
         self.data_np = np.array(data) #np.dstack(data)[0]
