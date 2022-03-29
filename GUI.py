@@ -327,7 +327,7 @@ class StatsOperator(QWidget):
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data.data_np
-            self.headers = my_data.data_np.dtype.names
+            self.headers = my_data.column_labels
             print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
