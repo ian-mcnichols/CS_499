@@ -297,29 +297,6 @@ class StatsOperator(QWidget):
         sys.exit(self.app.exec_())  # Run the app until the user closes
 
     # Specific functions that correspond to GUI widgets go under here
-    def update_operations(self):
-        """continually check and review the operations boxes to update the
-        list of operations that will be called"""
-        checkboxes = (
-            self.mean_chckbx,
-            self.median_chckbx,
-            self.mode_chckbx,
-            self.stand_dev_chckbx,
-            self.variance_chckbx,
-            self.percentiles_chckbx,
-            self.prob_dist_chckbx,
-            self.least_square_chckbx,
-            self.corr_coeff_chckbx,
-            self.spearman_chckbx
-        )
-        for checkbox in checkboxes:
-            if checkbox.isChecked() and checkbox.text() not in self.operations:
-                self.operations.append(checkbox.text())
-                print("operations: ", self.operations)
-            elif not checkbox.isChecked() and checkbox.text() in self.operations:
-                self.operations.remove(checkbox.text())
-                print("operations: ", self.operations)
-
     def load_file(self):
         """Loads in the user's inputted file and saves data to variable"""
         filename = self.fileName_txtbx.text()
