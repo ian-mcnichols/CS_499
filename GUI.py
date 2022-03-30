@@ -407,13 +407,6 @@ class StatsOperator(QWidget):
         else:
             self.calcResults_bttn.setDisabled(False)
 
-    # datatype toggle functions
-    def set_datatype_interval(self):
-        self.datatype = "Interval"
-
-    def set_datatype_ordinal(self):
-        self.datatype = "Ordinal"
-
     def show_results_window(self):
         message = ""
 
