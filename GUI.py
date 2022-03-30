@@ -32,7 +32,7 @@ class StatsOperator(QWidget):
         self.dataEntryWindow = DataInputWindow()
 
     def initUI(self):
-        # All the formatting and button/widget declarations go here
+        """ All the formatting and button/widget declarations go here """
         self.file_entry()
         self.operation_options()
         self.data_range_options()
@@ -119,7 +119,7 @@ class StatsOperator(QWidget):
         self.enterData_bttn.clicked.connect(self.display_manual_entry_window)
 
     def file_entry(self):
-        # File name option:
+        """File name option:"""
         self.filename_radiobttn = QRadioButton("Enter a csv file")
         self.fileName_lbl = QLabel(self.w)
         self.fileName_lbl.setText("File name: ")
@@ -173,7 +173,7 @@ class StatsOperator(QWidget):
         self.enterData_bttn.setDisabled(True)
 
     def operation_options(self):
-        # Operation options:
+        """ Operation options: """
         self.operations_group = QGroupBox("Operations:")
         self.vertLay = QVBoxLayout()
         self.operations_group.setLayout(self.vertLay)
@@ -200,7 +200,7 @@ class StatsOperator(QWidget):
         self.vertLay.addWidget(self.spearman_chckbx)
 
     def data_range_options(self):
-        # Data range option:
+        """Data range option: """
         self.dataRange_group = QGroupBox("Data Range:")
         self.dataRange_layout = QGridLayout()
         self.allOfFile_radiobttn = QRadioButton("All of file")
@@ -239,7 +239,7 @@ class StatsOperator(QWidget):
         self.dataRange_layout.addLayout(self.partialRange_layout, 1, 1)
 
     def data_type_options(self):
-        # Data type option:
+        """Data type option:"""
         self.dataType_group = QGroupBox("Data Type: ")
         self.dataType_layout = QVBoxLayout()
         self.dataType_group.setLayout(self.dataType_layout)
@@ -261,7 +261,7 @@ class StatsOperator(QWidget):
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
     def output_options(self):
-        # Output option:
+        """Output option:"""
         self.output_group = QGroupBox("Output:")
         self.output_layout = QVBoxLayout()
         self.output_group.setLayout(self.output_layout)
@@ -276,12 +276,12 @@ class StatsOperator(QWidget):
         self.saveResults_chckbx.toggled.connect(self.toggle_save)
 
     def calc_button_init(self):
-        # Calculate results button:
+        """Calculate results button:"""
         self.calcResults_bttn = QPushButton("Calculate Results")
         self.calcResults_bttn.clicked.connect(self.run_calculations)
 
     def main_app_layout(self):
-        # Main app layout:
+        """Main app layout:"""
         self.appLayout = QGridLayout(self.w)
         self.appLayout.addWidget(self.data_entry_group, 0, 0, 1, 0)
         self.appLayout.addWidget(self.operations_group, 1, 1, 2, 1)
@@ -291,6 +291,7 @@ class StatsOperator(QWidget):
         self.appLayout.addWidget(self.dataType_group, 1, 0)
 
     def start_GUI(self):
+        """GUI Driver function"""
         self.w.show()
         sys.exit(self.app.exec_())  # Run the app until the user closes
 
@@ -361,7 +362,6 @@ class StatsOperator(QWidget):
                 visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=False)
             self.show_results_window()
         print("Program Complete")
-
         return
 
     #  toggle functions
@@ -408,8 +408,8 @@ class StatsOperator(QWidget):
             self.calcResults_bttn.setDisabled(False)
 
     def show_results_window(self):
+        """Displays results from calculations to screen"""
         message = ""
-
         if self.datatype == "Interval":
             for function in self.results:
                 message += "\n\nResults from " + function + ":\n"
@@ -433,9 +433,9 @@ class StatsOperator(QWidget):
         self.resultsWindow.start()
 
     def display_manual_entry_window(self):
+        """Opens the data entry window"""
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
-
         self.dataEntryWindow.start()
 
 
@@ -466,6 +466,7 @@ class ResultsDisplay(QWidget):
 
 
 class DataInputWindow(QWidget):
+    """User input for data"""
     def __init__(self):
         self.app = QApplication([])
         super(DataInputWindow, self).__init__()
@@ -473,11 +474,8 @@ class DataInputWindow(QWidget):
         self.w.resize(500, 300)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer Manual Data Entry")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
-        self.init()
         self.rows = 0
         self.cols = 0
-
-    def init(self):
         self.setup_elements()
 
     def start(self):
@@ -546,6 +544,7 @@ class DataInputWindow(QWidget):
 
         self.submitData_bttn = QPushButton("Submit data")
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
+
 
 if __name__ == "__main__":
     myGUI = StatsOperator()
