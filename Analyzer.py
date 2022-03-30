@@ -48,18 +48,19 @@ def run_median(data, datatype="Interval"):
     elif datatype.lower() == "ordinal":
         # Determine median response for each question
         # For each row/question
-        for i in range(len(data)):
+        columns, rows = data.shape
+        for i in range(rows):
             # Get row as list
-            row = list(data[i])
+            row = list(data[:, i])
             row_values = []
             # Add number of responses for each index number to list
-            for j in range(1, len(row)):
+            for j in range(len(row)):
                 num_responses = row[j]
                 for x in range(num_responses):
                     row_values.append(j)
             # Find median response for each row
             row_median = np.median(row_values)
-            results.append(row_median)
+            results.append(row_median+1)
         return results
     else:
         raise Exception("Bad data type: {}".format(datatype))
@@ -72,7 +73,7 @@ def run_mode(data, datatype="Interval", display=False, save=True):
     :param datatype: "interval" or "ordinal"
     :return: interval-the mode for each column of data for interval data and the mode of the difference between the
                       first and last columns
-             ordinals-the mode each row/question
+             ordinals-the mode for each row/question
     """
     if datatype.lower() == "interval":
         results = []
@@ -90,14 +91,12 @@ def run_mode(data, datatype="Interval", display=False, save=True):
         results_name = []
         results_number = []
         # Determine answer with highest number of responses for each question
-        for i in range(len(data)):
-            row = list(data[:,i])
+        columns, rows = data.shape
+        for i in range(rows):
+            row = list(data[:, i])
             row_mode = max(row[1:])
-            #results_name.append(row_names[i])
-            results_number.append(row.index(row_mode))
-        if display or save:
-            visualize.plot_chart(data, "Vertical Bar Chart", results=results_number,
-                                 data_type='ordinal', save=save, display=display)
+            # results_name.append(row_names[i])
+            results_number.append(row.index(row_mode)+1)
         return results_number
     else:
         raise Exception("Bad data type: {}".format(datatype))
@@ -171,7 +170,6 @@ def run_probability_dist(data, datatype="Interval"):
     elif datatype == "Ordinal":
         print("Not calculated yet.")
         return
-        dist_data = ordinals[0]
     else:
         raise Exception("Bad data type: {}".format(datatype))
     x = np.linspace(min(dist_data), max(dist_data), len(dist_data))

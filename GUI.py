@@ -2,7 +2,7 @@ import sys
 import numpy as np
 import PyQt5.QtCore
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea
 
 import Data
 import Analyzer
@@ -32,7 +32,7 @@ class StatsOperator(QWidget):
         self.dataEntryWindow = DataInputWindow()
 
     def initUI(self):
-        # All the formatting and button/widget declarations go here
+        """ All the formatting and button/widget declarations go here """
         self.file_entry()
         self.operation_options()
         self.data_range_options()
@@ -119,7 +119,7 @@ class StatsOperator(QWidget):
         self.enterData_bttn.clicked.connect(self.display_manual_entry_window)
 
     def file_entry(self):
-        # File name option:
+        """File name option:"""
         self.filename_radiobttn = QRadioButton("Enter a csv file")
         self.fileName_lbl = QLabel(self.w)
         self.fileName_lbl.setText("File name: ")
@@ -173,7 +173,7 @@ class StatsOperator(QWidget):
         self.enterData_bttn.setDisabled(True)
 
     def operation_options(self):
-        # Operation options:
+        """ Operation options: """
         self.operations_group = QGroupBox("Operations:")
         self.vertLay = QVBoxLayout()
         self.operations_group.setLayout(self.vertLay)
@@ -200,7 +200,7 @@ class StatsOperator(QWidget):
         self.vertLay.addWidget(self.spearman_chckbx)
 
     def data_range_options(self):
-        # Data range option:
+        """Data range option: """
         self.dataRange_group = QGroupBox("Data Range:")
         self.dataRange_layout = QGridLayout()
         self.allOfFile_radiobttn = QRadioButton("All of file")
@@ -239,7 +239,7 @@ class StatsOperator(QWidget):
         self.dataRange_layout.addLayout(self.partialRange_layout, 1, 1)
 
     def data_type_options(self):
-        # Data type option:
+        """Data type option:"""
         self.dataType_group = QGroupBox("Data Type: ")
         self.dataType_layout = QVBoxLayout()
         self.dataType_group.setLayout(self.dataType_layout)
@@ -260,9 +260,8 @@ class StatsOperator(QWidget):
         self.interval_radiobttn.toggled.connect(self.set_datatype_ordinal)
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
-
     def output_options(self):
-        # Output option:
+        """Output option:"""
         self.output_group = QGroupBox("Output:")
         self.output_layout = QVBoxLayout()
         self.output_group.setLayout(self.output_layout)
@@ -277,12 +276,12 @@ class StatsOperator(QWidget):
         self.saveResults_chckbx.toggled.connect(self.toggle_save)
 
     def calc_button_init(self):
-        # Calculate results button:
+        """Calculate results button:"""
         self.calcResults_bttn = QPushButton("Calculate Results")
         self.calcResults_bttn.clicked.connect(self.run_calculations)
 
     def main_app_layout(self):
-        # Main app layout:
+        """Main app layout:"""
         self.appLayout = QGridLayout(self.w)
         self.appLayout.addWidget(self.data_entry_group, 0, 0, 1, 0)
         self.appLayout.addWidget(self.operations_group, 1, 1, 2, 1)
@@ -292,45 +291,25 @@ class StatsOperator(QWidget):
         self.appLayout.addWidget(self.dataType_group, 1, 0)
 
     def start_GUI(self):
+        """GUI Driver function"""
         self.w.show()
         sys.exit(self.app.exec_())  # Run the app until the user closes
 
     # Specific functions that correspond to GUI widgets go under here
-    def update_operations(self):
-        """continually check and review the operations boxes to update the
-        list of operations that will be called"""
-        checkboxes = (
-            self.mean_chckbx,
-            self.median_chckbx,
-            self.mode_chckbx,
-            self.stand_dev_chckbx,
-            self.variance_chckbx,
-            self.percentiles_chckbx,
-            self.prob_dist_chckbx,
-            self.least_square_chckbx,
-            self.corr_coeff_chckbx,
-            self.spearman_chckbx
-        )
-        for checkbox in checkboxes:
-            if checkbox.isChecked() and checkbox.text() not in self.operations:
-                self.operations.append(checkbox.text())
-                print("operations: ", self.operations)
-            elif not checkbox.isChecked() and checkbox.text() in self.operations:
-                self.operations.remove(checkbox.text())
-                print("operations: ", self.operations)
-
     def load_file(self):
         """Loads in the user's inputted file and saves data to variable"""
         filename = self.fileName_txtbx.text()
         print("loading file {}!".format(filename))
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
-            self.my_data = my_data.data_np
+            self.my_data = my_data
+            self.headers = my_data.column_labels
             print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
-            print("My data:", my_data.data_np)
-            self.my_data = my_data.data_np
+            self.my_data = my_data
+            self.headers = my_data.column_labels
+            print("My data: ", self.my_data.data_np)
         self.data_loaded = True
 
         # Don't allow user to submit file again and enable the groups again
@@ -351,23 +330,38 @@ class StatsOperator(QWidget):
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                output = Analyzer.run_function(calculation, self.my_data, data_type="Interval",
+                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Interval",
                                                display=self.display, save=self.save)
                 print("Results:", output)
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, self.my_data, data_type="Ordinal",
+                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
                                                display=self.display, save=self.save)
+                if calculation == "Mode":
+                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
+                                         data_type='ordinal', save=self.save, display=self.display)
                 print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
-        if self.save:
-            visualize.build_csv("Results.csv", self.results)
-            visualize.build_text("Results.txt", self.results)
-
-        if self.display:
+        if self.display and self.save:
+            if self.datatype == "Interval":
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=True)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=True)
+            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
             self.show_results_window()
-
+        elif self.display is False and self.save:
+            if self.datatype == "Interval":
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=False, save=True)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=False, save=True)
+            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+        elif self.display and self.save is False:
+            if self.datatype == "Interval":
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=False)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=False)
+            self.show_results_window()
+        print("Program Complete")
         return
 
     #  toggle functions
@@ -413,32 +407,35 @@ class StatsOperator(QWidget):
         else:
             self.calcResults_bttn.setDisabled(False)
 
-    # datatype toggle functions
-    def set_datatype_interval(self):
-        self.datatype = "Interval"
-
-    def set_datatype_ordinal(self):
-        self.datatype = "Ordinal"
-
     def show_results_window(self):
-        message = "\n\n";
-
-        for i in range(0, len(self.operations), 1):
-            message += "Results from " + self.operations[i]
-            message += "\nPretest: "
-            # TODO Add pre-test results
-            message += "\n"
-            message += "\nPost-test: "
-            # TODO Add post-test results
-            message += "\n\n\n\n"
+        """Displays results from calculations to screen"""
+        message = ""
+        if self.datatype == "Interval":
+            for function in self.results:
+                message += "\n\nResults from " + function + ":\n"
+                if type(self.results[function]) is list:
+                    for i in range(len(self.results[function])):
+                        if self.results[function][i] != self.results[function][-1]:
+                            message += "\t" + self.headers[i + 1] + ": "
+                        else:
+                            message += "\tDifference between first and last column: "
+                        message += str(self.results[function][i]) + "\n"
+                else:
+                    message += "\t" + str(self.results[function]) + "\n"
+        else:
+            for function in self.results:
+                message += "\n\nResults from " + function + ":\n"
+                if type(self.results[function]) is list:
+                    for i in range(len(self.results[function])):
+                        message += "\t #" + str(i+1) + ": " + str(self.results[function][i]) + "\n"
 
         self.resultsWindow.result_lbl.setText(message)
         self.resultsWindow.start()
 
     def display_manual_entry_window(self):
+        """Opens the data entry window"""
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
-
         self.dataEntryWindow.start()
 
 
@@ -469,6 +466,7 @@ class ResultsDisplay(QWidget):
 
 
 class DataInputWindow(QWidget):
+    """User input for data"""
     def __init__(self):
         self.app = QApplication([])
         super(DataInputWindow, self).__init__()
@@ -476,11 +474,8 @@ class DataInputWindow(QWidget):
         self.w.resize(500, 300)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer Manual Data Entry")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
-        self.init()
         self.rows = 0
         self.cols = 0
-
-    def init(self):
         self.setup_elements()
 
     def start(self):
@@ -549,6 +544,7 @@ class DataInputWindow(QWidget):
 
         self.submitData_bttn = QPushButton("Submit data")
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
+
 
 if __name__ == "__main__":
     myGUI = StatsOperator()
