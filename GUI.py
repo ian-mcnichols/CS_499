@@ -283,12 +283,12 @@ class StatsOperator(QWidget):
     def main_app_layout(self):
         """Main app layout:"""
         self.appLayout = QGridLayout(self.w)
-        self.appLayout.addWidget(self.data_entry_group, 0, 0, 1, 0)
-        self.appLayout.addWidget(self.operations_group, 1, 1, 2, 1)
-        self.appLayout.addWidget(self.dataRange_group, 2, 0)
-        self.appLayout.addWidget(self.output_group, 3, 0)
+        self.appLayout.addWidget(self.data_entry_group, 1, 0, 1, 0)
+        self.appLayout.addWidget(self.operations_group, 2, 1)
+        self.appLayout.addWidget(self.dataRange_group, 0, 1)
+        self.appLayout.addWidget(self.output_group, 2, 0)
         self.appLayout.addWidget(self.calcResults_bttn, 3, 0, 3, 2)
-        self.appLayout.addWidget(self.dataType_group, 1, 0)
+        self.appLayout.addWidget(self.dataType_group, 0, 0)
 
     def start_GUI(self):
         """GUI Driver function"""
