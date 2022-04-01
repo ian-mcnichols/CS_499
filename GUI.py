@@ -57,6 +57,7 @@ class StatsOperator(QWidget):
         self.partialRange_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(False))
 
         # Operations on for Interval data
+        self.interval_radiobttn.toggled.connect(lambda: self.mean_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(False))
