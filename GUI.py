@@ -1,8 +1,9 @@
 import sys
 import numpy as np
 import PyQt5.QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QScrollBar
 
 import Data
 import Analyzer
@@ -455,11 +456,14 @@ class ResultsDisplay(QWidget):
         self.result_layout = QVBoxLayout()
         self.oper_lbl = QLabel(self.w)
         self.pretest_lbl = QLabel(self.w)
+        self.scroll = QScrollArea(self.w)
 
-        self.result_layout.addWidget(self.result_lbl)
-        self.result_layout.addWidget(self.pretest_lbl)
-        self.result_layout.addWidget(self.oper_lbl)
-        #TODO Add a scroll bar so user can see all results
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.resize(500, 600)
+        self.scroll.setWidget(self.result_lbl)
+
+
 
     def start(self):
         self.w.show()
