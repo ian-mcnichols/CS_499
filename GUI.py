@@ -1,9 +1,8 @@
 import sys
 import numpy as np
-import PyQt5.QtCore
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QScrollBar
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea
 
 import Data
 import Analyzer
@@ -97,7 +96,6 @@ class StatsOperator(QWidget):
         # Filename validation
         # Groups are disabled on startup
         self.operations_group.setDisabled(True)
-        self.dataRange_group.setDisabled(True)
         self.output_group.setDisabled(True)
         self.calcResults_bttn.setDisabled(True)
 
@@ -116,7 +114,7 @@ class StatsOperator(QWidget):
         ]:
             checkbox.stateChanged.connect(self.update_operations)
 
-        #show manual entry window if enter data is clicked
+        # show manual entry window if enter data is clicked
         self.enterData_bttn.clicked.connect(self.display_manual_entry_window)
 
     def file_entry(self):
@@ -280,6 +278,8 @@ class StatsOperator(QWidget):
         """Calculate results button:"""
         self.calcResults_bttn = QPushButton("Calculate Results")
         self.calcResults_bttn.clicked.connect(self.run_calculations)
+        self.reset_bttn = QPushButton("Do Another Calculation")
+        self.reset_bttn.clicked.connect(self.restart)
 
     def main_app_layout(self):
         """Main app layout:"""
@@ -290,6 +290,7 @@ class StatsOperator(QWidget):
         self.appLayout.addWidget(self.output_group, 2, 0)
         self.appLayout.addWidget(self.calcResults_bttn, 3, 0, 3, 2)
         self.appLayout.addWidget(self.dataType_group, 0, 0)
+        self.appLayout.addWidget(self.reset_bttn, 4, 0, 4, 2)
 
     def start_GUI(self):
         """GUI Driver function"""
@@ -315,7 +316,7 @@ class StatsOperator(QWidget):
 
         # Don't allow user to submit file again and enable the groups again
         self.operations_group.setDisabled(False)
-        self.dataRange_group.setDisabled(False)
+        self.dataRange_group.setDisabled(True)
         self.output_group.setDisabled(False)
         self.data_entry_group.setDisabled(True)
         self.dataType_group.setDisabled(True)
@@ -439,13 +440,54 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.cols = self.col_txtbx.text()
         self.dataEntryWindow.start()
 
+    def restart(self):
+        """Restart the app so user can make another calculation"""
+        self.calcResults_bttn.setEnabled(False)
+        self.operations_group.setEnabled(False)
+        self.output_group.setEnabled(False)
+        self.data_entry_group.setEnabled(True)
+        self.dataType_group.setEnabled(True)
+        self.dataRange_group.setEnabled(True)
+        self.submit_bttn.setEnabled(True)
+
+        # uncheck all operations
+        self.mean_chckbx.setChecked(False)
+        self.median_chckbx.setChecked(False)
+        self.mode_chckbx.setChecked(False)
+        self.stand_dev_chckbx.setChecked(False)
+        self.variance_chckbx.setChecked(False)
+        self.percentiles_chckbx.setChecked(False)
+        self.least_square_chckbx.setChecked(False)
+        self.prob_dist_chckbx.setChecked(False)
+        self.corr_coeff_chckbx.setChecked(False)
+        self.spearman_chckbx.setChecked(False)
+
+        # default output group
+        self.displayResults_chckbx.setChecked(True)
+        self.saveResults_chckbx.setChecked(False)
+
+        # default data type group
+        self.interval_radiobttn.setChecked(True)
+
+        # Empty variables
+        self.operations = []
+        self.results = {}
+        self.display = True
+        self.save = False
+        self.range_rows = None
+        self.range_cols = None
+        self.my_data = None
+        self.filename = None
+        self.datatype = "Interval"
+        self.data_loaded = False
+
 
 class ResultsDisplay(QWidget):
     def __init__(self):
         self.app = QApplication([])
         super(ResultsDisplay, self).__init__()
         self.w = QWidget()  # Base widget
-        self.w.resize(500, 600)  # Window default size
+        self.w.resize(900, 600)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.init_ui()
@@ -460,7 +502,7 @@ class ResultsDisplay(QWidget):
 
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scroll.setWidgetResizable(True)
-        self.scroll.resize(500, 600)
+        self.scroll.resize(900, 600)
         self.scroll.setWidget(self.result_lbl)
 
 
