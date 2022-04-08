@@ -499,6 +499,7 @@ class StatsOperator(QWidget):
 
         # Empty variables
         self.set_defaults()
+        self.resultsWindow.init_ui()
 
 
 class ResultsDisplay(QWidget):
@@ -526,6 +527,7 @@ class ResultsDisplay(QWidget):
 
     def start(self):
         self.w.show()
+        self.close()
 
 
 class DataInputWindow(QWidget):
