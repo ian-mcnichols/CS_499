@@ -314,6 +314,29 @@ class StatsOperator(QWidget):
             self.headers = my_data.column_labels
             print("My data: ", self.my_data.data_np)
         self.data_loaded = True
+        # If user has selected a range
+        if self.partialRange_radiobttn.isChecked():
+            min_column = int(self.minColumn_txtbx.text()) - 1
+            max_column = int(self.maxColumn_txtbx.text())
+            min_row = int(self.minRow_txtbx.text()) - 1
+            max_row = int(self.maxRow_txtbx.text())
+
+            # Check that all values are integers
+            if all([isinstance(i, int) for i in [min_column, max_column, min_row, max_row]]):
+                # Edit the data array
+                new_data_np = self.my_data.data_np[min_column:max_column, min_row:max_row]
+                self.my_data.data_np = new_data_np
+                # Reset column/row labels
+                new_column_labels = self.my_data.column_labels[min_column:max_column]
+                self.my_data.column_labels = new_column_labels
+                new_row_labels = self.my_data.row_labels[min_row:max_row]
+                self.my_data.row_labels = new_row_labels
+                print("my new data: ", self.my_data.data_np)
+                print("column labels: ", self.my_data.column_labels)
+                print("row labels: ", self.my_data.row_labels)
+            else:
+                # The values entered were not correct
+                print("Please enter integer values for rows/columns")
 
         # Don't allow user to submit file again and enable the groups again
         self.operations_group.setDisabled(False)
@@ -419,7 +442,7 @@ class StatsOperator(QWidget):
                 if type(self.results[function]) is list:
                     for i in range(len(self.results[function])):
                         if self.results[function][i] != self.results[function][-1]:
-                            message += "\t" + self.headers[i + 1] + ": "
+                            message += "\t" + self.headers[i] + ": "
                         else:
                             message += "\tDifference between first and last column: "
                         message += str(self.results[function][i]) + "\n"
