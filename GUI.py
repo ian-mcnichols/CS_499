@@ -1,8 +1,9 @@
 import sys
 import numpy as np
-import PyQt5.QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QAbstractScrollArea
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 import Data
 import Analyzer
@@ -18,6 +19,12 @@ class StatsOperator(QWidget):
         self.w.setWindowTitle("Statistical Analyzer")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.initUI()
+        self.set_defaults()
+        self.resultsWindow = ResultsDisplay()
+        self.dataEntryWindow = DataInputWindow()
+
+    def set_defaults(self):
+        """Sets default parameters"""
         self.operations = []
         self.results = {}
         self.display = True
@@ -28,8 +35,6 @@ class StatsOperator(QWidget):
         self.filename = None
         self.datatype = "Interval"
         self.data_loaded = False
-        self.resultsWindow = ResultsDisplay()
-        self.dataEntryWindow = DataInputWindow()
 
     def initUI(self):
         """ All the formatting and button/widget declarations go here """
@@ -57,6 +62,7 @@ class StatsOperator(QWidget):
         self.partialRange_radiobttn.toggled.connect(lambda: self.minColumn_txtbx.setDisabled(False))
 
         # Operations on for Interval data
+        self.interval_radiobttn.toggled.connect(lambda: self.mean_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.stand_dev_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.variance_chckbx.setDisabled(False))
         self.interval_radiobttn.toggled.connect(lambda: self.percentiles_chckbx.setDisabled(False))
@@ -96,7 +102,6 @@ class StatsOperator(QWidget):
         # Filename validation
         # Groups are disabled on startup
         self.operations_group.setDisabled(True)
-        self.dataRange_group.setDisabled(True)
         self.output_group.setDisabled(True)
         self.calcResults_bttn.setDisabled(True)
 
@@ -115,7 +120,7 @@ class StatsOperator(QWidget):
         ]:
             checkbox.stateChanged.connect(self.update_operations)
 
-        #show manual entry window if enter data is clicked
+        # show manual entry window if enter data is clicked
         self.enterData_bttn.clicked.connect(self.display_manual_entry_window)
 
     def file_entry(self):
@@ -279,16 +284,19 @@ class StatsOperator(QWidget):
         """Calculate results button:"""
         self.calcResults_bttn = QPushButton("Calculate Results")
         self.calcResults_bttn.clicked.connect(self.run_calculations)
+        self.reset_bttn = QPushButton("Do Another Calculation")
+        self.reset_bttn.clicked.connect(self.restart)
 
     def main_app_layout(self):
         """Main app layout:"""
         self.appLayout = QGridLayout(self.w)
-        self.appLayout.addWidget(self.data_entry_group, 0, 0, 1, 0)
-        self.appLayout.addWidget(self.operations_group, 1, 1, 2, 1)
-        self.appLayout.addWidget(self.dataRange_group, 2, 0)
-        self.appLayout.addWidget(self.output_group, 3, 0)
+        self.appLayout.addWidget(self.data_entry_group, 1, 0, 1, 0)
+        self.appLayout.addWidget(self.operations_group, 2, 1)
+        self.appLayout.addWidget(self.dataRange_group, 0, 1)
+        self.appLayout.addWidget(self.output_group, 2, 0)
         self.appLayout.addWidget(self.calcResults_bttn, 3, 0, 3, 2)
-        self.appLayout.addWidget(self.dataType_group, 1, 0)
+        self.appLayout.addWidget(self.dataType_group, 0, 0)
+        self.appLayout.addWidget(self.reset_bttn, 4, 0, 4, 2)
 
     def start_GUI(self):
         """GUI Driver function"""
@@ -311,10 +319,33 @@ class StatsOperator(QWidget):
             self.headers = my_data.column_labels
             print("My data: ", self.my_data.data_np)
         self.data_loaded = True
+        # If user has selected a range
+        if self.partialRange_radiobttn.isChecked():
+            min_column = int(self.minColumn_txtbx.text()) - 1
+            max_column = int(self.maxColumn_txtbx.text())
+            min_row = int(self.minRow_txtbx.text()) - 1
+            max_row = int(self.maxRow_txtbx.text())
+
+            # Check that all values are integers
+            if all([isinstance(i, int) for i in [min_column, max_column, min_row, max_row]]):
+                # Edit the data array
+                new_data_np = self.my_data.data_np[min_column:max_column, min_row:max_row]
+                self.my_data.data_np = new_data_np
+                # Reset column/row labels
+                new_column_labels = self.my_data.column_labels[min_column:max_column]
+                self.my_data.column_labels = new_column_labels
+                new_row_labels = self.my_data.row_labels[min_row:max_row]
+                self.my_data.row_labels = new_row_labels
+                print("my new data: ", self.my_data.data_np)
+                print("column labels: ", self.my_data.column_labels)
+                print("row labels: ", self.my_data.row_labels)
+            else:
+                # The values entered were not correct
+                print("Please enter integer values for rows/columns")
 
         # Don't allow user to submit file again and enable the groups again
         self.operations_group.setDisabled(False)
-        self.dataRange_group.setDisabled(False)
+        self.dataRange_group.setDisabled(True)
         self.output_group.setDisabled(False)
         self.data_entry_group.setDisabled(True)
         self.dataType_group.setDisabled(True)
@@ -416,7 +447,7 @@ class StatsOperator(QWidget):
                 if type(self.results[function]) is list:
                     for i in range(len(self.results[function])):
                         if self.results[function][i] != self.results[function][-1]:
-                            message += "\t" + self.headers[i + 1] + ": "
+                            message += "\t" + self.headers[i] + ": "
                         else:
                             message += "\tDifference between first and last column: "
                         message += str(self.results[function][i]) + "\n"
@@ -438,13 +469,47 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.cols = self.col_txtbx.text()
         self.dataEntryWindow.start()
 
+    def restart(self):
+        """Restart the app so user can make another calculation"""
+        self.calcResults_bttn.setEnabled(False)
+        self.operations_group.setEnabled(False)
+        self.output_group.setEnabled(False)
+        self.data_entry_group.setEnabled(True)
+        self.dataType_group.setEnabled(True)
+        self.dataRange_group.setEnabled(True)
+        self.submit_bttn.setEnabled(True)
+
+        # uncheck all operations
+        self.mean_chckbx.setChecked(False)
+        self.median_chckbx.setChecked(False)
+        self.mode_chckbx.setChecked(False)
+        self.stand_dev_chckbx.setChecked(False)
+        self.variance_chckbx.setChecked(False)
+        self.percentiles_chckbx.setChecked(False)
+        self.least_square_chckbx.setChecked(False)
+        self.prob_dist_chckbx.setChecked(False)
+        self.corr_coeff_chckbx.setChecked(False)
+        self.spearman_chckbx.setChecked(False)
+
+        # default output group
+        self.displayResults_chckbx.setChecked(True)
+        self.saveResults_chckbx.setChecked(False)
+
+        # default data type group
+        self.interval_radiobttn.setChecked(True)
+
+        # Empty variables
+        self.set_defaults()
+        self.resultsWindow.init_ui()
+
 
 class ResultsDisplay(QWidget):
     def __init__(self):
         self.app = QApplication([])
         super(ResultsDisplay, self).__init__()
         self.w = QWidget()  # Base widget
-        self.w.resize(500, 600)  # Window default size
+        self.w.setFixedSize(900, 600) # Window default size
+        #self.w.resize(900, 600)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.init_ui()
@@ -455,14 +520,16 @@ class ResultsDisplay(QWidget):
         self.result_layout = QVBoxLayout()
         self.oper_lbl = QLabel(self.w)
         self.pretest_lbl = QLabel(self.w)
+        self.scroll = QScrollArea(self.w)
 
-        self.result_layout.addWidget(self.result_lbl)
-        self.result_layout.addWidget(self.pretest_lbl)
-        self.result_layout.addWidget(self.oper_lbl)
-        #TODO Add a scroll bar so user can see all results
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.resize(900, 600)
+        self.scroll.setWidget(self.result_lbl)
 
     def start(self):
         self.w.show()
+        self.close()
 
 
 class DataInputWindow(QWidget):

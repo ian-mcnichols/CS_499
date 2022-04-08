@@ -39,7 +39,7 @@ class Data:
         data = [self.data_np[x] for x in column_labels]
         row_labels = [x for x in data[0]]
         self.row_labels = row_labels
-        self.column_labels = column_labels
+        self.column_labels = column_labels[1:]
         data = data[1:]
         print("data:", data)
         self.data_np = np.array(data) #np.dstack(data)[0]
