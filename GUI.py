@@ -18,6 +18,12 @@ class StatsOperator(QWidget):
         self.w.setWindowTitle("Statistical Analyzer")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.initUI()
+        self.set_defaults()
+        self.resultsWindow = ResultsDisplay()
+        self.dataEntryWindow = DataInputWindow()
+
+    def set_defaults(self):
+        """Sets default parameters"""
         self.operations = []
         self.results = {}
         self.display = True
@@ -28,8 +34,6 @@ class StatsOperator(QWidget):
         self.filename = None
         self.datatype = "Interval"
         self.data_loaded = False
-        self.resultsWindow = ResultsDisplay()
-        self.dataEntryWindow = DataInputWindow()
 
     def initUI(self):
         """ All the formatting and button/widget declarations go here """
@@ -494,16 +498,7 @@ class StatsOperator(QWidget):
         self.interval_radiobttn.setChecked(True)
 
         # Empty variables
-        self.operations = []
-        self.results = {}
-        self.display = True
-        self.save = False
-        self.range_rows = None
-        self.range_cols = None
-        self.my_data = None
-        self.filename = None
-        self.datatype = "Interval"
-        self.data_loaded = False
+        self.set_defaults()
 
 
 class ResultsDisplay(QWidget):
@@ -528,8 +523,6 @@ class ResultsDisplay(QWidget):
         self.scroll.setWidgetResizable(True)
         self.scroll.resize(900, 600)
         self.scroll.setWidget(self.result_lbl)
-
-
 
     def start(self):
         self.w.show()
