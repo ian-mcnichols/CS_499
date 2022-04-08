@@ -2,7 +2,8 @@ import sys
 import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QAbstractScrollArea
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 import Data
 import Analyzer
@@ -507,7 +508,8 @@ class ResultsDisplay(QWidget):
         self.app = QApplication([])
         super(ResultsDisplay, self).__init__()
         self.w = QWidget()  # Base widget
-        self.w.resize(900, 600)  # Window default size
+        self.w.setFixedSize(900, 600) # Window default size
+        #self.w.resize(900, 600)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.init_ui()
