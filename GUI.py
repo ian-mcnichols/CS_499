@@ -20,6 +20,7 @@ class StatsOperator(QWidget):
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.initUI()
         self.set_defaults()
+        self.my_data = None
         self.resultsWindow = ResultsDisplay()
         self.dataEntryWindow = DataInputWindow()
 
@@ -465,10 +466,12 @@ class StatsOperator(QWidget):
 
     def display_manual_entry_window(self):
         """Opens the data entry window"""
+        self.my_data = Data.Data("GUI", self.datatype)
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
         self.dataEntryWindow.start(self.dataEntryWindow.rows,
-                                   self.dataEntryWindow.cols)
+                                   self.dataEntryWindow.cols,
+                                   self.my_data)
 
     def restart(self):
         """Restart the app so user can make another calculation"""
@@ -544,37 +547,47 @@ class DataInputWindow(QWidget):
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.rows = 0
         self.cols = 0
+        self.data = None
         self.textBoxes = []
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
-    def start(self, rows, cols):
+    def start(self, rows, cols, data_object):
+        self.data = data_object
         try:
             tmp = int(rows)
             tmp = int(cols)
         except ValueError:
             print("Warning, rows/cols not integers.")
             return
-        self.rows = rows
-        self.cols = cols
+        self.rows = int(rows)
+        self.cols = int(cols)
         self.setup_elements()
         self.w.show()
 
     def setup_elements(self):
+        self.textBoxes = []
         print(self.rows)
         print(self.cols)
-        for i in range(int(self.rows)):
-            for j in range(int(self.cols)):
+        for i in range(self.rows):
+            for j in range(self.cols):
                 self.textBoxes.append(QLineEdit())
                 self.inputLayout.addWidget(self.textBoxes[-1], i, j)
 
     def grab_input(self):
         print("Getting results")
+        for x in self.textBoxes:
+            if x.text() == "":
+                print("Warning: Entry box empty. Cannot get inputs.")
+                return
         print("User inputs:", [int(x.text()) for x in self.textBoxes])
         user_input = np.array([int(x.text()) for x in self.textBoxes])
-        user_input = np.reshape(user_input, (int(self.rows), int(self.cols)))
+        user_input = np.reshape(user_input, (self.rows, self.cols))
+        row_labels = ["Row {}".format(i+1) for i in range(self.rows)]
+        col_labels = ["Col {}".format(i+1) for i in range(self.cols)]
+        self.data.add_data(user_input, col_labels, row_labels)
         print("user input:", user_input)
 
 
@@ -582,3 +595,12 @@ if __name__ == "__main__":
     myGUI = StatsOperator()
     myGUI.start_GUI()
 
+
+"""
+        if self.dataEntryWindow.user_input is not None:
+            self.my_data = Data.Data("GUI", self.datatype)
+            self.my_data.add_data(self.dataEntryWindow.user_input,
+                                  self.dataEntryWindow.col_labels,
+                                  self.dataEntryWindow.row_labels)
+            print("my data:", self.my_data.data_np)
+"""
