@@ -467,7 +467,8 @@ class StatsOperator(QWidget):
         """Opens the data entry window"""
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
-        self.dataEntryWindow.start()
+        self.dataEntryWindow.start(self.dataEntryWindow.rows,
+                                   self.dataEntryWindow.cols)
 
     def restart(self):
         """Restart the app so user can make another calculation"""
@@ -543,71 +544,23 @@ class DataInputWindow(QWidget):
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.rows = 0
         self.cols = 0
-        self.setup_elements()
+        self.textBoxes = []
+        self.inputLayout = QGridLayout(self.w)
 
-    def start(self):
+    def start(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.setup_elements()
         self.w.show()
 
     def setup_elements(self):
-        self.inputLayout = QGridLayout(self.w)
-        self.txtbx1 = QLineEdit()
-        self.txtbx2 = QLineEdit()
-        self.txtbx3 = QLineEdit()
-        self.txtbx4 = QLineEdit()
-        self.txtbx5 = QLineEdit()
-        self.txtbx6 = QLineEdit()
-        self.txtbx7 = QLineEdit()
-        self.txtbx8 = QLineEdit()
-        self.txtbx9 = QLineEdit()
-        self.txtbx10 = QLineEdit()
-        self.txtbx11 = QLineEdit()
-        self.txtbx12 = QLineEdit()
-        self.txtbx13 = QLineEdit()
-        self.txtbx14 = QLineEdit()
-        self.txtbx15 = QLineEdit()
-        self.txtbx16 = QLineEdit()
-        self.txtbx17 = QLineEdit()
-        self.txtbx18 = QLineEdit()
-        self.txtbx19 = QLineEdit()
-        self.txtbx20 = QLineEdit()
-        self.txtbx21 = QLineEdit()
-        self.txtbx22 = QLineEdit()
-        self.txtbx23 = QLineEdit()
-        self.txtbx24 = QLineEdit()
-        self.txtbx25 = QLineEdit()
-
-        self.textBoxes = [
-            [self.txtbx1, self.txtbx2, self.txtbx3, self.txtbx4, self.txtbx5],
-            [self.txtbx6, self.txtbx7, self.txtbx8, self.txtbx9, self.txtbx10],
-            [self.txtbx11, self.txtbx12, self.txtbx13, self.txtbx14, self.txtbx15],
-            [self.txtbx16, self.txtbx17, self.txtbx18, self.txtbx19, self.txtbx20],
-            [self.txtbx21, self.txtbx22, self.txtbx23, self.txtbx24, self.txtbx25]]
-
-        self.inputLayout.addWidget(self.txtbx1, 0, 0)
-        self.inputLayout.addWidget(self.txtbx2, 0, 1)
-        self.inputLayout.addWidget(self.txtbx3, 0, 2)
-        self.inputLayout.addWidget(self.txtbx4, 0, 3)
-        self.inputLayout.addWidget(self.txtbx5, 0, 4)
-        self.inputLayout.addWidget(self.txtbx6, 1, 0)
-        self.inputLayout.addWidget(self.txtbx7, 1, 1)
-        self.inputLayout.addWidget(self.txtbx8, 1, 2)
-        self.inputLayout.addWidget(self.txtbx9, 1, 3)
-        self.inputLayout.addWidget(self.txtbx10, 1, 4)
-        self.inputLayout.addWidget(self.txtbx11, 2, 0)
-        self.inputLayout.addWidget(self.txtbx12, 2, 1)
-        self.inputLayout.addWidget(self.txtbx13, 2, 2)
-        self.inputLayout.addWidget(self.txtbx14, 2, 3)
-        self.inputLayout.addWidget(self.txtbx15, 2, 4)
-        self.inputLayout.addWidget(self.txtbx16, 3, 0)
-        self.inputLayout.addWidget(self.txtbx17, 3, 1)
-        self.inputLayout.addWidget(self.txtbx18, 3, 2)
-        self.inputLayout.addWidget(self.txtbx19, 3, 3)
-        self.inputLayout.addWidget(self.txtbx20, 3, 4)
-        self.inputLayout.addWidget(self.txtbx21, 4, 0)
-        self.inputLayout.addWidget(self.txtbx22, 4, 1)
-        self.inputLayout.addWidget(self.txtbx23, 4, 2)
-        self.inputLayout.addWidget(self.txtbx24, 4, 3)
-        self.inputLayout.addWidget(self.txtbx25, 4, 4)
+        print("setup elements")
+        print(self.rows)
+        print(self.cols)
+        for i in range(int(self.rows)):
+            for j in range(int(self.cols)):
+                print(i, j)
+                self.inputLayout.addWidget(QLineEdit(), i, j)
 
         self.submitData_bttn = QPushButton("Submit data")
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
