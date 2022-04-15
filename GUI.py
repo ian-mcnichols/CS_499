@@ -545,7 +545,10 @@ class DataInputWindow(QWidget):
         self.rows = 0
         self.cols = 0
         self.textBoxes = []
+        self.submitData_bttn = QPushButton("Submit data")
+        self.submitData_bttn.clicked.connect(self.grab_results)
         self.inputLayout = QGridLayout(self.w)
+        self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
     def start(self, rows, cols):
         self.rows = rows
@@ -554,7 +557,6 @@ class DataInputWindow(QWidget):
         self.w.show()
 
     def setup_elements(self):
-        print("setup elements")
         print(self.rows)
         print(self.cols)
         for i in range(int(self.rows)):
@@ -562,8 +564,8 @@ class DataInputWindow(QWidget):
                 print(i, j)
                 self.inputLayout.addWidget(QLineEdit(), i, j)
 
-        self.submitData_bttn = QPushButton("Submit data")
-        self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
+    def grab_results(self):
+        print("Getting results")
 
 
 if __name__ == "__main__":
