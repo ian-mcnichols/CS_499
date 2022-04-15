@@ -104,7 +104,7 @@ class StatsOperator(QWidget):
         # Groups are disabled on startup
         self.operations_group.setDisabled(True)
         self.output_group.setDisabled(True)
-        self.calcResults_bttn.setDisabled(True)
+        #self.calcResults_bttn.setDisabled(True)
 
         # Have the operations checkboxes update automatically
         for checkbox in [
@@ -358,7 +358,8 @@ class StatsOperator(QWidget):
         The bulk of our logic goes here"""
         print("running calculations!")
         if not self.data_loaded:
-            self.load_file()
+            print("Cannot run without inputs loaded.")
+            return
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
@@ -471,11 +472,13 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.cols = self.col_txtbx.text()
         self.dataEntryWindow.start(self.dataEntryWindow.rows,
                                    self.dataEntryWindow.cols,
-                                   self.my_data)
+                                   self.my_data, self.data_loaded)
+        self.operations_group.setDisabled(False)
+        self.data_loaded = True
 
     def restart(self):
         """Restart the app so user can make another calculation"""
-        self.calcResults_bttn.setEnabled(False)
+        self.calcResults_bttn.setEnabled(True)
         self.operations_group.setEnabled(False)
         self.output_group.setEnabled(False)
         self.data_entry_group.setEnabled(True)
@@ -549,13 +552,15 @@ class DataInputWindow(QWidget):
         self.cols = 0
         self.data = None
         self.textBoxes = []
+        self.inputs_loaded = False
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
-    def start(self, rows, cols, data_object):
+    def start(self, rows, cols, data_object, inputs_loaded):
         self.data = data_object
+        self.inputs_loaded = inputs_loaded
         try:
             tmp = int(rows)
             tmp = int(cols)
@@ -577,18 +582,16 @@ class DataInputWindow(QWidget):
                 self.inputLayout.addWidget(self.textBoxes[-1], i, j)
 
     def grab_input(self):
-        print("Getting results")
         for x in self.textBoxes:
             if x.text() == "":
                 print("Warning: Entry box empty. Cannot get inputs.")
                 return
-        print("User inputs:", [int(x.text()) for x in self.textBoxes])
         user_input = np.array([int(x.text()) for x in self.textBoxes])
         user_input = np.reshape(user_input, (self.rows, self.cols))
         row_labels = ["Row {}".format(i+1) for i in range(self.rows)]
         col_labels = ["Col {}".format(i+1) for i in range(self.cols)]
         self.data.add_data(user_input, col_labels, row_labels)
-        print("user input:", user_input)
+        self.inputs_loaded = True
 
 
 if __name__ == "__main__":
