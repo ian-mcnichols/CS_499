@@ -470,7 +470,7 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.cols = self.col_txtbx.text()
         self.dataEntryWindow.start(self.dataEntryWindow.rows,
                                    self.dataEntryWindow.cols,
-                                   self.my_data, self.data_loaded)
+                                   self.my_data)
         self.operations_group.setDisabled(False)
         self.data_loaded = True
 
@@ -550,15 +550,13 @@ class DataInputWindow(QWidget):
         self.cols = 0
         self.data = None
         self.textBoxes = []
-        self.inputs_loaded = False
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
-    def start(self, rows, cols, data_object, inputs_loaded):
+    def start(self, rows, cols, data_object):
         self.data = data_object
-        self.inputs_loaded = inputs_loaded
         try:
             tmp = int(rows)
             tmp = int(cols)
@@ -589,7 +587,6 @@ class DataInputWindow(QWidget):
         row_labels = ["Row {}".format(i+1) for i in range(self.rows)]
         col_labels = ["Col {}".format(i+1) for i in range(self.cols)]
         self.data.add_data(user_input, col_labels, row_labels)
-        self.inputs_loaded = True
 
 
 if __name__ == "__main__":
