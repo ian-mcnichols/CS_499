@@ -556,6 +556,11 @@ class DataInputWindow(QWidget):
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
     def start(self, rows, cols, data_object):
+        """Checks inputs and shows window
+        :param rows: String, number of rows to add
+        :param cols: String, number of columns to add
+        :param data_object: Data.Data
+        """
         self.data = data_object
         try:
             tmp = int(rows)
@@ -569,6 +574,7 @@ class DataInputWindow(QWidget):
         self.w.show()
 
     def setup_elements(self):
+        """Initializes input array boxes."""
         self.textBoxes = []
         print(self.rows)
         print(self.cols)
@@ -578,6 +584,7 @@ class DataInputWindow(QWidget):
                 self.inputLayout.addWidget(self.textBoxes[-1], i, j)
 
     def grab_input(self):
+        """Converts input to variables for data object"""
         for x in self.textBoxes:
             if x.text() == "":
                 print("Warning: Entry box empty. Cannot get inputs.")
