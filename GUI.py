@@ -124,6 +124,7 @@ class StatsOperator(QWidget):
         # show manual entry window if enter data is clicked
         self.enterData_bttn.clicked.connect(self.display_manual_entry_window)
 
+    # GUI layout and organization
     def file_entry(self):
         """File name option:"""
         self.filename_radiobttn = QRadioButton("Enter a csv file")
@@ -394,21 +395,6 @@ class StatsOperator(QWidget):
             self.show_results_window()
         print("Program Complete")
         return
-
-    #  toggle functions
-    def set_datatype_interval(self):
-        self.datatype = "Interval"
-
-    def set_datatype_ordinal(self):
-        self.datatype = "Ordinal"
-
-    def toggle_display(self):
-        self.display = not self.display
-        print("display is set to: ", self.display)
-
-    def toggle_save(self):
-        self.save = not self.save
-        print("save output is set to: ", self.save)
         
     def update_operations(self):
         """continually check and review the operations boxes to update the
@@ -438,6 +424,7 @@ class StatsOperator(QWidget):
         else:
             self.calcResults_bttn.setDisabled(False)
 
+    # Additional window options
     def show_results_window(self):
         """Displays results from calculations to screen"""
         message = ""
@@ -507,7 +494,23 @@ class StatsOperator(QWidget):
         self.set_defaults()
         self.resultsWindow.init_ui()
 
+    #  Toggle functions
+    def set_datatype_interval(self):
+        self.datatype = "Interval"
 
+    def set_datatype_ordinal(self):
+        self.datatype = "Ordinal"
+
+    def toggle_display(self):
+        self.display = not self.display
+        print("display is set to: ", self.display)
+
+    def toggle_save(self):
+        self.save = not self.save
+        print("save output is set to: ", self.save)
+
+
+# Other window classes
 class ResultsDisplay(QWidget):
     def __init__(self):
         self.app = QApplication([])
@@ -600,12 +603,3 @@ if __name__ == "__main__":
     myGUI = StatsOperator()
     myGUI.start_GUI()
 
-
-"""
-        if self.dataEntryWindow.user_input is not None:
-            self.my_data = Data.Data("GUI", self.datatype)
-            self.my_data.add_data(self.dataEntryWindow.user_input,
-                                  self.dataEntryWindow.col_labels,
-                                  self.dataEntryWindow.row_labels)
-            print("my data:", self.my_data.data_np)
-"""
