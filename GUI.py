@@ -312,12 +312,10 @@ class StatsOperator(QWidget):
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data
-            self.headers = my_data.column_labels
             print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
             self.my_data = my_data
-            self.headers = my_data.column_labels
             print("My data: ", self.my_data.data_np)
         self.data_loaded = True
         # If user has selected a range
@@ -380,15 +378,15 @@ class StatsOperator(QWidget):
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=True)
                 visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=True)
-            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
             self.show_results_window()
         elif self.display is False and self.save:
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=False, save=True)
                 visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=False, save=True)
-            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
         elif self.display and self.save is False:
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=False)
@@ -449,7 +447,7 @@ class StatsOperator(QWidget):
                 if type(self.results[function]) is list:
                     for i in range(len(self.results[function])):
                         if self.results[function][i] != self.results[function][-1]:
-                            message += "\t" + self.headers[i] + ": "
+                            message += "\t" + self.my_data.column_labels[i] + ": "
                         else:
                             message += "\tDifference between first and last column: "
                         message += str(self.results[function][i]) + "\n"
