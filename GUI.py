@@ -546,11 +546,17 @@ class DataInputWindow(QWidget):
         self.cols = 0
         self.textBoxes = []
         self.submitData_bttn = QPushButton("Submit data")
-        self.submitData_bttn.clicked.connect(self.grab_results)
+        self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
         self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
     def start(self, rows, cols):
+        try:
+            tmp = int(rows)
+            tmp = int(cols)
+        except ValueError:
+            print("Warning, rows/cols not integers.")
+            return
         self.rows = rows
         self.cols = cols
         self.setup_elements()
@@ -561,11 +567,15 @@ class DataInputWindow(QWidget):
         print(self.cols)
         for i in range(int(self.rows)):
             for j in range(int(self.cols)):
-                print(i, j)
-                self.inputLayout.addWidget(QLineEdit(), i, j)
+                self.textBoxes.append(QLineEdit())
+                self.inputLayout.addWidget(self.textBoxes[-1], i, j)
 
-    def grab_results(self):
+    def grab_input(self):
         print("Getting results")
+        print("User inputs:", [int(x.text()) for x in self.textBoxes])
+        user_input = np.array([int(x.text()) for x in self.textBoxes])
+        user_input = np.reshape(user_input, (int(self.rows), int(self.cols)))
+        print("user input:", user_input)
 
 
 if __name__ == "__main__":
