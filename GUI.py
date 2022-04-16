@@ -146,11 +146,11 @@ class StatsOperator(QWidget):
         self.numRows_lbl = QLabel(self.w)
         self.numRows_lbl.setText("Number of rows: ")
         self.row_txtbx = QLineEdit(self.w)
-        self.row_txtbx.setPlaceholderText("Enter a number 1-5")
+        self.row_txtbx.setPlaceholderText("Enter a number")
         self.numCol_lbl = QLabel(self.w)
         self.numCol_lbl.setText("Number of columns: ")
         self.col_txtbx = QLineEdit(self.w)
-        self.col_txtbx.setPlaceholderText("Enter a number 1-5")
+        self.col_txtbx.setPlaceholderText("Enter a number")
         self.enterData_bttn = QPushButton("Enter data")
         self.dataRow_txtbx_layout = QHBoxLayout()
         self.dataRow_txtbx_layout.addWidget(self.numRows_lbl)
@@ -556,7 +556,6 @@ class DataInputWindow(QWidget):
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
-        self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
 
     def start(self, rows, cols, data_object):
         """Checks inputs and shows window
@@ -585,6 +584,7 @@ class DataInputWindow(QWidget):
             for j in range(self.cols):
                 self.textBoxes.append(QLineEdit())
                 self.inputLayout.addWidget(self.textBoxes[-1], i, j)
+        self.inputLayout.addWidget(self.submitData_bttn, self.rows+1, 1, self.cols+1, 3)
 
     def grab_input(self):
         """Converts input to variables for data object"""
