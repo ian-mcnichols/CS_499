@@ -573,9 +573,13 @@ class DataInputWindow(QWidget):
         self.rows = int(rows)
         if self.rows > 50:
             self.rows = 50
+        elif self.rows < 1:
+            return
         self.cols = int(cols)
         if self.cols > 50:
             self.cols = 50
+        elif self.cols < 1:
+            return
         self.setup_elements()
         self.w.show()
 
