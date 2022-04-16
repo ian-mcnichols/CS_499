@@ -359,6 +359,9 @@ class StatsOperator(QWidget):
         if not self.data_loaded:
             print("Cannot run without inputs loaded.")
             return
+        elif self.my_data.data_np is None:
+            print("Cannot run without data numpy.")
+            return
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
