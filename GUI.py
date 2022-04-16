@@ -597,6 +597,7 @@ class DataInputWindow(QWidget):
         row_labels = ["Row {}".format(i+1) for i in range(self.rows)]
         col_labels = ["Col {}".format(i+1) for i in range(self.cols)]
         self.data.add_data(user_input, col_labels, row_labels)
+        self.w.close()
 
 
 if __name__ == "__main__":
