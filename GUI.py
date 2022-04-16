@@ -361,6 +361,7 @@ class StatsOperator(QWidget):
             return
         elif self.my_data.data_np is None:
             print("Cannot run without data numpy.")
+            self.operations_group.setDisabled(True)
             return
         for calculation in self.operations:
             print("running {}".format(calculation))
