@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import visualize
 from matplotlib.ticker import PercentFormatter
 
+
 def run_mean(data):
     """Calculates the mean of the given data
 
@@ -161,12 +162,16 @@ def run_percentiles(data):
     return [column_results, change_percentile]
 
 
-def run_probability_dist(data, datatype="Interval"):
+def run_probability_dist(data, datatype):
     # change to histogram output
     # ordinal and interval
-    # TODO: make work for ordinal data
     if datatype == "Interval":
-        dist_data = data[data.dtype.names[-1]] - data[data.dtype.names[1]]
+        for column in data:
+            plt.figure()
+            temp = np.ndarray.tolist(column)
+            temp.sort()
+            plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
+            plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
     elif datatype == "Ordinal":
         # For each row/question
         columns, rows = data.shape
@@ -183,14 +188,9 @@ def run_probability_dist(data, datatype="Interval"):
             print(row_values)
             plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
             plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-        plt.show()
-        return
     else:
         raise Exception("Bad data type: {}".format(datatype))
-    x = np.linspace(min(dist_data), max(dist_data), len(dist_data))
-    mu, std = stats.norm.fit(dist_data)
-    snd = stats.norm(mu, std)
-    return snd.pdf(x), mu, std
+    plt.show()
 
 
 def run_least_square_line(data):
