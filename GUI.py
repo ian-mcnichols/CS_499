@@ -458,6 +458,9 @@ class StatsOperator(QWidget):
         self.my_data = Data.Data("GUI", self.datatype)
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
+        if self.row_txtbx.text() == "" or self.col_txtbx.text() == "":
+            print("no rows or columns entered.")
+            return
         self.dataEntryWindow.start(self.dataEntryWindow.rows,
                                    self.dataEntryWindow.cols,
                                    self.my_data)
