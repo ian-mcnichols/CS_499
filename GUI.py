@@ -571,7 +571,11 @@ class DataInputWindow(QWidget):
             print("Warning, rows/cols not integers.")
             return
         self.rows = int(rows)
+        if self.rows > 50:
+            self.rows = 50
         self.cols = int(cols)
+        if self.cols > 50:
+            self.cols = 50
         self.setup_elements()
         self.w.show()
 
