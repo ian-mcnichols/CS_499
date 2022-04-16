@@ -464,8 +464,9 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.start(self.dataEntryWindow.rows,
                                    self.dataEntryWindow.cols,
                                    self.my_data)
-        self.operations_group.setDisabled(False)
-        self.data_loaded = True
+        if self.my_data.data_np is not None:
+            self.operations_group.setDisabled(False)
+            self.data_loaded = True
 
     def restart(self):
         """Restart the app so user can make another calculation"""
