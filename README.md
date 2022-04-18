@@ -1,15 +1,15 @@
 # Statistical Analyzer Codebase
 
 ## Contents:
-* driver.py
+* GUI.py
 * Analyzer.py
 * visualize.py
 * Data.py
 
-### driver.py
-This file contains the main function to call the other files as needed. It takes user input and calls appropriate functions. This is also where the library that maps data types to applicable functions and charts.
+### GUI.py
+This file runs all the other files and interacts with the user.
 
-### Analyzer.py
+###Analyzer.py
 This is the mathematics 'library' for our project. It has a driver to call a function given the function name and data, or each function can be called separately. The input for each operation is 'data', a numpy array of any given size. Each operation should check that the shape is correct before running.
 
 ### visualize.py
@@ -20,24 +20,20 @@ The class to read in or take in data from numpy array or csv/tab-delimited file.
 
 ## Dependencies:
 * Python 3.x (3.6-3.9 is best)
-* Numpy 1.21.x
-* Scipy 1.7.x
+* Numpy
+* Scipy
 * Matplotlib
-- These can be installed using conda install or pip install. The internet should have specific install instructions.
 
-## Operations: 
-* mean
-* median
-* mode
-* standard deviation
-* variance
-* coefficient of variance
-* percentiles
-* probability distribution
-* binomial distribution
-* least square line
-* 2 (Chi Square)
-* correlation coefficient
-* sign test
-* rank sum test
-* Spearman rank correlation coefficient
+## Environment Setup:
+
+> git clone https://github.com/ian-mcnichols/CS_499
+> 
+> cd CS_499
+> 
+> conda create -f env.yml
+> 
+> conda activate 499
+ 
+## Running the script:
+
+> python ./GUI.py
