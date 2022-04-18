@@ -10,13 +10,18 @@
 This file runs all the other files and interacts with the user.
 
 ###Analyzer.py
-This is the mathematics 'library' for our project. It has a driver to call a function given the function name and data, or each function can be called separately. The input for each operation is 'data', a numpy array of any given size. Each operation should check that the shape is correct before running.
+This is the mathematics 'library' for our project. It has a driver to call a function given 
+the function name and data, or each function can be called separately. The input for each 
+operation is 'data', a numpy array of any given size. Each operation should check that the 
+shape is correct before running.
 
 ### visualize.py
-This is the file to hold all data display/saving functionality. It should take in results and plot type, then use matplotlib to either display or save depending on the user's input. Mostly undeveloped.
+This is the file to hold all data display/saving functionality. 
 
 ### Data.py
-The class to read in or take in data from numpy array or csv/tab-delimited file. It holds the data as a numpy array, and the data type as a string. In the future it should also have functionality to only access specific rows/columns, although right now that can be done by accessing the numpy array. 
+The class to read in or take in data from numpy array or csv/tab-delimited file. It holds the
+data as a numpy array, and the data type as a string. After operations are finished running
+it saves the results to a dictionary.
 
 ## Dependencies:
 * Python 3.x (3.6-3.9 is best)
