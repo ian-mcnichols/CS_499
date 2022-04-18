@@ -42,3 +42,7 @@ it saves the results to a dictionary.
 ## Running the script:
 
 > python ./GUI.py
+
+## Alternative: .exe script
+
+Click and run GUI.exe file for the program to execute.
