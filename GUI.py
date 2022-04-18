@@ -310,6 +310,8 @@ class StatsOperator(QWidget):
             filename = self.fileName_txtbx.text()
         else:
             filename = str(QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*.csv)")[0])
+            if filename == "":
+                return
         self.fileName_txtbx.setPlaceholderText(filename)
         print("loading file {}!".format(filename))
         if self.datatype == 'Interval':
