@@ -467,6 +467,7 @@ class StatsOperator(QWidget):
                                    self.my_data)
         self.operations_group.setDisabled(False)
         self.data_loaded = True
+        self.enterData_bttn.setDisabled(True)
 
     def restart(self):
         """Restart the app so user can make another calculation"""
