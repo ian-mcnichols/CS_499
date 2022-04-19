@@ -4,6 +4,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
     QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QAbstractScrollArea
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QStyleFactory
 
 import Data
 import Analyzer
@@ -15,9 +16,12 @@ class StatsOperator(QWidget):
         self.app = QApplication([])
         super(StatsOperator, self).__init__()
         self.w = QWidget()  # Base widget
-        self.w.resize(500, 800)  # Window default size
+        self.w.setFixedSize(500, 850)  # Window is fixed size
         self.w.setWindowTitle("Statistical Analyzer")  # Window title
-        self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
+        with open('style.qss', 'r') as f:
+            style = f.read()
+            # Set the stylesheet of the application
+            self.app.setStyleSheet(style)
         self.initUI()
         self.set_defaults()
         self.resultsWindow = ResultsDisplay()
