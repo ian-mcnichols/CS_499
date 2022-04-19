@@ -24,6 +24,7 @@ class StatsOperator(QWidget):
             self.app.setStyleSheet(style)
         self.initUI()
         self.set_defaults()
+        self.my_data = None
         self.resultsWindow = ResultsDisplay()
         self.dataEntryWindow = DataInputWindow()
 
@@ -107,7 +108,7 @@ class StatsOperator(QWidget):
         # Groups are disabled on startup
         self.operations_group.setDisabled(True)
         self.output_group.setDisabled(True)
-        self.calcResults_bttn.setDisabled(True)
+        #self.calcResults_bttn.setDisabled(True)
 
         # Have the operations checkboxes update automatically
         for checkbox in [
@@ -127,6 +128,7 @@ class StatsOperator(QWidget):
         # show manual entry window if enter data is clicked
         self.enterData_bttn.clicked.connect(self.display_manual_entry_window)
 
+    # GUI layout and organization
     def file_entry(self):
         """File name option:"""
         self.filename_radiobttn = QRadioButton("Enter a csv file")
@@ -148,11 +150,13 @@ class StatsOperator(QWidget):
         self.numRows_lbl = QLabel(self.w)
         self.numRows_lbl.setText("Number of rows: ")
         self.row_txtbx = QLineEdit(self.w)
+
         self.row_txtbx.setPlaceholderText("Enter a number 1-50")
         self.numCol_lbl = QLabel(self.w)
         self.numCol_lbl.setText("Number of columns: ")
         self.col_txtbx = QLineEdit(self.w)
         self.col_txtbx.setPlaceholderText("Enter a number 1-50")
+
         self.enterData_bttn = QPushButton("Enter data")
         self.dataRow_txtbx_layout = QHBoxLayout()
         self.dataRow_txtbx_layout.addWidget(self.numRows_lbl)
@@ -315,12 +319,10 @@ class StatsOperator(QWidget):
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data
-            self.headers = my_data.column_labels
             print("My data: ", self.my_data)
         else:
             my_data = Data.Data(filename, "Ordinal")
             self.my_data = my_data
-            self.headers = my_data.column_labels
             print("My data: ", self.my_data.data_np)
         self.data_loaded = True
         # If user has selected a range
@@ -361,7 +363,12 @@ class StatsOperator(QWidget):
         The bulk of our logic goes here"""
         print("running calculations!")
         if not self.data_loaded:
-            self.load_file()
+            print("Cannot run without inputs loaded.")
+            return
+        elif self.my_data.data_np is None:
+            print("Cannot run without data numpy.")
+            self.operations_group.setDisabled(True)
+            return
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
@@ -382,15 +389,15 @@ class StatsOperator(QWidget):
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=True)
                 visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=True)
-            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
             self.show_results_window()
         elif self.display is False and self.save:
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=False, save=True)
                 visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=False, save=True)
-            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
+            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
         elif self.display and self.save is False:
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=False)
@@ -398,21 +405,6 @@ class StatsOperator(QWidget):
             self.show_results_window()
         print("Program Complete")
         return
-
-    #  toggle functions
-    def set_datatype_interval(self):
-        self.datatype = "Interval"
-
-    def set_datatype_ordinal(self):
-        self.datatype = "Ordinal"
-
-    def toggle_display(self):
-        self.display = not self.display
-        print("display is set to: ", self.display)
-
-    def toggle_save(self):
-        self.save = not self.save
-        print("save output is set to: ", self.save)
         
     def update_operations(self):
         """continually check and review the operations boxes to update the
@@ -442,6 +434,7 @@ class StatsOperator(QWidget):
         else:
             self.calcResults_bttn.setDisabled(False)
 
+    # Additional window options
     def show_results_window(self):
         """Displays results from calculations to screen"""
         message = ""
@@ -451,7 +444,7 @@ class StatsOperator(QWidget):
                 if type(self.results[function]) is list:
                     for i in range(len(self.results[function])):
                         if self.results[function][i] != self.results[function][-1]:
-                            message += "\t" + self.headers[i] + ": "
+                            message += "\t" + self.my_data.column_labels[i] + ": "
                         else:
                             message += "\tDifference between first and last column: "
                         message += str(self.results[function][i]) + "\n"
@@ -469,13 +462,22 @@ class StatsOperator(QWidget):
 
     def display_manual_entry_window(self):
         """Opens the data entry window"""
+        self.my_data = Data.Data("GUI", self.datatype)
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
-        self.dataEntryWindow.start()
+        if self.row_txtbx.text() == "" or self.col_txtbx.text() == "":
+            print("no rows or columns entered.")
+            return
+        self.dataEntryWindow.start(self.dataEntryWindow.rows,
+                                   self.dataEntryWindow.cols,
+                                   self.my_data)
+        self.operations_group.setDisabled(False)
+        self.data_loaded = True
+        self.enterData_bttn.setDisabled(True)
 
     def restart(self):
         """Restart the app so user can make another calculation"""
-        self.calcResults_bttn.setEnabled(False)
+        self.calcResults_bttn.setEnabled(True)
         self.operations_group.setEnabled(False)
         self.output_group.setEnabled(False)
         self.data_entry_group.setEnabled(True)
@@ -506,7 +508,23 @@ class StatsOperator(QWidget):
         self.set_defaults()
         self.resultsWindow.init_ui()
 
+    #  Toggle functions
+    def set_datatype_interval(self):
+        self.datatype = "Interval"
 
+    def set_datatype_ordinal(self):
+        self.datatype = "Ordinal"
+
+    def toggle_display(self):
+        self.display = not self.display
+        print("display is set to: ", self.display)
+
+    def toggle_save(self):
+        self.save = not self.save
+        print("save output is set to: ", self.save)
+
+
+# Other window classes
 class ResultsDisplay(QWidget):
     def __init__(self):
         self.app = QApplication([])
@@ -547,74 +565,61 @@ class DataInputWindow(QWidget):
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.rows = 0
         self.cols = 0
-        self.setup_elements()
+        self.data = None
+        self.textBoxes = []
+        self.submitData_bttn = QPushButton("Submit data")
+        self.submitData_bttn.clicked.connect(self.grab_input)
+        self.inputLayout = QGridLayout(self.w)
 
-    def start(self):
+    def start(self, rows, cols, data_object):
+        """Checks inputs and shows window
+        :param rows: String, number of rows to add
+        :param cols: String, number of columns to add
+        :param data_object: Data.Data
+        """
+        self.data = data_object
+        try:
+            tmp = int(rows)
+            tmp = int(cols)
+        except ValueError:
+            print("Warning, rows/cols not integers.")
+            return
+        self.rows = int(rows)
+        if self.rows > 50:
+            self.rows = 50
+        elif self.rows < 1:
+            return
+        self.cols = int(cols)
+        if self.cols > 50:
+            self.cols = 50
+        elif self.cols < 1:
+            return
+        self.setup_elements()
         self.w.show()
 
     def setup_elements(self):
-        self.inputLayout = QGridLayout(self.w)
-        self.txtbx1 = QLineEdit()
-        self.txtbx2 = QLineEdit()
-        self.txtbx3 = QLineEdit()
-        self.txtbx4 = QLineEdit()
-        self.txtbx5 = QLineEdit()
-        self.txtbx6 = QLineEdit()
-        self.txtbx7 = QLineEdit()
-        self.txtbx8 = QLineEdit()
-        self.txtbx9 = QLineEdit()
-        self.txtbx10 = QLineEdit()
-        self.txtbx11 = QLineEdit()
-        self.txtbx12 = QLineEdit()
-        self.txtbx13 = QLineEdit()
-        self.txtbx14 = QLineEdit()
-        self.txtbx15 = QLineEdit()
-        self.txtbx16 = QLineEdit()
-        self.txtbx17 = QLineEdit()
-        self.txtbx18 = QLineEdit()
-        self.txtbx19 = QLineEdit()
-        self.txtbx20 = QLineEdit()
-        self.txtbx21 = QLineEdit()
-        self.txtbx22 = QLineEdit()
-        self.txtbx23 = QLineEdit()
-        self.txtbx24 = QLineEdit()
-        self.txtbx25 = QLineEdit()
+        """Initializes input array boxes."""
+        self.textBoxes = []
+        print(self.rows)
+        print(self.cols)
+        for i in range(self.rows):
+            for j in range(self.cols):
+                self.textBoxes.append(QLineEdit())
+                self.inputLayout.addWidget(self.textBoxes[-1], i, j)
+        self.inputLayout.addWidget(self.submitData_bttn, self.rows+1, 1, self.cols+1, 3)
 
-        self.textBoxes = [
-            [self.txtbx1, self.txtbx2, self.txtbx3, self.txtbx4, self.txtbx5],
-            [self.txtbx6, self.txtbx7, self.txtbx8, self.txtbx9, self.txtbx10],
-            [self.txtbx11, self.txtbx12, self.txtbx13, self.txtbx14, self.txtbx15],
-            [self.txtbx16, self.txtbx17, self.txtbx18, self.txtbx19, self.txtbx20],
-            [self.txtbx21, self.txtbx22, self.txtbx23, self.txtbx24, self.txtbx25]]
-
-        self.inputLayout.addWidget(self.txtbx1, 0, 0)
-        self.inputLayout.addWidget(self.txtbx2, 0, 1)
-        self.inputLayout.addWidget(self.txtbx3, 0, 2)
-        self.inputLayout.addWidget(self.txtbx4, 0, 3)
-        self.inputLayout.addWidget(self.txtbx5, 0, 4)
-        self.inputLayout.addWidget(self.txtbx6, 1, 0)
-        self.inputLayout.addWidget(self.txtbx7, 1, 1)
-        self.inputLayout.addWidget(self.txtbx8, 1, 2)
-        self.inputLayout.addWidget(self.txtbx9, 1, 3)
-        self.inputLayout.addWidget(self.txtbx10, 1, 4)
-        self.inputLayout.addWidget(self.txtbx11, 2, 0)
-        self.inputLayout.addWidget(self.txtbx12, 2, 1)
-        self.inputLayout.addWidget(self.txtbx13, 2, 2)
-        self.inputLayout.addWidget(self.txtbx14, 2, 3)
-        self.inputLayout.addWidget(self.txtbx15, 2, 4)
-        self.inputLayout.addWidget(self.txtbx16, 3, 0)
-        self.inputLayout.addWidget(self.txtbx17, 3, 1)
-        self.inputLayout.addWidget(self.txtbx18, 3, 2)
-        self.inputLayout.addWidget(self.txtbx19, 3, 3)
-        self.inputLayout.addWidget(self.txtbx20, 3, 4)
-        self.inputLayout.addWidget(self.txtbx21, 4, 0)
-        self.inputLayout.addWidget(self.txtbx22, 4, 1)
-        self.inputLayout.addWidget(self.txtbx23, 4, 2)
-        self.inputLayout.addWidget(self.txtbx24, 4, 3)
-        self.inputLayout.addWidget(self.txtbx25, 4, 4)
-
-        self.submitData_bttn = QPushButton("Submit data")
-        self.inputLayout.addWidget(self.submitData_bttn, 5, 1, 5, 3)
+    def grab_input(self):
+        """Converts input to variables for data object"""
+        for x in self.textBoxes:
+            if x.text() == "":
+                print("Warning: Entry box empty. Cannot get inputs.")
+                return
+        user_input = np.array([int(x.text()) for x in self.textBoxes])
+        user_input = np.reshape(user_input, (self.rows, self.cols))
+        row_labels = ["Row {}".format(i+1) for i in range(self.rows)]
+        col_labels = ["Col {}".format(i+1) for i in range(self.cols)]
+        self.data.add_data(user_input, col_labels, row_labels)
+        self.w.close()
 
 
 if __name__ == "__main__":
