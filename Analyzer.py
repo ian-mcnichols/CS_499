@@ -57,7 +57,7 @@ def run_median(data, datatype="Interval"):
             # Add number of responses for each index number to list
             for j in range(len(row)):
                 num_responses = row[j]
-                for x in range(num_responses):
+                for x in range(int(num_responses)):
                     row_values.append(j)
             # Find median response for each row
             row_median = np.median(row_values)
@@ -202,7 +202,7 @@ def run_probability_dist(data, datatype):
 def run_least_square_line(data):
     """Calculates the least square regression line of correlation between first and last column of data
 
-    :param data: data to run the funtion on
+    :param data: data to run the function on
     :return: slope of LSRL, y-intercept of LSRL
     """
     out = stats.linregress(data[0], data[-1])
@@ -212,7 +212,7 @@ def run_least_square_line(data):
 def run_correlation_coeff(data):
     """Return Pearson product-moment correlation coefficient
 
-    :param data: data to run the funtion on
+    :param data: data to run the function on
     :return: float, the minimum value of the correlation coefficient matrix
     """
     # take the first value of the correlation matrix
