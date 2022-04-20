@@ -1,3 +1,4 @@
+import os
 import sys
 import numpy as np
 from PyQt5.QtCore import Qt
@@ -362,6 +363,8 @@ class StatsOperator(QWidget):
         Save or display outputs according to user's choices.
         The bulk of our logic goes here"""
         print("running calculations!")
+        if self.save:
+            os.makedirs("output/", exist_ok=True)
         if not self.data_loaded:
             self.load_file()
         for calculation in self.operations:
