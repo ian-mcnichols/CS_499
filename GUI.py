@@ -383,24 +383,20 @@ class StatsOperator(QWidget):
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
-        if self.display and self.save:
+        if self.display or self.save:
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=True)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=True)
-            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
-            self.show_results_window()
-        elif self.display is False and self.save:
-            if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=False, save=True)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=False, save=True)
-            visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
-        elif self.display and self.save is False:
-            if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=False)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=False)
-            self.show_results_window()
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=self.display,
+                                     save=self.save)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=self.display,
+                                     save=self.save)
+            if "Probability distribution" in self.operations:
+                visualize.plot_chart(self.my_data, "Probability Distribution", display=True, save=True,
+                                     data_type=self.datatype)
+            if self.save:
+                visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
+                visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+            if self.display:
+                self.show_results_window()
         print("Program Complete")
         return
 
