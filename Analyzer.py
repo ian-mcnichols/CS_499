@@ -172,6 +172,7 @@ def run_probability_dist(data, datatype):
             temp.sort()
             plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
             plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
+        plt.show()
     elif datatype == "Ordinal":
         # For each row/question
         columns, rows = data.shape
@@ -188,9 +189,12 @@ def run_probability_dist(data, datatype):
             print(row_values)
             plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
             plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
+            plt.title("Row {}".format(i))
+            plt.savefig("output/Row_{}_distribution".format(i))
+            plt.show()
     else:
         raise Exception("Bad data type: {}".format(datatype))
-    plt.show()
+
 
 
 def run_least_square_line(data):
