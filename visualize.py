@@ -136,7 +136,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             if display:
                 plt.show()
     elif plot_type == "Probability Distribution":
-        if data_type.lower() == "ordinal":
+        if data_type.lower() == "interval":
             print("Plotting probability distribution")
             for idx, column in enumerate(data.data_np):
                 plt.figure()
@@ -149,20 +149,21 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                     plt.savefig("output/Col_{}_distribution".format(idx))
             if display:
                 plt.show()
-        elif data_type.lower == "interval":
+        elif data_type.lower() == "ordinal":
             print("Plotting probability distribution")
             columns, rows = data.data_np.shape
+            print("num rows:", rows)
             for i in range(rows):
                 # Get row as list
                 plt.figure()
-                row = list(data[:, i])
+                row = list(data.data_np[:, i])
                 row_values = []
                 # Add number of responses for each index number to list
                 for j in range(len(row)):
                     num_responses = row[j]
                     for x in range(num_responses):
                         row_values.append(j+1)
-                print(row_values)
+                #print(row_values)
                 plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
                 plt.title("Row {}".format(i))
