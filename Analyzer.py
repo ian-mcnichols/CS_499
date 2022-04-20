@@ -166,12 +166,14 @@ def run_probability_dist(data, datatype):
     # change to histogram output
     # ordinal and interval
     if datatype == "Interval":
-        for column in data:
+        for idx, column in enumerate(data):
             plt.figure()
             temp = np.ndarray.tolist(column)
             temp.sort()
             plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
             plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
+            plt.title("Column {}".format(idx))
+            plt.savefig("output/Col_{}_distribution".format(idx))
         plt.show()
     elif datatype == "Ordinal":
         # For each row/question
