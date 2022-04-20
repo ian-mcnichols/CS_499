@@ -384,14 +384,15 @@ class StatsOperator(QWidget):
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
         if self.display or self.save:
+            print("operations list:", self.operations)
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=self.display,
                                      save=self.save)
                 visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=self.display,
                                      save=self.save)
             if "Probability distribution" in self.operations:
-                visualize.plot_chart(self.my_data, "Probability Distribution", display=True, save=True,
-                                     data_type=self.datatype)
+                visualize.plot_chart(self.my_data, "Probability Distribution", display=self.display,
+                                     save=self.save, data_type=self.datatype)
             if self.save:
                 visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
                 visualize.build_text("Results.txt", self.results, self.headers, self.datatype)

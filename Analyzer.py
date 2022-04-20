@@ -165,6 +165,7 @@ def run_percentiles(data):
 def run_probability_dist(data, datatype):
     # change to histogram output
     # ordinal and interval
+    return
     if datatype == "Interval":
         for idx, column in enumerate(data):
             plt.figure()
@@ -196,7 +197,6 @@ def run_probability_dist(data, datatype):
             plt.show()
     else:
         raise Exception("Bad data type: {}".format(datatype))
-
 
 
 def run_least_square_line(data):
