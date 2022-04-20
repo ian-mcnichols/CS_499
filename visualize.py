@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+from matplotlib.ticker import PercentFormatter
 
 
 def build_csv(output_file_name, results, headers, data_type):
@@ -134,5 +135,40 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.savefig("output/" + data.column_labels[i] + ' Histogram.jpg')
             if display:
                 plt.show()
+    elif plot_type == "Probability Distribution":
+        if data_type.lower() == "ordinal":
+            print("Plotting probability distribution")
+            for idx, column in enumerate(data.data_np):
+                plt.figure()
+                temp = np.ndarray.tolist(column)
+                temp.sort()
+                plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
+                plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
+                plt.title("Column {}".format(idx))
+                if save:
+                    plt.savefig("output/Col_{}_distribution".format(idx))
+            if display:
+                plt.show()
+        elif data_type.lower == "interval":
+            print("Plotting probability distribution")
+            columns, rows = data.data_np.shape
+            for i in range(rows):
+                # Get row as list
+                plt.figure()
+                row = list(data[:, i])
+                row_values = []
+                # Add number of responses for each index number to list
+                for j in range(len(row)):
+                    num_responses = row[j]
+                    for x in range(num_responses):
+                        row_values.append(j+1)
+                print(row_values)
+                plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
+                plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
+                plt.title("Row {}".format(i))
+                if save:
+                    plt.savefig("output/Row_{}_distribution".format(i))
+                if display:
+                    plt.show()
     else:
         raise Exception("Invalid chart type {}".format(plot_type))
