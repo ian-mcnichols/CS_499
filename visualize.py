@@ -7,7 +7,7 @@ def build_csv(output_file_name, results, headers, data_type):
     multi_funcs = ["Mean", "Median", "Mode", "Standard deviation", "Variance"]
     if output_file_name.endswith('.csv') is False:
         output_file_name += ".csv"
-    with open(output_file_name, 'w', newline='') as csv_file:
+    with open("output/" + output_file_name, 'w', newline='') as csv_file:
         write = csv.writer(csv_file)
         write.writerow(['Function', 'Value'])
         if data_type == "Interval":
@@ -39,11 +39,10 @@ def build_csv(output_file_name, results, headers, data_type):
         csv_file.close()
 
 
-
 def build_text(output_file_name, results, headers, data_type):
     if output_file_name.endswith('.txt') is False:
         output_file_name += ".txt"
-    with open(output_file_name, 'w', newline='') as csv_file:
+    with open("output/" + output_file_name, 'w', newline='') as csv_file:
         write = csv.writer(csv_file)
         write.writerow(['Function', 'Value'])
         if data_type == "Interval":
@@ -73,7 +72,7 @@ def build_text(output_file_name, results, headers, data_type):
 def save_jpeg(self, output_file_name):  # Static function, outputs one graph at a time. Reliant on plt state
     if output_file_name.endswith('.jpeg') is False:
         output_file_name += ".jpeg"
-    plt.savefig(output_file_name)
+    plt.savefig("output/" + output_file_name)
 
 
 def plot_chart(data, plot_type, results=None, data_type=None, save=True,
@@ -98,7 +97,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         plt.margins(x=0.005)
         plt.tight_layout()
         if save:
-            plt.savefig('Ordinal_Chart.jpg')
+            plt.savefig('output/' + 'Ordinal_Chart.jpg')
         if display:
             plt.show()
     elif plot_type == "box plot":
@@ -118,7 +117,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         plt.xticks(num_labels, labels)
         plt.title("Box and Whisker Plot for " + data.data_type + " Data")
         if save:
-            plt.savefig('Box_and_Whisker.jpg')
+            plt.savefig('output/' + 'Box_and_Whisker.jpg')
         if display:
             plt.show()
     elif plot_type == "Histogram":
@@ -132,7 +131,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             plt.ylabel("Number of Results")
             plt.title(data.column_labels[i] + " Scores Histogram")
             if save:
-                plt.savefig(data.column_labels[i] + ' Histogram.jpg')
+                plt.savefig("output/" + data.column_labels[i] + ' Histogram.jpg')
             if display:
                 plt.show()
     else:
