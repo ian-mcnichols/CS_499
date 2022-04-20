@@ -181,7 +181,7 @@ def run_probability_dist(data, datatype="Interval"):
 def run_least_square_line(data):
     """Calculates the least square regression line of correlation between first and last column of data
 
-    :param data: data to run the funtion on
+    :param data: data to run the function on
     :return: slope of LSRL, y-intercept of LSRL
     """
     out = stats.linregress(data[0], data[-1])
@@ -191,7 +191,7 @@ def run_least_square_line(data):
 def run_correlation_coeff(data):
     """Return Pearson product-moment correlation coefficient
 
-    :param data: data to run the funtion on
+    :param data: data to run the function on
     :return: float, the minimum value of the correlation coefficient matrix
     """
     # take the first value of the correlation matrix

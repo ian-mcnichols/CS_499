@@ -17,7 +17,7 @@ def build_csv(output_file_name, results, headers, data_type):
                     if function in multi_funcs:
                         for i in range(len(results[function])):
                             if results[function][i] != results[function][-1]:
-                                row = [function + " " + headers[i+1]]
+                                row = [function + " " + headers[i]]
                             else:
                                 row = [function + " Difference between first and last column"]
                             row.append(results[function][i])
@@ -52,7 +52,7 @@ def build_text(output_file_name, results, headers, data_type):
                 if type(results[function]) is list:
                     for i in range(len(results[function])):
                         if results[function][i] != results[function][-1]:
-                            row = [function + " " + headers[i + 1]]
+                            row = [function + " " + headers[i]]
                         else:
                             row = [function + " Difference between first and last column"]
                         row.append(results[function][i])

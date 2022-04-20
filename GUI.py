@@ -108,7 +108,7 @@ class StatsOperator(QWidget):
         # Groups are disabled on startup
         self.operations_group.setDisabled(True)
         self.output_group.setDisabled(True)
-        #self.calcResults_bttn.setDisabled(True)
+        self.calcResults_bttn.setDisabled(True)
 
         # Have the operations checkboxes update automatically
         for checkbox in [
