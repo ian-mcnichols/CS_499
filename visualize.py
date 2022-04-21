@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import csv
 
 
@@ -39,41 +38,37 @@ def build_csv(output_file_name, results, headers, data_type):
         csv_file.close()
 
 
-
 def build_text(output_file_name, results, headers, data_type):
     if output_file_name.endswith('.txt') is False:
         output_file_name += ".txt"
-    with open(output_file_name, 'w', newline='') as csv_file:
-        write = csv.writer(csv_file)
-        write.writerow(['Function', 'Value'])
-        if data_type == "Interval":
-            for function in results:
-                row = [function]
-                if type(results[function]) is list:
-                    for i in range(len(results[function])):
-                        if results[function][i] != results[function][-1]:
-                            row = [function + " " + headers[i]]
-                        else:
-                            row = [function + " Difference between first and last column"]
-                        row.append(results[function][i])
-                        write.writerow(row)
-
-                else:
-                    row.append(results[function])
-                    write.writerow(row)
-        else:
-            for function in results:
-                if type(results[function]) is list:
-                    for i in range(len(results[function])):
-                        row = [function + " #" + str(i+1), results[function][i]]
-                        write.writerow(row)
-        csv_file.close()
+    with open(output_file_name, 'w', newline='') as txt_file:
+        txt_file.write(create_results_summary(data_type, results, headers))
+        txt_file.close()
 
 
-def save_jpeg(self, output_file_name):  # Static function, outputs one graph at a time. Reliant on plt state
-    if output_file_name.endswith('.jpeg') is False:
-        output_file_name += ".jpeg"
-    plt.savefig(output_file_name)
+def create_results_summary(data_type, results, headers):
+    message = ""
+    if data_type == "Interval":
+        for function in results:
+            message += "Results from " + function + ":\n"
+            if type(results[function]) is list:
+                for i in range(len(results[function])):
+                    if results[function][i] != results[function][-1]:
+                        message += "\t" + headers[i] + ": "
+                        message += str(results[function][i]) + "\n"
+                    else:
+                        message += "\tDifference between first and last column: "
+                        message += str(results[function][i]) + "\n\n"
+            else:
+                message += "\t" + str(results[function]) + "\n"
+    else:
+        for function in results:
+            message += "Results from " + function + ":\n"
+            if type(results[function]) is list:
+                for i in range(len(results[function])):
+                    message += "\t #" + str(i + 1) + ": " + str(results[function][i]) + "\n"
+            message += "\n\n"
+    return message
 
 
 def plot_chart(data, plot_type, results=None, data_type=None, save=True,

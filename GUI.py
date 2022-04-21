@@ -436,28 +436,9 @@ class StatsOperator(QWidget):
 
     # Additional window options
     def show_results_window(self):
-        """Displays results from calculations to screen"""
-        message = ""
-        if self.datatype == "Interval":
-            for function in self.results:
-                message += "\n\nResults from " + function + ":\n"
-                if type(self.results[function]) is list:
-                    for i in range(len(self.results[function])):
-                        if self.results[function][i] != self.results[function][-1]:
-                            message += "\t" + self.my_data.column_labels[i] + ": "
-                        else:
-                            message += "\tDifference between first and last column: "
-                        message += str(self.results[function][i]) + "\n"
-                else:
-                    message += "\t" + str(self.results[function]) + "\n"
-        else:
-            for function in self.results:
-                message += "\n\nResults from " + function + ":\n"
-                if type(self.results[function]) is list:
-                    for i in range(len(self.results[function])):
-                        message += "\t #" + str(i+1) + ": " + str(self.results[function][i]) + "\n"
-
-        self.resultsWindow.result_lbl.setText(message)
+        """Displays results summary from calculations to screen"""
+        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(self.datatype, self.results,
+                                                                               self.my_data.column_labels))
         self.resultsWindow.start()
 
     def display_manual_entry_window(self):
