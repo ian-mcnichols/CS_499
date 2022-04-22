@@ -16,6 +16,9 @@ class Data:
             self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
+        """Loads a data file
+        :param filepath: String, path to the .csv
+        """
         with open(filepath, "r") as file:
             # Find file formatting from first line
             sections = file.readline()
@@ -52,7 +55,11 @@ class Data:
         self.data_np = np.array(data_values)
 
     def add_data(self, data, columns, rows):
-        """Adds data from list of lists"""
+        """Adds data from list of lists
+        :param data: list of lists containing rows and columns of ints/floats
+        :param columns: column labels
+        :param rows: row lables
+        """
         # Check that they're all the same length first
         for x in range(len(data) - 1):
             if len(data[x]) != len(data[x+1]):
@@ -70,6 +77,10 @@ class Data:
             print("No data added, data type wrong.")
 
     def add_result(self, function_ran, output):
+        """Adds the result of a function to the results dictionary
+        :param function_ran: String, the function
+        :param output: the output of the function
+        """
         self.results.update({function_ran: output})
 
 
