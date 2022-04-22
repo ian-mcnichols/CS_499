@@ -6,6 +6,7 @@ class Data:
         # Initialize variables
         self.data_type = data_type
         self.data = None
+        self.data_np = None
         self.column_labels = None
         self.row_labels = None
         self.results = {}
@@ -58,11 +59,11 @@ class Data:
                 print("No data added, dimensions wrong.")
                 return
         try:
-            self.data = np.dstack(data)[0].astype('float')
-            if len(columns) != self.data.shape[0]:
-                columns = ["Column {}".format(str(i+1)) for i in range(self.data.shape[0])]
-            if len(rows) != self.data.shape[1]:
-                rows = ["Row {}".format(str(i+1)) for i in range(self.data.shape[1])]
+            self.data_np = np.dstack(data)[0].astype('float')
+            if len(columns) != self.data_np.shape[0]:
+                columns = ["Column {}".format(str(i+1)) for i in range(self.data_np.shape[0])]
+            if len(rows) != self.data_np.shape[1]:
+                rows = ["Row {}".format(str(i+1)) for i in range(self.data_np.shape[1])]
             self.column_labels = columns
             self.row_labels = rows
         except ValueError:
