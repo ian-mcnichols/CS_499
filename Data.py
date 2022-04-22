@@ -1,6 +1,7 @@
 from numpy.core.defchararray import index
 import numpy as np
-
+import logging
+do_logging = True
 
 class Data:
     def __init__(self, file_name, data_type):
@@ -41,15 +42,19 @@ class Data:
         self.row_labels = row_labels
         self.column_labels = column_labels[1:]
         data = data[1:]
-        print("data:", data)
+        if do_logging:
+            logging.info(f"data {data}")
         self.data_np = np.array(data) #np.dstack(data)[0]
+        if do_logging:
+            logging.info(f"data: {np.array2string(self.data_np)}")
 
     def add_data(self, data, columns, rows):
         """Adds data from list of lists"""
         # checking that they're all the same length first
         for x in range(len(data) - 1):
             if len(data[x]) != len(data[x+1]):
-                print("No data added, dimensions wrong.")
+                if do_logging:
+                    logging.error("No data added, dimensions wrong.")
                 return
         try:
             self.data_np = np.dstack(data)[0].astype('float')
@@ -60,7 +65,8 @@ class Data:
             self.column_labels = columns
             self.row_labels = rows
         except ValueError:
-            print("No data added, data type wrong.")
+            if do_logging:
+                logging.error("No data added, data type wrong.")
 
     def add_result(self, function_ran, output):
         self.results.update({function_ran: output})
@@ -70,13 +76,16 @@ if __name__ == '__main__':
 
     import numpy as np
     my_data = Data("Data/IntervalDataTest.csv", "interval")
-    print(my_data.data_np)
+    if do_logging:
+        logging.info(np.array2string(my_data.data_np))
     my_data = Data("GUI", "interval")
     my_data.add_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
                      ['question1', 'question2', 'question3', 'question4', 'question5'])
-    print("My data:", my_data.data_np)
+    if do_logging:
+        logging.info(f"My data: {np.array2string(my_data.data_np)}")
 
     my_data = Data("GUI", "ordinal")
     my_data.add_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]], [], [])
-    print("My data:", my_data.data_np)
+    if do_logging:
+        logging.info(f"My data: {np.array2string(my_data.data_np)}")
 

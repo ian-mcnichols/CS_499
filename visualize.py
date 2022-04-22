@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 from matplotlib.ticker import PercentFormatter
-
+import logging
+do_logging = True
 
 def build_csv(output_file_name, results, headers, data_type):
     multi_funcs = ["Mean", "Median", "Mode", "Standard deviation", "Variance"]
@@ -96,7 +97,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         if display:
             plt.show()
     elif plot_type == "box plot":
-        print("plotting box plot")
+        if do_logging:
+            logging.info("plotting box plot")
         # Set up labels for x-axis
         labels = []
         column_data = []
@@ -116,7 +118,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         if display:
             plt.show()
     elif plot_type == "Histogram":
-        print("Plotting Histogram")
+        if do_logging:
+            logging.info("Plotting Histogram")
         # for each column, create a histogram
         for i in range(len(data.column_labels)):
             plt.hist(data.data_np[i], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
@@ -131,7 +134,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.show()
     elif plot_type == "Probability Distribution":
         if data_type.lower() == "interval":
-            print("Plotting probability distribution")
+            if do_logging:
+                logging.info("Plotting probability distribution")
             for idx, column in enumerate(data.data_np):
                 plt.figure()
                 temp = np.ndarray.tolist(column)
@@ -144,9 +148,11 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             if display:
                 plt.show()
         elif data_type.lower() == "ordinal":
-            print("Plotting probability distribution")
+            if do_logging:
+                logging.info("Plotting probability distribution")
             columns, rows = data.data_np.shape
-            print("num rows:", rows)
+            if do_logging:
+                logging.info(f"num rows: {rows}")
             for i in range(rows):
                 # Get row as list
                 plt.figure()
