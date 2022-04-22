@@ -336,9 +336,9 @@ class StatsOperator(QWidget):
         # If user has selected a range
         if self.partialRange_radiobttn.isChecked():
             min_column = int(self.minColumn_txtbx.text()) - 1
-            max_column = int(self.maxColumn_txtbx.text())
+            max_column = int(self.maxColumn_txtbx.text()) - 1
             min_row = int(self.minRow_txtbx.text()) - 1
-            max_row = int(self.maxRow_txtbx.text())
+            max_row = int(self.maxRow_txtbx.text()) - 1
 
             # Check that all values are integers
             if all([isinstance(i, int) for i in [min_column, max_column, min_row, max_row]]):
