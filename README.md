@@ -44,4 +44,3 @@ The class to read in or take in data from numpy array or csv/tab-delimited file.
 
 
 Bugs:
-* Crashes if you set rows range from 5-2
