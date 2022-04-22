@@ -59,7 +59,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs\n"
+                results_summary += "\tSee probability distribution graphs\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
