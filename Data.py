@@ -50,11 +50,10 @@ class Data:
         data_values = data[1:]
         if do_logging:
             logging.info(f"data {data_values}")
+        # Save numpy array of data values
         self.data_np = np.array(data) #np.dstack(data)[0]
         if do_logging:
             logging.info(f"data: {np.array2string(self.data_np)}")
-        # Save numpy array of data values
-        self.data_np = np.array(data_values)
 
     def add_data(self, data, columns, rows):
         """Adds data from list of lists"""
