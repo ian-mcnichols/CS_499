@@ -1,13 +1,14 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import csv
 from matplotlib.ticker import PercentFormatter
+import numpy as np
 
 
-def build_csv(output_file_name, results, headers, data_type):
+def build_csv(results, headers, data_type):
+    # Specify which functions have multiple values
     multi_funcs = ["Mean", "Median", "Mode", "Standard deviation", "Variance"]
-    if output_file_name.endswith('.csv') is False:
-        output_file_name += ".csv"
+    output_file_name = "Results.csv"
+    # Write each function's results to a .csv file
     with open("output/" + output_file_name, 'w', newline='') as csv_file:
         write = csv.writer(csv_file)
         write.writerow(['Function', 'Value'])
@@ -37,52 +38,70 @@ def build_csv(output_file_name, results, headers, data_type):
                     for i in range(len(results[function])):
                         row = [function + " #" + str(i+1), results[function][i]]
                         write.writerow(row)
-        csv_file.close()
+    csv_file.close()
 
 
-def build_text(output_file_name, results, headers, data_type):
-    if output_file_name.endswith('.txt') is False:
-        output_file_name += ".txt"
-    with open("output/" + output_file_name, 'w', newline='') as csv_file:
-        write = csv.writer(csv_file)
-        write.writerow(['Function', 'Value'])
-        if data_type == "Interval":
-            for function in results:
-                row = [function]
-                if type(results[function]) is list:
-                    for i in range(len(results[function])):
-                        if results[function][i] != results[function][-1]:
-                            row = [function + " " + headers[i]]
-                        else:
-                            row = [function + " Difference between first and last column"]
-                        row.append(results[function][i])
-                        write.writerow(row)
+def build_text(results, headers, data_type):
+    output_file_name = "Results.txt"
+    # Write results summary to text file
+    with open(output_file_name, 'w', newline='') as txt_file:
+        txt_file.write(create_results_summary(data_type, results, headers))
+    txt_file.close()
 
-                else:
-                    row.append(results[function])
-                    write.writerow(row)
-        else:
-            for function in results:
-                if type(results[function]) is list:
-                    for i in range(len(results[function])):
-                        row = [function + " #" + str(i+1), results[function][i]]
-                        write.writerow(row)
-        csv_file.close()
+
+def create_results_summary(data_type, results, headers):
+    # Reset result summary
+    results_summary = ""
+    if data_type == "Interval":
+        # For each function run, add summary of results from that function
+        for function in results:
+            results_summary += "Results from " + function + ":\n"
+            if function == "Probability distribution":
+                results_summary += "\tSee probability distribution graphs"
+                continue
+            if type(results[function]) is list:
+                for i in range(len(results[function])):
+                    if results[function][i] != results[function][-1]:
+                        results_summary += "\t" + headers[i] + ": "
+                        results_summary += str(results[function][i]) + "\n"
+                    else:
+                        results_summary += "\tDifference between first and last column: "
+                        results_summary += str(results[function][i]) + "\n\n"
+            else:
+                results_summary += "\t" + str(results[function]) + "\n\n"
+    # Data is ordinal
+    else:
+        # For each function run, add summary of results from that function
+        for function in results:
+            results_summary += "Results from " + function + ":\n"
+            if function == "Probability distribution":
+                results_summary += "\tSee probability distribution graphs"
+                continue
+            if type(results[function]) is list:
+                for i in range(len(results[function])):
+                    results_summary += "\t #" + str(i + 1) + ": " + str(results[function][i]) + "\n"
+            results_summary += "\n\n"
+    return results_summary
 
 
 def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                display=True):
     if plot_type == "Vertical Bar Chart":
+        # Set up size
         fig, ax = plt.subplots(figsize=(15, 8))
+        # Set y-labels from column labels
         y_labels = []
         y_ticks = []
         for i in range(len(data.column_labels)):
             y_ticks.append(i)
             y_labels.append(data.column_labels[i] + " - " + str(i))
+        # Set x-labels from row labels
         row_labels = []
         for j in range(len(data.row_labels)):
             row_labels.append(j+1)
+        # Plot results
         plt.bar(row_labels, results)
+        # Set up labels and title
         plt.xlabel('Question Number')
         plt.ylabel('Response Value')
         plt.title("Most Common Response for Each Question")
@@ -96,7 +115,6 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         if display:
             plt.show()
     elif plot_type == "box plot":
-        print("plotting box plot")
         # Set up labels for x-axis
         labels = []
         column_data = []
@@ -116,15 +134,14 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         if display:
             plt.show()
     elif plot_type == "Histogram":
-        print("Plotting Histogram")
-        # for each column, create a histogram
+        # For each column, create a histogram
         for i in range(len(data.column_labels)):
             plt.hist(data.data_np[i], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                      edgecolor='black')
             plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
             plt.xlabel("Scores")
             plt.ylabel("Number of Results")
-            plt.title(data.column_labels[i] + " Scores Histogram")
+            plt.title(data.column_labels[i] + " Histogram")
             if save:
                 plt.savefig("output/" + data.column_labels[i] + ' Histogram.jpg')
             if display:
