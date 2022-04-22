@@ -163,40 +163,7 @@ def run_percentiles(data):
 
 
 def run_probability_dist(data, datatype):
-    # change to histogram output
-    # ordinal and interval
     return
-    if datatype == "Interval":
-        for idx, column in enumerate(data):
-            plt.figure()
-            temp = np.ndarray.tolist(column)
-            temp.sort()
-            plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
-            plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-            plt.title("Column {}".format(idx))
-            plt.savefig("output/Col_{}_distribution".format(idx))
-        plt.show()
-    elif datatype == "Ordinal":
-        # For each row/question
-        columns, rows = data.shape
-        for i in range(rows):
-            # Get row as list
-            plt.figure()
-            row = list(data[:, i])
-            row_values = []
-            # Add number of responses for each index number to list
-            for j in range(len(row)):
-                num_responses = row[j]
-                for x in range(num_responses):
-                    row_values.append(j+1)
-            print(row_values)
-            plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
-            plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-            plt.title("Row {}".format(i))
-            plt.savefig("output/Row_{}_distribution".format(i))
-            plt.show()
-    else:
-        raise Exception("Bad data type: {}".format(datatype))
 
 
 def run_least_square_line(data):
