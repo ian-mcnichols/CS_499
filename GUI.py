@@ -315,7 +315,8 @@ class StatsOperator(QWidget):
         if self.fileName_txtbx.text() != "":
             filename = self.fileName_txtbx.text()
         else:
-            filename = str(QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*.csv)")[0])
+            filename = str(QFileDialog.getOpenFileName(self, "Open File", "",
+                                                       "All Files (*.csv)")[0])
             if filename == "":
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
@@ -382,16 +383,18 @@ class StatsOperator(QWidget):
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
-                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Interval",
+                output = Analyzer.run_function(calculation, self.my_data.data_np,
+                                               data_type="Interval",
                                                display=self.display, save=self.save)
                 print("Results:", output)
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
-                                               display=self.display, save=self.save)
+                output = Analyzer.run_function(calculation, self.my_data.data_np,
+                                               data_type="Ordinal", display=self.display,
+                                               save=self.save)
                 if calculation == "Mode":
                     # Create graph with mode results
-                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output, save=self.save,
-                                         display=self.display)
+                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
+                                         save=self.save, display=self.display)
                 print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
@@ -400,13 +403,14 @@ class StatsOperator(QWidget):
         if self.display or self.save:
             print("operations list:", self.operations)
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=self.display,
-                                     save=self.save)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=self.display,
-                                     save=self.save)
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype,
+                                     display=self.display, save=self.save)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype,
+                                     display=self.display, save=self.save)
             if "Probability distribution" in self.operations:
-                visualize.plot_chart(self.my_data, "Probability Distribution", display=self.display,
-                                     save=self.save, data_type=self.datatype)
+                visualize.plot_chart(self.my_data, "Probability Distribution",
+                                     display=self.display, save=self.save,
+                                     data_type=self.datatype)
             if self.save:
                 visualize.build_csv(self.results, self.my_data.column_labels, self.datatype)
                 visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
@@ -446,8 +450,10 @@ class StatsOperator(QWidget):
     # Additional window options
     def show_results_window(self):
         """Displays results summary from calculations to screen"""
-        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(self.datatype, self.results,
-                                                                               self.my_data.column_labels))
+        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(
+            self.datatype, self.results,
+            self.my_data.column_labels)
+        )
         self.resultsWindow.start()
 
     def display_manual_entry_window(self):
