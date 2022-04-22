@@ -321,6 +321,9 @@ class StatsOperator(QWidget):
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
         print("loading file {}!".format(filename))
+        if not os.path.isfile(filename):
+            print("File does not exist.")
+            return
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data
@@ -629,4 +632,3 @@ class DataInputWindow(QWidget):
 if __name__ == "__main__":
     myGUI = StatsOperator()
     myGUI.start_GUI()
-
