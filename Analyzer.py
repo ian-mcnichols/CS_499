@@ -156,21 +156,8 @@ def run_percentiles(data):
     return [column_results, change_percentile]
 
 
-def run_probability_dist(data, datatype="Interval"):
-    # change to histogram output
-    # ordinal and interval
-    # TODO: make work for ordinal data
-    if datatype == "Interval":
-        dist_data = data[-1] - data[0]
-    elif datatype == "Ordinal":
-        print("Not calculated yet.")
-        return
-    else:
-        raise Exception("Bad data type: {}".format(datatype))
-    x = np.linspace(min(dist_data), max(dist_data), len(dist_data))
-    mu, std = stats.norm.fit(dist_data)
-    snd = stats.norm(mu, std)
-    return snd.pdf(x), mu, std
+def run_probability_dist(data, datatype):
+    return
 
 
 def run_least_square_line(data):
@@ -203,8 +190,12 @@ def run_spearman_rank_corr_coeff(data):
     :return: p-value : float The two-sided p-value for a hypothesis test whose null hypothesis is that two sets of
                        data are uncorrelated, has same dimension as rho.
     """
-    return [stats.spearmanr(data[0], data[-1])[0],
+    results = [stats.spearmanr(data[0], data[-1])[0],
             stats.spearmanr(data[0], data[-1])[1]]
+    for idx, result in enumerate(results):
+        if result != 0 and not (result > 0) and not (result < 0):
+            results[idx] = 1
+    return results
 
 
 def run_function(function_name, data, data_type="Interval", display=False,
@@ -243,25 +234,5 @@ def run_function(function_name, data, data_type="Interval", display=False,
 
 
 if __name__ == "__main__":
-    import Data
-    import visualize
-
-    my_data = Data.Data("Data/OrdinalDataTest.csv", data_type="ordinal")
-    print('data type:', my_data.data_type)
-    print(my_data.data_np)
-    if my_data.data_type == 'interval':
-        print("mean: ", run_mean(my_data.data_np))
-        print("median: ", run_median(my_data.data_np, datatype=my_data.data_type))
-        print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
-        print("standard deviation: ", run_stand_dev(my_data.data_np))
-        print("variance: ", run_variance(my_data.data_np))
-        print("percentiles: ", run_percentiles(my_data.data_np))
-        print("probability dist: ", run_probability_dist(my_data.data_np, datatype=my_data.data_type))
-        print("least squared line: ", run_least_square_line(my_data.data_np))
-        print("correlation coefficient:", run_correlation_coeff(my_data.data_np))
-        print("spearman coefficient: ",
-              run_spearman_rank_corr_coeff(my_data.data_np))
-    elif my_data.data_type == "ordinal":
-        print("median: ", run_median(my_data.data_np, datatype=my_data.data_type))
-        print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
-        # print("probability dist: ", run_probability_dist(ordinals=my_data.ordinals, datatype=my_data.data_type))
+    x = run_spearman_rank_corr_coeff([1, 1, 1, 1])
+    print(x)

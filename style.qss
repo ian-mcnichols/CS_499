@@ -27,6 +27,3 @@ QCheckBox:enabled:checked { color: #0b7ecf; }
 QRadioButton { font: 12px; }
 QRadioButton:enabled { color: black; }
 QRadioButton:checked { color: #0b7ecf; }
-
-QScrollBar { background: #24394a; }
-QScrollBar::handle { background: #009de0; }
