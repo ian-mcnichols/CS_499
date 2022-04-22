@@ -4,6 +4,7 @@ import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
     QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog
+import logging
 import Data
 import Analyzer
 import visualize
@@ -25,6 +26,11 @@ class StatsOperator(QWidget):
         self.my_data = None
         self.resultsWindow = ResultsDisplay()
         self.dataEntryWindow = DataInputWindow()
+
+        self.do_logging = True
+        if self.do_logging:
+            logging.basicConfig(level=logging.INFO, filename='log.log', filemode='a',
+                                format='%(asctime)s  [%(filename)s:%(lineno)d] %(message)s')
 
     def set_defaults(self):
         """Sets default parameters"""
@@ -319,18 +325,22 @@ class StatsOperator(QWidget):
             if filename == "":
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
-        print("loading file {}!".format(filename))
+        if self.do_logging:
+            logging.info("loading file {}!".format(filename))
         if not os.path.isfile(filename):
-            print("File does not exist.")
+            if self.do_logging:
+                logging.error("File does not exist.")
             return
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data
-            print("My data: ", self.my_data)
+            if self.do_logging:
+                logging.info(f"My data: {np.array2string(self.my_data.data_np)}")
         else:
             my_data = Data.Data(filename, "Ordinal")
             self.my_data = my_data
-            print("My data: ", self.my_data.data_np)
+            if self.do_logging:
+                logging.info(f"My data: {np.array2string(self.my_data.data_np)}")
         self.data_loaded = True
         # If user has selected a range
         if self.partialRange_radiobttn.isChecked():
@@ -349,12 +359,14 @@ class StatsOperator(QWidget):
                 self.my_data.column_labels = new_column_labels
                 new_row_labels = self.my_data.row_labels[min_row:max_row]
                 self.my_data.row_labels = new_row_labels
-                print("my new data: ", self.my_data.data_np)
-                print("column labels: ", self.my_data.column_labels)
-                print("row labels: ", self.my_data.row_labels)
+                if self.do_logging:
+                    logging.info(f"my new data: {np.array2string(self.my_data.data_np)}")
+                    logging.info(f"column labels: {self.my_data.column_labels}")
+                    logging.info(f"row labels: {self.my_data.row_labels}")
             else:
                 # The values entered were not correct
-                print("Please enter integer values for rows/columns")
+                if self.do_logging:
+                    logging.warning("Please enter integer values for rows/columns")
 
         # Don't allow user to submit file again and enable the groups again
         self.operations_group.setDisabled(False)
@@ -368,37 +380,46 @@ class StatsOperator(QWidget):
         """Iterate over user's selected calculations and run them with the Analyzer.
         Save or display outputs according to user's choices.
         The bulk of our logic goes here"""
-        print("running calculations!")
+        if self.do_logging:
+            logging.info("running calculations!")
         if self.save:
             os.makedirs("output/", exist_ok=True)
         if not self.data_loaded:
-            print("Cannot run without inputs loaded.")
+            if self.do_logging:
+                logging.error("Cannot run without inputs loaded.")
             return
         elif self.my_data.data_np is None:
-            print("Cannot run without data numpy.")
+            if self.do_logging:
+                logging.error("Cannot run without data numpy.")
             self.operations_group.setDisabled(True)
             return
         # For each selected calculation
         for calculation in self.operations:
-            print("running {}".format(calculation))
+            if self.do_logging:
+                logging.info(f"running {format(calculation)}")
             if self.datatype == "Interval":
                 output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Interval",
                                                display=self.display, save=self.save)
-                print("Results:", output)
+                if self.do_logging:
+                    logging.info(f"Results: {output}")
             elif self.datatype == "Ordinal":
                 output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
                                                display=self.display, save=self.save)
                 if calculation == "Mode":
+                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
+                                         data_type='ordinal', save=self.save, display=self.display)
+                if self.do_logging:
+                    logging.info(f"Results: {output}")
                     # Create graph with mode results
                     visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output, save=self.save,
                                          display=self.display)
-                print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             # Save results
             self.results[calculation] = output
         if self.display or self.save:
-            print("operations list:", self.operations)
+            if self.do_logging:
+                logging.info(f"operations list: {self.operations}")
             if self.datatype == "Interval":
                 visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=self.display,
                                      save=self.save)
@@ -412,7 +433,8 @@ class StatsOperator(QWidget):
                 visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
             if self.display:
                 self.show_results_window()
-        print("Program Complete")
+        if self.do_logging:
+            logging.info("Program Complete")
         return
         
     def update_operations(self):
@@ -433,10 +455,12 @@ class StatsOperator(QWidget):
         for checkbox in checkboxes:
             if checkbox.isChecked() and checkbox.text() not in self.operations:
                 self.operations.append(checkbox.text())
-                print("operations: ", self.operations)
+                if self.do_logging:
+                    logging.info(f"operations: {str(self.operations)}")
             elif not checkbox.isChecked() and checkbox.text() in self.operations:
                 self.operations.remove(checkbox.text())
-                print("operations: ", self.operations)
+                if self.do_logging:
+                    logging.info(f"operations: {str(self.operations)}")
 
         if not self.operations:
             self.calcResults_bttn.setDisabled(True)
@@ -456,7 +480,8 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
         if self.row_txtbx.text() == "" or self.col_txtbx.text() == "":
-            print("no rows or columns entered.")
+            if self.do_logging:
+                logging.error("no rows or columns entered.")
             return
         self.dataEntryWindow.start(self.dataEntryWindow.rows,
                                    self.dataEntryWindow.cols,
@@ -516,11 +541,13 @@ class StatsOperator(QWidget):
 
     def toggle_display(self):
         self.display = not self.display
-        print("display is set to: ", self.display)
+        if self.do_logging:
+            logging.info(f"display is set to: {self.display}")
 
     def toggle_save(self):
         self.save = not self.save
-        print("save output is set to: ", self.save)
+        if self.do_logging:
+            logging.info(f"save output is set to: {self.save}")
 
 
 # Other window classes
@@ -580,7 +607,8 @@ class DataInputWindow(QWidget):
             tmp = int(rows)
             tmp = int(cols)
         except ValueError:
-            print("Warning, rows/cols not integers.")
+            if self.do_logging:
+                logging.warning("Warning, rows/cols not integers.")
             return
         self.rows = int(rows)
         if self.rows > 50:
@@ -598,8 +626,9 @@ class DataInputWindow(QWidget):
     def setup_elements(self):
         """Initializes input array boxes."""
         self.textBoxes = []
-        print(self.rows)
-        print(self.cols)
+        if self.do_logging:
+            logging.info(self.rows)
+            logging.info(self.cols)
         for i in range(self.rows):
             for j in range(self.cols):
                 self.textBoxes.append(QLineEdit())
@@ -610,7 +639,8 @@ class DataInputWindow(QWidget):
         """Converts input to variables for data object"""
         for x in self.textBoxes:
             if x.text() == "":
-                print("Warning: Entry box empty. Cannot get inputs.")
+                if self.do_logging:
+                    logging.warning("Warning: Entry box empty. Cannot get inputs.")
                 return
         user_input = np.array([int(x.text()) for x in self.textBoxes])
         user_input = np.reshape(user_input, (self.rows, self.cols))

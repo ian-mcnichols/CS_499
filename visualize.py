@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import csv
 from matplotlib.ticker import PercentFormatter
 import numpy as np
+import logging
+do_logging = True
 
 
 def build_csv(results, headers, data_type):
@@ -57,7 +59,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs"
+                results_summary += "\tSee probability distribution graphs\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
@@ -148,7 +150,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.show()
     elif plot_type == "Probability Distribution":
         if data_type.lower() == "interval":
-            print("Plotting probability distribution")
+            if do_logging:
+                logging.info("Plotting probability distribution")
             for idx, column in enumerate(data.data_np):
                 plt.figure()
                 temp = np.ndarray.tolist(column)
@@ -161,9 +164,11 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             if display:
                 plt.show()
         elif data_type.lower() == "ordinal":
-            print("Plotting probability distribution")
+            if do_logging:
+                logging.info("Plotting probability distribution")
             columns, rows = data.data_np.shape
-            print("num rows:", rows)
+            if do_logging:
+                logging.info("num rows:", rows)
             for i in range(rows):
                 # Get row as list
                 plt.figure()
