@@ -1,8 +1,5 @@
 import numpy as np
-import statistics
 import scipy.stats as stats
-import matplotlib.pyplot as plt
-import visualize
 
 
 def run_mean(data):
@@ -88,14 +85,12 @@ def run_mode(data, datatype="Interval", display=False, save=True):
         return results
     elif datatype.lower() == "ordinal":
         # Array to store mode for each question
-        results_name = []
         results_number = []
         # Determine answer with highest number of responses for each question
         columns, rows = data.shape
         for i in range(rows):
             row = list(data[:, i])
             row_mode = max(row[1:])
-            # results_name.append(row_names[i])
             results_number.append(row.index(row_mode)+1)
         return results_number
     else:

@@ -2,10 +2,7 @@ import sys
 import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QAbstractScrollArea
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QStyleFactory
-
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea
 import Data
 import Analyzer
 import visualize
@@ -369,6 +366,7 @@ class StatsOperator(QWidget):
             print("Cannot run without data numpy.")
             self.operations_group.setDisabled(True)
             return
+        # For each selected calculation
         for calculation in self.operations:
             print("running {}".format(calculation))
             if self.datatype == "Interval":
@@ -379,29 +377,32 @@ class StatsOperator(QWidget):
                 output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
                                                display=self.display, save=self.save)
                 if calculation == "Mode":
-                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
-                                         data_type='ordinal', save=self.save, display=self.display)
+                    # Create graph with mode results
+                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output, save=self.save,
+                                         display=self.display)
                 print("Results:", output)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
+            # Save results
             self.results[calculation] = output
+        # Save and/or display graphs and results
         if self.display and self.save:
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=True)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=True)
-            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
+                visualize.plot_chart(self.my_data, "box plot", display=True, save=True)
+                visualize.plot_chart(self.my_data, "Histogram", display=True, save=True)
+            visualize.build_csv(self.results, self.my_data.column_labels, self.datatype)
+            visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
             self.show_results_window()
         elif self.display is False and self.save:
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=False, save=True)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=False, save=True)
-            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
+                visualize.plot_chart(self.my_data, "box plot", display=False, save=True)
+                visualize.plot_chart(self.my_data, "Histogram", display=False, save=True)
+            visualize.build_csv(self.results, self.my_data.column_labels, self.datatype)
+            visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
         elif self.display and self.save is False:
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=False)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=False)
+                visualize.plot_chart(self.my_data, "box plot", display=True, save=False)
+                visualize.plot_chart(self.my_data, "Histogram", display=True, save=False)
             self.show_results_window()
         print("Program Complete")
         return
@@ -511,8 +512,7 @@ class ResultsDisplay(QWidget):
         self.app = QApplication([])
         super(ResultsDisplay, self).__init__()
         self.w = QWidget()  # Base widget
-        self.w.setFixedSize(900, 600) # Window default size
-        #self.w.resize(900, 600)  # Window default size
+        self.w.setFixedSize(900, 600)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.init_ui()
@@ -606,4 +606,3 @@ class DataInputWindow(QWidget):
 if __name__ == "__main__":
     myGUI = StatsOperator()
     myGUI.start_GUI()
-
