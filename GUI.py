@@ -339,6 +339,13 @@ class StatsOperator(QWidget):
             max_column = int(self.maxColumn_txtbx.text()) - 1
             min_row = int(self.minRow_txtbx.text()) - 1
             max_row = int(self.maxRow_txtbx.text()) - 1
+            # error checking
+            if min_column > max_column:
+                min_column = 0
+                max_column = self.my_data.data_np.shape[0]
+            if min_row > max_row:
+                min_row = 0
+                max_row = self.my_data.data_np.shape[1]
 
             # Check that all values are integers
             if all([isinstance(i, int) for i in [min_column, max_column, min_row, max_row]]):
