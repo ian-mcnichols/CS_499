@@ -3,6 +3,7 @@ import statistics
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 import visualize
+from matplotlib.ticker import PercentFormatter
 
 
 def run_mean(data):
@@ -161,21 +162,8 @@ def run_percentiles(data):
     return [column_results, change_percentile]
 
 
-def run_probability_dist(data, datatype="Interval"):
-    # change to histogram output
-    # ordinal and interval
-    # TODO: make work for ordinal data
-    if datatype == "Interval":
-        dist_data = data[-1] - data[0]
-    elif datatype == "Ordinal":
-        print("Not calculated yet.")
-        return
-    else:
-        raise Exception("Bad data type: {}".format(datatype))
-    x = np.linspace(min(dist_data), max(dist_data), len(dist_data))
-    mu, std = stats.norm.fit(dist_data)
-    snd = stats.norm(mu, std)
-    return snd.pdf(x), mu, std
+def run_probability_dist(data, datatype):
+    return
 
 
 def run_least_square_line(data):

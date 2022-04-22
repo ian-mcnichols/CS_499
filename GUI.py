@@ -1,10 +1,9 @@
+import os
 import sys
 import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QAbstractScrollArea
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QStyleFactory
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog
 
 import Data
 import Analyzer
@@ -142,7 +141,7 @@ class StatsOperator(QWidget):
         self.fileName_layout = QHBoxLayout()
         self.fileName_layout.addWidget(self.fileName_lbl)
         self.fileName_layout.addWidget(self.fileName_txtbx)
-        self.submit_bttn = QPushButton("Submit")
+        self.submit_bttn = QPushButton("Load File")
         self.fileName_layout.addWidget(self.submit_bttn)
         self.submit_bttn.clicked.connect(self.load_file)
 
@@ -314,8 +313,17 @@ class StatsOperator(QWidget):
     # Specific functions that correspond to GUI widgets go under here
     def load_file(self):
         """Loads in the user's inputted file and saves data to variable"""
-        filename = self.fileName_txtbx.text()
+        if self.fileName_txtbx.text() != "":
+            filename = self.fileName_txtbx.text()
+        else:
+            filename = str(QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*.csv)")[0])
+            if filename == "":
+                return
+        self.fileName_txtbx.setPlaceholderText(filename)
         print("loading file {}!".format(filename))
+        if not os.path.isfile(filename):
+            print("File does not exist.")
+            return
         if self.datatype == 'Interval':
             my_data = Data.Data(filename, "Interval")
             self.my_data = my_data
@@ -362,6 +370,8 @@ class StatsOperator(QWidget):
         Save or display outputs according to user's choices.
         The bulk of our logic goes here"""
         print("running calculations!")
+        if self.save:
+            os.makedirs("output/", exist_ok=True)
         if not self.data_loaded:
             print("Cannot run without inputs loaded.")
             return
@@ -385,24 +395,21 @@ class StatsOperator(QWidget):
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             self.results[calculation] = output
-        if self.display and self.save:
+        if self.display or self.save:
+            print("operations list:", self.operations)
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=True)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=True)
-            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
-            self.show_results_window()
-        elif self.display is False and self.save:
-            if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=False, save=True)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=False, save=True)
-            visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
-            visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
-        elif self.display and self.save is False:
-            if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=True, save=False)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=True, save=False)
-            self.show_results_window()
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=self.display,
+                                     save=self.save)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=self.display,
+                                     save=self.save)
+            if "Probability distribution" in self.operations:
+                visualize.plot_chart(self.my_data, "Probability Distribution", display=self.display,
+                                     save=self.save, data_type=self.datatype)
+            if self.save:
+                visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
+                visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
+            if self.display:
+                self.show_results_window()
         print("Program Complete")
         return
         
@@ -625,4 +632,3 @@ class DataInputWindow(QWidget):
 if __name__ == "__main__":
     myGUI = StatsOperator()
     myGUI.start_GUI()
-
