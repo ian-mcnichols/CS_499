@@ -29,7 +29,7 @@ class StatsOperator(QWidget):
 
         self.do_logging = True
         if self.do_logging:
-            logging.basicConfig(level=logging.INFO, filename='log.log', filemode='w',
+            logging.basicConfig(level=logging.INFO, filename='log.log', filemode='a',
                                 format='%(asctime)s  [%(filename)s:%(lineno)d] %(message)s')
 
     def set_defaults(self):
@@ -393,6 +393,7 @@ class StatsOperator(QWidget):
                 logging.error("Cannot run without data numpy.")
             self.operations_group.setDisabled(True)
             return
+        # For each selected calculation
         for calculation in self.operations:
             if self.do_logging:
                 logging.info(f"running {format(calculation)}")
@@ -409,8 +410,12 @@ class StatsOperator(QWidget):
                                          data_type='ordinal', save=self.save, display=self.display)
                 if self.do_logging:
                     logging.info(f"Results: {output}")
+                    # Create graph with mode results
+                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output, save=self.save,
+                                         display=self.display)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
+            # Save results
             self.results[calculation] = output
         if self.display or self.save:
             if self.do_logging:
@@ -424,8 +429,8 @@ class StatsOperator(QWidget):
                 visualize.plot_chart(self.my_data, "Probability Distribution", display=self.display,
                                      save=self.save, data_type=self.datatype)
             if self.save:
-                visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
-                visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
+                visualize.build_csv(self.results, self.my_data.column_labels, self.datatype)
+                visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
             if self.display:
                 self.show_results_window()
         if self.do_logging:
@@ -464,28 +469,9 @@ class StatsOperator(QWidget):
 
     # Additional window options
     def show_results_window(self):
-        """Displays results from calculations to screen"""
-        message = ""
-        if self.datatype == "Interval":
-            for function in self.results:
-                message += "\n\nResults from " + function + ":\n"
-                if type(self.results[function]) is list:
-                    for i in range(len(self.results[function])):
-                        if self.results[function][i] != self.results[function][-1]:
-                            message += "\t" + self.my_data.column_labels[i] + ": "
-                        else:
-                            message += "\tDifference between first and last column: "
-                        message += str(self.results[function][i]) + "\n"
-                else:
-                    message += "\t" + str(self.results[function]) + "\n"
-        else:
-            for function in self.results:
-                message += "\n\nResults from " + function + ":\n"
-                if type(self.results[function]) is list:
-                    for i in range(len(self.results[function])):
-                        message += "\t #" + str(i+1) + ": " + str(self.results[function][i]) + "\n"
-
-        self.resultsWindow.result_lbl.setText(message)
+        """Displays results summary from calculations to screen"""
+        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(self.datatype, self.results,
+                                                                               self.my_data.column_labels))
         self.resultsWindow.start()
 
     def display_manual_entry_window(self):
@@ -570,8 +556,7 @@ class ResultsDisplay(QWidget):
         self.app = QApplication([])
         super(ResultsDisplay, self).__init__()
         self.w = QWidget()  # Base widget
-        self.w.setFixedSize(900, 600) # Window default size
-        #self.w.resize(900, 600)  # Window default size
+        self.w.setFixedSize(900, 600)  # Window default size
         self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.init_ui()
