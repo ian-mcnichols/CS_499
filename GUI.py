@@ -479,8 +479,11 @@ class StatsOperator(QWidget):
                                    self.dataEntryWindow.cols,
                                    self.my_data)
         self.operations_group.setDisabled(False)
+        self.output_group.setDisabled(False)
         self.data_loaded = True
-        self.enterData_bttn.setDisabled(True)
+        self.data_entry_group.setEnabled(False)
+        self.dataRange_group.setEnabled(False)
+        self.dataType_group.setEnabled(False)
 
     def restart(self):
         """Restart the app so user can make another calculation"""
@@ -490,7 +493,13 @@ class StatsOperator(QWidget):
         self.data_entry_group.setEnabled(True)
         self.dataType_group.setEnabled(True)
         self.dataRange_group.setEnabled(True)
+        self.filename_radiobttn.setChecked(True)
+        self.fileName_txtbx.setEnabled(True)
+        self.fileName_lbl.setEnabled(True)
         self.submit_bttn.setEnabled(True)
+        self.row_txtbx.setEnabled(False)
+        self.col_txtbx.setEnabled(False)
+        self.enterData_bttn.setEnabled(False)
 
         # uncheck all operations
         self.mean_chckbx.setChecked(False)
