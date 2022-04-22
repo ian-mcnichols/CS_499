@@ -3,9 +3,7 @@ import sys
 import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QAbstractScrollArea, QFileDialog
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QStyleFactory
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog
 
 import Data
 import Analyzer
@@ -405,8 +403,8 @@ class StatsOperator(QWidget):
                 visualize.plot_chart(self.my_data, "Probability Distribution", display=self.display,
                                      save=self.save, data_type=self.datatype)
             if self.save:
-                visualize.build_csv("Results.csv", self.results, self.headers, self.datatype)
-                visualize.build_text("Results.txt", self.results, self.headers, self.datatype)
+                visualize.build_csv("Results.csv", self.results, self.my_data.column_labels, self.datatype)
+                visualize.build_text("Results.txt", self.results, self.my_data.column_labels, self.datatype)
             if self.display:
                 self.show_results_window()
         print("Program Complete")

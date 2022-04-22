@@ -70,12 +70,6 @@ def build_text(output_file_name, results, headers, data_type):
         csv_file.close()
 
 
-def save_jpeg(self, output_file_name):  # Static function, outputs one graph at a time. Reliant on plt state
-    if output_file_name.endswith('.jpeg') is False:
-        output_file_name += ".jpeg"
-    plt.savefig("output/" + output_file_name)
-
-
 def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                display=True):
     if plot_type == "Vertical Bar Chart":
@@ -144,7 +138,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 temp.sort()
                 plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-                plt.title("Column {}".format(idx))
+                plt.title("Column {} Probability Distribution".format(idx))
                 if save:
                     plt.savefig("output/Col_{}_distribution".format(idx))
             if display:
@@ -163,10 +157,9 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                     num_responses = row[j]
                     for x in range(num_responses):
                         row_values.append(j+1)
-                #print(row_values)
                 plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-                plt.title("Row {}".format(i))
+                plt.title("Row {} Probability Distribution".format(i))
                 if save:
                     plt.savefig("output/Row_{}_distribution".format(i))
                 if display:
