@@ -2,6 +2,8 @@ import matplotlib.pyplot as plt
 import csv
 from matplotlib.ticker import PercentFormatter
 import numpy as np
+import logging
+do_logging = True
 
 
 def build_csv(results, headers, data_type):
@@ -148,25 +150,28 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.show()
     elif plot_type == "Probability Distribution":
         if data_type.lower() == "interval":
-            print("Plotting probability distribution")
+            if do_logging:
+                logging.info("Plotting probability distribution")
             for idx, column in enumerate(data.data_np):
                 plt.figure()
                 temp = np.ndarray.tolist(column)
                 temp.sort()
-                plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
+                plt.hist(temp, weights=np.ones(len(temp)) / len(temp), edgecolor='black')
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-                plt.title("Column {} Probability Distribution".format(idx))
+                plt.title("Column {} Probability Distribution".format(idx+1))
                 if save:
-                    plt.savefig("output/Col_{}_distribution".format(idx))
-            if display:
-                plt.show()
+                    plt.savefig("output/Col_{}_distribution".format(idx+1))
+                if display:
+                    plt.show()
         elif data_type.lower() == "ordinal":
-            print("Plotting probability distribution")
+            if do_logging:
+                logging.info("Plotting probability distribution")
             columns, rows = data.data_np.shape
-            print("num rows:", rows)
+            if do_logging:
+                logging.info("num rows:", rows)
             for i in range(rows):
-                # Get row as list
                 plt.figure()
+                # Get row as list
                 row = list(data.data_np[:, i])
                 row_values = []
                 # Add number of responses for each index number to list
@@ -174,11 +179,11 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                     num_responses = row[j]
                     for x in range(num_responses):
                         row_values.append(j+1)
-                plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
+                plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values), edgecolor='black')
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-                plt.title("Row {} Probability Distribution".format(i))
+                plt.title("Row {} Probability Distribution".format(i+1))
                 if save:
-                    plt.savefig("output/Row_{}_distribution".format(i))
+                    plt.savefig("output/Row_{}_distribution".format(i+1))
                 if display:
                     plt.show()
     else:
