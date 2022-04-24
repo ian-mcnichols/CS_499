@@ -44,7 +44,7 @@ def build_csv(results, headers, data_type):
 def build_text(results, headers, data_type):
     output_file_name = "Results.txt"
     # Write results summary to text file
-    with open(output_file_name, 'w', newline='') as txt_file:
+    with open("output/" + output_file_name, 'w', newline='') as txt_file:
         txt_file.write(create_results_summary(data_type, results, headers))
     txt_file.close()
 
@@ -57,7 +57,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs"
+                results_summary += "\tSee probability distribution graphs\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
@@ -75,7 +75,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs"
+                results_summary += "\tSee probability distribution graphs\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
