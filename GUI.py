@@ -345,10 +345,12 @@ class StatsOperator(QWidget):
         self.data_loaded = True
         # If user has selected a range
         if self.partialRange_radiobttn.isChecked():
+            # Get min and max row/column number
+            # NOTE: Do not subtract 1 from the max row/column, b/c of the way the np slice works
             min_column = int(self.minColumn_txtbx.text()) - 1
-            max_column = int(self.maxColumn_txtbx.text()) - 1
+            max_column = int(self.maxColumn_txtbx.text())
             min_row = int(self.minRow_txtbx.text()) - 1
-            max_row = int(self.maxRow_txtbx.text()) - 1
+            max_row = int(self.maxRow_txtbx.text())
             # error checking
             if min_column > max_column:
                 min_column = 0
