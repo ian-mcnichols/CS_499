@@ -168,7 +168,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 logging.info("Plotting probability distribution")
             columns, rows = data.data_np.shape
             if do_logging:
-                logging.info("num rows:", rows)
+                logging.info(f"num rows: {rows}")
             for i in range(rows):
                 plt.figure()
                 # Get row as list
