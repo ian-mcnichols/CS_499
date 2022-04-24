@@ -321,7 +321,8 @@ class StatsOperator(QWidget):
         if self.fileName_txtbx.text() != "":
             filename = self.fileName_txtbx.text()
         else:
-            filename = str(QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*.csv)")[0])
+            filename = str(QFileDialog.getOpenFileName(self, "Open File", "",
+                                                       "All Files (*.csv)")[0])
             if filename == "":
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
@@ -345,9 +346,16 @@ class StatsOperator(QWidget):
         # If user has selected a range
         if self.partialRange_radiobttn.isChecked():
             min_column = int(self.minColumn_txtbx.text()) - 1
-            max_column = int(self.maxColumn_txtbx.text())
+            max_column = int(self.maxColumn_txtbx.text()) - 1
             min_row = int(self.minRow_txtbx.text()) - 1
-            max_row = int(self.maxRow_txtbx.text())
+            max_row = int(self.maxRow_txtbx.text()) - 1
+            # error checking
+            if min_column > max_column:
+                min_column = 0
+                max_column = self.my_data.data_np.shape[0]
+            if min_row > max_row:
+                min_row = 0
+                max_row = self.my_data.data_np.shape[1]
 
             # Check that all values are integers
             if all([isinstance(i, int) for i in [min_column, max_column, min_row, max_row]]):
@@ -398,13 +406,15 @@ class StatsOperator(QWidget):
             if self.do_logging:
                 logging.info(f"running {format(calculation)}")
             if self.datatype == "Interval":
-                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Interval",
+                output = Analyzer.run_function(calculation, self.my_data.data_np,
+                                               data_type="Interval",
                                                display=self.display, save=self.save)
                 if self.do_logging:
                     logging.info(f"Results: {output}")
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
-                                               display=self.display, save=self.save)
+                output = Analyzer.run_function(calculation, self.my_data.data_np,
+                                               data_type="Ordinal", display=self.display,
+                                               save=self.save)
                 if calculation == "Mode":
                     # Create graph with mode results
                     visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
@@ -419,13 +429,14 @@ class StatsOperator(QWidget):
             if self.do_logging:
                 logging.info(f"operations list: {self.operations}")
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=self.display,
-                                     save=self.save)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=self.display,
-                                     save=self.save)
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype,
+                                     display=self.display, save=self.save)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype,
+                                     display=self.display, save=self.save)
             if "Probability distribution" in self.operations:
-                visualize.plot_chart(self.my_data, "Probability Distribution", display=self.display,
-                                     save=self.save, data_type=self.datatype)
+                visualize.plot_chart(self.my_data, "Probability Distribution",
+                                     display=self.display, save=self.save,
+                                     data_type=self.datatype)
             if self.save:
                 visualize.build_csv(self.results, self.my_data.column_labels, self.datatype)
                 visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
@@ -468,8 +479,10 @@ class StatsOperator(QWidget):
     # Additional window options
     def show_results_window(self):
         """Displays results summary from calculations to screen"""
-        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(self.datatype, self.results,
-                                                                               self.my_data.column_labels))
+        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(
+            self.datatype, self.results,
+            self.my_data.column_labels)
+        )
         self.resultsWindow.start()
 
     def display_manual_entry_window(self):

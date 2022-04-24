@@ -41,3 +41,6 @@ The class to read in or take in data from numpy array or csv/tab-delimited file.
 * sign test
 * rank sum test
 * Spearman rank correlation coefficient
+
+
+Bugs:

@@ -18,9 +18,8 @@ class Data:
             self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
-        """Reads in data from specified filepath
-
-        :param filepath: location of file to load data from
+        """Loads data file
+        :param filepath: String to .csv data file
         """
         with open(filepath, "r") as file:
             # Find file formatting from first line
@@ -38,7 +37,6 @@ class Data:
             file.close()
             # Strip down data to numpy with values, list of column labels, and list of row labels
             self._to_numpy()
-        return
 
     def _to_numpy(self):
         """Converts np.genfromtxt output to numpy array of data and row/column labels"""
@@ -62,8 +60,9 @@ class Data:
 
     def add_data(self, data, columns, rows):
         """Adds data from list of lists
-
-        :param
+        :param data: List of lists containing data values
+        :param columns: Column labels
+        :param rows: Row labels
         """
         # Check that they're all the same length first
         for x in range(len(data) - 1):
@@ -84,6 +83,10 @@ class Data:
                 logging.error("No data added, data type wrong.")
 
     def add_result(self, function_ran, output):
+        """Adds function/result pair to results dictionary
+        :param function_ran: String, the function
+        :param output: the function's output
+        """
         self.results.update({function_ran: output})
 
 
