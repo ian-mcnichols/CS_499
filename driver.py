@@ -17,7 +17,6 @@ def main():
             data_file = input("Enter data file:  ")
             data_type = input("Enter data type:  ")
             my_data = Data(file_name=data_file, data_type=data_type)
-            # my_data.read_data_file(data_file)
         else:
             break
         if data_type == 'interval':

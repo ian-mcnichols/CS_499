@@ -406,13 +406,11 @@ class StatsOperator(QWidget):
                 output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
                                                display=self.display, save=self.save)
                 if calculation == "Mode":
+                    # Create graph with mode results
                     visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
                                          data_type='ordinal', save=self.save, display=self.display)
                 if self.do_logging:
                     logging.info(f"Results: {output}")
-                    # Create graph with mode results
-                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output, save=self.save,
-                                         display=self.display)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             # Save results

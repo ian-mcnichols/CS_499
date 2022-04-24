@@ -2,6 +2,7 @@ import numpy as np
 import logging
 do_logging = True
 
+
 class Data:
     def __init__(self, file_name, data_type):
         # Initialize variables
@@ -17,6 +18,10 @@ class Data:
             self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
+        """Reads in data from specified filepath
+
+        :param filepath: location of file to load data from
+        """
         with open(filepath, "r") as file:
             # Find file formatting from first line
             sections = file.readline()
@@ -51,12 +56,15 @@ class Data:
         if do_logging:
             logging.info(f"data {data_values}")
         # Save numpy array of data values
-        self.data_np = np.array(data) #np.dstack(data)[0]
+        self.data_np = np.array(data_values)
         if do_logging:
             logging.info(f"data: {np.array2string(self.data_np)}")
 
     def add_data(self, data, columns, rows):
-        """Adds data from list of lists"""
+        """Adds data from list of lists
+
+        :param
+        """
         # Check that they're all the same length first
         for x in range(len(data) - 1):
             if len(data[x]) != len(data[x+1]):
