@@ -45,7 +45,11 @@ class Data:
         self.data_np = np.array(data) #np.dstack(data)[0]
 
     def add_data(self, data, columns, rows):
-        """Adds data from list of lists"""
+        """Adds data from list of lists
+        :param data List of lists, containing rows and columns of data
+        :param columns Number of columns
+        :param rows Number of rows
+        """
         # checking that they're all the same length first
         for x in range(len(data) - 1):
             if len(data[x]) != len(data[x+1]):
