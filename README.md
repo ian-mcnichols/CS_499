@@ -40,7 +40,8 @@ data as a numpy array, the data type as a string, and the column/row labels as a
  
 ## Documentation:
 We use Sphinx to auto-generate documentation from docstrings. To run this, make sure
-you have Sphinx installed using pip install -U Sphinx or conda install -c anaconda sphinx
+you have Sphinx installed using pip install -U Sphinx or conda install -c anaconda sphinx.
+Navigate inside the CS_499 folder where all the .py files are before running the following.
 
 To generate .rst 
 >  sphinx-apidoc -o ./documentation .
