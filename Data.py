@@ -15,7 +15,7 @@ class Data:
 
     def read_data_file(self, filepath):
         """Loads data from a .csv file
-        :param filepath The string path to a .csv file
+        :param filepath: The string path to a .csv file
         """
         with open(filepath, "r") as file:
             # Find file formatting from first line
@@ -45,13 +45,13 @@ class Data:
         self.column_labels = column_labels[1:]
         data = data[1:]
         print("data:", data)
-        self.data_np = np.array(data) #np.dstack(data)[0]
+        self.data_np = np.array(data)
 
     def add_data(self, data, columns, rows):
         """Adds data from list of lists
-        :param data List of lists, containing rows and columns of data
-        :param columns Number of columns
-        :param rows Number of rows
+        :param data: List of lists, containing rows and columns of data
+        :param columns: Number of columns
+        :param rows: Number of rows
         """
         # checking that they're all the same length first
         for x in range(len(data) - 1):
@@ -71,7 +71,7 @@ class Data:
 
     def add_result(self, function_ran, output):
         """Adds results from a function to the object's results dictionary
-        :param function_ran A string describing which function was run
-        :param output The output of that function
+        :param function_ran: A string describing which function was run
+        :param output: The output of that function
         """
         self.results.update({function_ran: output})
