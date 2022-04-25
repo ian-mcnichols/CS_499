@@ -38,7 +38,18 @@ data as a numpy array, the data type as a string, and the column/row labels as a
 > 
 > conda activate 499
  
-## Running the script:
+## Documentation:
+We use Sphinx to auto-generate documentation from docstrings. To run this, make sure
+you have Sphinx installed using pip install -U Sphinx or conda install -c anaconda sphinx
+
+To generate .rst 
+>  sphinx-apidoc -o ./documentation .
+
+To generate html
+> make html
+
+
+## Running the program:
 
 > python ./GUI.py
 
