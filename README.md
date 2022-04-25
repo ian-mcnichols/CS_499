@@ -9,7 +9,7 @@
 ### GUI.py
 This file runs all the other files and interacts with the user.
 
-###Analyzer.py
+### Analyzer.py
 This is the mathematics 'library' for our project. It has a driver to call a function given 
 the function name and data, or each function can be called separately. The input for each 
 operation is 'data', a numpy array of any given size. This driver function returns the results
