@@ -26,6 +26,7 @@ class StatsOperator(QWidget):
         self.my_data = None
         self.resultsWindow = ResultsDisplay()
         self.dataEntryWindow = DataInputWindow()
+        self.communicator = MessageBox()
 
         self.do_logging = True
         if self.do_logging:
@@ -323,11 +324,14 @@ class StatsOperator(QWidget):
         else:
             filename = str(QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*.csv)")[0])
             if filename == "":
+                self.communicator.display("No file added.")
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
         if self.do_logging:
+            self.communicator.display("Loading file {}!".format(filename))
             logging.info("loading file {}!".format(filename))
         if not os.path.isfile(filename):
+            self.communicator.display("File does not exist.")
             if self.do_logging:
                 logging.error("File does not exist.")
             return
@@ -365,6 +369,7 @@ class StatsOperator(QWidget):
                     logging.info(f"row labels: {self.my_data.row_labels}")
             else:
                 # The values entered were not correct
+                self.communicator.display("Please enter integer values for rows and columns.")
                 if self.do_logging:
                     logging.warning("Please enter integer values for rows/columns")
 
@@ -385,10 +390,12 @@ class StatsOperator(QWidget):
         if self.save:
             os.makedirs("output/", exist_ok=True)
         if not self.data_loaded:
+            self.communicator.display("Cannot run without inputs loaded.")
             if self.do_logging:
                 logging.error("Cannot run without inputs loaded.")
             return
         elif self.my_data.data_np is None:
+            self.communicator.display("No data array loaded.")
             if self.do_logging:
                 logging.error("Cannot run without data numpy.")
             self.operations_group.setDisabled(True)
@@ -433,6 +440,7 @@ class StatsOperator(QWidget):
                 visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
             if self.display:
                 self.show_results_window()
+        self.communicator.display("Calculations complete! Hit 'Do Another Calculation to run again.")
         if self.do_logging:
             logging.info("Program Complete")
         return
@@ -480,6 +488,7 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
         if self.row_txtbx.text() == "" or self.col_txtbx.text() == "":
+            self.communicator.display("No rows or columns entered.")
             if self.do_logging:
                 logging.error("no rows or columns entered.")
             return
@@ -641,6 +650,7 @@ class DataInputWindow(QWidget):
         """Converts input to variables for data object"""
         for x in self.textBoxes:
             if x.text() == "":
+                self.communicator.display("Entry box empty. Cannot get inputs.")
                 if self.do_logging:
                     logging.warning("Warning: Entry box empty. Cannot get inputs.")
                 return
