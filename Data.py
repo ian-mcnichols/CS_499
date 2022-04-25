@@ -46,6 +46,18 @@ class Data:
         # Set column labels
         column_labels = [x for x in self.data.dtype.names]
         self.column_labels = column_labels[1:]
+        # Get data from each column
+        data = [self.data[x] for x in column_labels]
+        # Set row labels, gotten from first column of data
+        self.row_labels = [x for x in data[0]]
+        # Strip out row labels to get just numerical values
+        data_values = data[1:]
+        if do_logging:
+            logging.info(f"data {data_values}")
+        # Save numpy array of data values
+        self.data_np = np.array(data) #np.dstack(data)[0]
+        if do_logging:
+            logging.info(f"data: {np.array2string(self.data_np)}")
 
     def add_data(self, data, columns, rows):
         """Adds data from list of lists
