@@ -1,0 +1,12 @@
+Data
+GUI.spec
+log.log
+.pytest_cache
+_build
+_static
+_templates
+dist
+documentation
+build
+__pycache__
+output

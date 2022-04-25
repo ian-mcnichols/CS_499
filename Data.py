@@ -2,6 +2,7 @@ import numpy as np
 import logging
 do_logging = True
 
+
 class Data:
     def __init__(self, file_name, data_type):
         # Initialize variables
@@ -17,6 +18,9 @@ class Data:
             self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
+        """Loads data from a .csv file
+        :param filepath: The string path to a .csv file
+        """
         with open(filepath, "r") as file:
             # Find file formatting from first line
             sections = file.readline()
@@ -56,7 +60,11 @@ class Data:
             logging.info(f"data: {np.array2string(self.data_np)}")
 
     def add_data(self, data, columns, rows):
-        """Adds data from list of lists"""
+        """Adds data from list of lists
+        :param data: List of lists, containing rows and columns of data
+        :param columns: Number of columns
+        :param rows: Number of rows
+        """
         # Check that they're all the same length first
         for x in range(len(data) - 1):
             if len(data[x]) != len(data[x+1]):
@@ -76,8 +84,11 @@ class Data:
                 logging.error("No data added, data type wrong.")
 
     def add_result(self, function_ran, output):
+        """Adds results from a function to the object's results dictionary
+        :param function_ran: A string describing which function was run
+        :param output: The output of that function
+        """
         self.results.update({function_ran: output})
-
 
 if __name__ == '__main__':
 
@@ -95,5 +106,3 @@ if __name__ == '__main__':
     my_data.add_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]], [], [])
     if do_logging:
         logging.info(f"My data: {np.array2string(my_data.data_np)}")
-
-
