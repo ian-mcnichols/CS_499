@@ -7,10 +7,11 @@
 * Data.py
 
 ### GUI.py
-This file runs all the other files and interacts with the user.
+This file runs all the other files and interacts with the user. Basically the 'driver' for
+the codebase.
 
 ### Analyzer.py
-This is the mathematics 'library' for our project. It has a driver to call a function given 
+This is the mathematics library for our project. It has a driver to call a function given 
 the function name and data, or each function can be called separately. The input for each 
 operation is 'data', a numpy array of any given size. This driver function returns the results
 of the given function to the caller.
@@ -49,6 +50,7 @@ To generate .rst
 To generate html
 > make html
 
+Open in any html viewer.
 
 ## Running the program:
 
