@@ -157,6 +157,7 @@ def run_percentiles(data):
 
 
 def run_probability_dist(data, datatype):
+    """A placeholder, probability distribution is solely a plotting problem"""
     return
 
 
