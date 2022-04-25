@@ -44,3 +44,4 @@ The class to read in or take in data from numpy array or csv/tab-delimited file.
 
 
 Bugs:
+* If a user types "1-50" in the row range entry it crashes
