@@ -134,7 +134,7 @@ class StatsOperator(QWidget):
 
     # GUI layout and organization
     def file_entry(self):
-        """File name option:"""
+        """File name option"""
         self.filename_radiobttn = QRadioButton("Enter a csv file")
         self.fileName_lbl = QLabel(self.w)
         self.fileName_lbl.setText("File name: ")
@@ -190,7 +190,7 @@ class StatsOperator(QWidget):
         self.enterData_bttn.setDisabled(True)
 
     def operation_options(self):
-        """ Operation options: """
+        """Operation options"""
         self.operations_group = QGroupBox("Operations:")
         self.vertLay = QVBoxLayout()
         self.operations_group.setLayout(self.vertLay)
@@ -217,7 +217,7 @@ class StatsOperator(QWidget):
         self.vertLay.addWidget(self.spearman_chckbx)
 
     def data_range_options(self):
-        """Data range option: """
+        """Data range option"""
         self.dataRange_group = QGroupBox("Data Range:")
         self.dataRange_layout = QGridLayout()
         self.allOfFile_radiobttn = QRadioButton("All of file")
@@ -256,7 +256,7 @@ class StatsOperator(QWidget):
         self.dataRange_layout.addLayout(self.partialRange_layout, 1, 1)
 
     def data_type_options(self):
-        """Data type option:"""
+        """Data type option"""
         self.dataType_group = QGroupBox("Data Type: ")
         self.dataType_layout = QVBoxLayout()
         self.dataType_group.setLayout(self.dataType_layout)
@@ -278,7 +278,7 @@ class StatsOperator(QWidget):
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
     def output_options(self):
-        """Output option:"""
+        """Output option"""
         self.output_group = QGroupBox("Output:")
         self.output_layout = QVBoxLayout()
         self.output_group.setLayout(self.output_layout)
@@ -293,14 +293,14 @@ class StatsOperator(QWidget):
         self.saveResults_chckbx.toggled.connect(self.toggle_save)
 
     def calc_button_init(self):
-        """Calculate results button:"""
+        """Calculate results button"""
         self.calcResults_bttn = QPushButton("Calculate Results")
         self.calcResults_bttn.clicked.connect(self.run_calculations)
         self.reset_bttn = QPushButton("Do Another Calculation")
         self.reset_bttn.clicked.connect(self.restart)
 
     def main_app_layout(self):
-        """Main app layout:"""
+        """Main app layout"""
         self.appLayout = QGridLayout(self.w)
         self.appLayout.addWidget(self.data_entry_group, 1, 0, 1, 0)
         self.appLayout.addWidget(self.operations_group, 2, 1)
@@ -379,7 +379,6 @@ class StatsOperator(QWidget):
                 logging.info(f"column labels: {self.my_data.column_labels}")
                 logging.info(f"row labels: {self.my_data.row_labels}")
 
-
         # Don't allow user to submit file again and enable the groups again
         self.operations_group.setDisabled(False)
         self.dataRange_group.setDisabled(True)
@@ -389,8 +388,8 @@ class StatsOperator(QWidget):
         self.submit_bttn.setDisabled(True)
 
     def run_calculations(self):
-        """Iterate over user's selected calculations and run them with the Analyzer.
-        Save or display outputs according to user's choices.
+        """Iterate over user's selected calculations and run them with the Analyzer, \
+        save or display outputs according to user's choices. \
         The bulk of our logic goes here"""
         if self.do_logging:
             logging.info("running calculations!")
@@ -451,7 +450,7 @@ class StatsOperator(QWidget):
         return
         
     def update_operations(self):
-        """continually check and review the operations boxes to update the
+        """continually check and review the operations boxes to update the \
         list of operations that will be called"""
         checkboxes = (
             self.mean_chckbx,
@@ -549,17 +548,21 @@ class StatsOperator(QWidget):
 
     #  Toggle functions
     def set_datatype_interval(self):
+        """Toggles datatype to interval"""
         self.datatype = "Interval"
 
     def set_datatype_ordinal(self):
+        """Toggles datatype to ordinal"""
         self.datatype = "Ordinal"
 
     def toggle_display(self):
+        """Toggles display to on or off"""
         self.display = not self.display
         if self.do_logging:
             logging.info(f"display is set to: {self.display}")
 
     def toggle_save(self):
+        """Toggles save to on or off"""
         self.save = not self.save
         if self.do_logging:
             logging.info(f"save output is set to: {self.save}")
@@ -614,6 +617,7 @@ class DataInputWindow(QWidget):
 
     def start(self, rows, cols, data_object):
         """Checks inputs and shows window
+
         :param rows: String, number of rows to add
         :param cols: String, number of columns to add
         :param data_object: Data.Data
