@@ -1,8 +1,5 @@
 import numpy as np
-import statistics
 import scipy.stats as stats
-import matplotlib.pyplot as plt
-import visualize
 
 
 def run_mean(data):
@@ -56,7 +53,7 @@ def run_median(data, datatype="Interval"):
             # Add number of responses for each index number to list
             for j in range(len(row)):
                 num_responses = row[j]
-                for x in range(num_responses):
+                for x in range(int(num_responses)):
                     row_values.append(j)
             # Find median response for each row
             row_median = np.median(row_values)
@@ -88,14 +85,12 @@ def run_mode(data, datatype="Interval", display=False, save=True):
         return results
     elif datatype.lower() == "ordinal":
         # Array to store mode for each question
-        results_name = []
         results_number = []
         # Determine answer with highest number of responses for each question
         columns, rows = data.shape
         for i in range(rows):
             row = list(data[:, i])
             row_mode = max(row[1:])
-            # results_name.append(row_names[i])
             results_number.append(row.index(row_mode)+1)
         return results_number
     else:
@@ -161,27 +156,14 @@ def run_percentiles(data):
     return [column_results, change_percentile]
 
 
-def run_probability_dist(data, datatype="Interval"):
-    # change to histogram output
-    # ordinal and interval
-    # TODO: make work for ordinal data
-    if datatype == "Interval":
-        dist_data = data[-1] - data[0]
-    elif datatype == "Ordinal":
-        print("Not calculated yet.")
-        return
-    else:
-        raise Exception("Bad data type: {}".format(datatype))
-    x = np.linspace(min(dist_data), max(dist_data), len(dist_data))
-    mu, std = stats.norm.fit(dist_data)
-    snd = stats.norm(mu, std)
-    return snd.pdf(x), mu, std
+def run_probability_dist(data, datatype):
+    return
 
 
 def run_least_square_line(data):
     """Calculates the least square regression line of correlation between first and last column of data
 
-    :param data: data to run the funtion on
+    :param data: data to run the function on
     :return: slope of LSRL, y-intercept of LSRL
     """
     out = stats.linregress(data[0], data[-1])
@@ -191,7 +173,7 @@ def run_least_square_line(data):
 def run_correlation_coeff(data):
     """Return Pearson product-moment correlation coefficient
 
-    :param data: data to run the funtion on
+    :param data: data to run the function on
     :return: float, the minimum value of the correlation coefficient matrix
     """
     # take the first value of the correlation matrix
@@ -208,8 +190,12 @@ def run_spearman_rank_corr_coeff(data):
     :return: p-value : float The two-sided p-value for a hypothesis test whose null hypothesis is that two sets of
                        data are uncorrelated, has same dimension as rho.
     """
-    return [stats.spearmanr(data[0], data[-1])[0],
+    results = [stats.spearmanr(data[0], data[-1])[0],
             stats.spearmanr(data[0], data[-1])[1]]
+    for idx, result in enumerate(results):
+        if result != 0 and not (result > 0) and not (result < 0):
+            results[idx] = 1
+    return results
 
 
 def run_function(function_name, data, data_type="Interval", display=False,
@@ -248,25 +234,5 @@ def run_function(function_name, data, data_type="Interval", display=False,
 
 
 if __name__ == "__main__":
-    import Data
-    import visualize
-
-    my_data = Data.Data("Data/OrdinalDataTest.csv", data_type="ordinal")
-    print('data type:', my_data.data_type)
-    print(my_data.data_np)
-    if my_data.data_type == 'interval':
-        print("mean: ", run_mean(my_data.data_np))
-        print("median: ", run_median(my_data.data_np, datatype=my_data.data_type))
-        print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
-        print("standard deviation: ", run_stand_dev(my_data.data_np))
-        print("variance: ", run_variance(my_data.data_np))
-        print("percentiles: ", run_percentiles(my_data.data_np))
-        print("probability dist: ", run_probability_dist(my_data.data_np, datatype=my_data.data_type))
-        print("least squared line: ", run_least_square_line(my_data.data_np))
-        print("correlation coefficient:", run_correlation_coeff(my_data.data_np))
-        print("spearman coefficient: ",
-              run_spearman_rank_corr_coeff(my_data.data_np))
-    elif my_data.data_type == "ordinal":
-        print("median: ", run_median(my_data.data_np, datatype=my_data.data_type))
-        print("mode: ", run_mode(my_data.data_np, datatype=my_data.data_type))
-        # print("probability dist: ", run_probability_dist(ordinals=my_data.ordinals, datatype=my_data.data_type))
+    x = run_spearman_rank_corr_coeff([1, 1, 1, 1])
+    print(x)
