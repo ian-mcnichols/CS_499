@@ -27,7 +27,7 @@ class StatsOperator(QWidget):
         self.resultsWindow = ResultsDisplay()
         self.dataEntryWindow = DataInputWindow()
 
-        self.do_logging = True
+        self.do_logging = False
         if self.do_logging:
             logging.basicConfig(level=logging.INFO, filename='log.log', filemode='a',
                                 format='%(asctime)s  [%(filename)s:%(lineno)d] %(message)s')
@@ -345,12 +345,18 @@ class StatsOperator(QWidget):
         self.data_loaded = True
         # If user has selected a range
         if self.partialRange_radiobttn.isChecked():
-            # Get min and max row/column number
+            # Get min and max row/column number from text fields and switch them to ints
             # NOTE: Do not subtract 1 from the max row/column, b/c of the way the np slice works
-            min_column = int(self.minColumn_txtbx.text()) - 1
-            max_column = int(self.maxColumn_txtbx.text())
-            min_row = int(self.minRow_txtbx.text()) - 1
-            max_row = int(self.maxRow_txtbx.text())
+            try:
+                min_column = int(self.minColumn_txtbx.text()) - 1
+                max_column = int(self.maxColumn_txtbx.text())
+                min_row = int(self.minRow_txtbx.text()) - 1
+                max_row = int(self.maxRow_txtbx.text())
+            except ValueError:
+                # The values entered were not correct type
+                if self.do_logging:
+                    logging.warning("Please enter integer values for rows/columns")
+                raise Exception("Only integer values allowed for range of rows and columns.")
             # error checking
             if min_column > max_column:
                 min_column = 0
@@ -359,24 +365,20 @@ class StatsOperator(QWidget):
                 min_row = 0
                 max_row = self.my_data.data_np.shape[1]
 
-            # Check that all values are integers
-            if all([isinstance(i, int) for i in [min_column, max_column, min_row, max_row]]):
-                # Edit the data array
-                new_data_np = self.my_data.data_np[min_column:max_column, min_row:max_row]
-                self.my_data.data_np = new_data_np
-                # Reset column/row labels
-                new_column_labels = self.my_data.column_labels[min_column:max_column]
-                self.my_data.column_labels = new_column_labels
-                new_row_labels = self.my_data.row_labels[min_row:max_row]
-                self.my_data.row_labels = new_row_labels
-                if self.do_logging:
-                    logging.info(f"my new data: {np.array2string(self.my_data.data_np)}")
-                    logging.info(f"column labels: {self.my_data.column_labels}")
-                    logging.info(f"row labels: {self.my_data.row_labels}")
-            else:
-                # The values entered were not correct
-                if self.do_logging:
-                    logging.warning("Please enter integer values for rows/columns")
+            # Once you know all values are integers and in correct order
+            # Edit the data array
+            new_data_np = self.my_data.data_np[min_column:max_column, min_row:max_row]
+            self.my_data.data_np = new_data_np
+            # Reset column/row labels
+            new_column_labels = self.my_data.column_labels[min_column:max_column]
+            self.my_data.column_labels = new_column_labels
+            new_row_labels = self.my_data.row_labels[min_row:max_row]
+            self.my_data.row_labels = new_row_labels
+            if self.do_logging:
+                logging.info(f"my new data: {np.array2string(self.my_data.data_np)}")
+                logging.info(f"column labels: {self.my_data.column_labels}")
+                logging.info(f"row labels: {self.my_data.row_labels}")
+
 
         # Don't allow user to submit file again and enable the groups again
         self.operations_group.setDisabled(False)
