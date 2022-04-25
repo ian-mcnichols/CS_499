@@ -366,9 +366,11 @@ class StatsOperator(QWidget):
             if min_column > max_column:
                 min_column = 0
                 max_column = self.my_data.data_np.shape[0]
+                self.communicator.display("Cannot have max column less than min column.", "Warning")
             if min_row > max_row:
                 min_row = 0
                 max_row = self.my_data.data_np.shape[1]
+                self.communicator.display("Cannot have max row less than min row.", "Warning")
 
             # Once you know all values are integers and in correct order
             # Edit the data array
