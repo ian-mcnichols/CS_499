@@ -27,7 +27,7 @@ class StatsOperator(QWidget):
         self.resultsWindow = ResultsDisplay()
         self.dataEntryWindow = DataInputWindow()
 
-        self.do_logging = True
+        self.do_logging = False
         if self.do_logging:
             logging.basicConfig(level=logging.INFO, filename='log.log', filemode='a',
                                 format='%(asctime)s  [%(filename)s:%(lineno)d] %(message)s')
@@ -134,7 +134,7 @@ class StatsOperator(QWidget):
 
     # GUI layout and organization
     def file_entry(self):
-        """File name option:"""
+        """File name option"""
         self.filename_radiobttn = QRadioButton("Enter a csv file")
         self.fileName_lbl = QLabel(self.w)
         self.fileName_lbl.setText("File name: ")
@@ -190,7 +190,7 @@ class StatsOperator(QWidget):
         self.enterData_bttn.setDisabled(True)
 
     def operation_options(self):
-        """ Operation options: """
+        """Operation options"""
         self.operations_group = QGroupBox("Operations:")
         self.vertLay = QVBoxLayout()
         self.operations_group.setLayout(self.vertLay)
@@ -217,7 +217,7 @@ class StatsOperator(QWidget):
         self.vertLay.addWidget(self.spearman_chckbx)
 
     def data_range_options(self):
-        """Data range option: """
+        """Data range option"""
         self.dataRange_group = QGroupBox("Data Range:")
         self.dataRange_layout = QGridLayout()
         self.allOfFile_radiobttn = QRadioButton("All of file")
@@ -256,7 +256,7 @@ class StatsOperator(QWidget):
         self.dataRange_layout.addLayout(self.partialRange_layout, 1, 1)
 
     def data_type_options(self):
-        """Data type option:"""
+        """Data type option"""
         self.dataType_group = QGroupBox("Data Type: ")
         self.dataType_layout = QVBoxLayout()
         self.dataType_group.setLayout(self.dataType_layout)
@@ -278,7 +278,7 @@ class StatsOperator(QWidget):
         self.dataType_layout.addWidget(self.ordinal_radiobttn)
 
     def output_options(self):
-        """Output option:"""
+        """Output option"""
         self.output_group = QGroupBox("Output:")
         self.output_layout = QVBoxLayout()
         self.output_group.setLayout(self.output_layout)
@@ -293,14 +293,14 @@ class StatsOperator(QWidget):
         self.saveResults_chckbx.toggled.connect(self.toggle_save)
 
     def calc_button_init(self):
-        """Calculate results button:"""
+        """Calculate results button"""
         self.calcResults_bttn = QPushButton("Calculate Results")
         self.calcResults_bttn.clicked.connect(self.run_calculations)
         self.reset_bttn = QPushButton("Do Another Calculation")
         self.reset_bttn.clicked.connect(self.restart)
 
     def main_app_layout(self):
-        """Main app layout:"""
+        """Main app layout"""
         self.appLayout = QGridLayout(self.w)
         self.appLayout.addWidget(self.data_entry_group, 1, 0, 1, 0)
         self.appLayout.addWidget(self.operations_group, 2, 1)
@@ -321,7 +321,8 @@ class StatsOperator(QWidget):
         if self.fileName_txtbx.text() != "":
             filename = self.fileName_txtbx.text()
         else:
-            filename = str(QFileDialog.getOpenFileName(self, "Open File", "", "All Files (*.csv)")[0])
+            filename = str(QFileDialog.getOpenFileName(self, "Open File", "",
+                                                       "All Files (*.csv)")[0])
             if filename == "":
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
@@ -344,29 +345,39 @@ class StatsOperator(QWidget):
         self.data_loaded = True
         # If user has selected a range
         if self.partialRange_radiobttn.isChecked():
-            min_column = int(self.minColumn_txtbx.text()) - 1
-            max_column = int(self.maxColumn_txtbx.text())
-            min_row = int(self.minRow_txtbx.text()) - 1
-            max_row = int(self.maxRow_txtbx.text())
-
-            # Check that all values are integers
-            if all([isinstance(i, int) for i in [min_column, max_column, min_row, max_row]]):
-                # Edit the data array
-                new_data_np = self.my_data.data_np[min_column:max_column, min_row:max_row]
-                self.my_data.data_np = new_data_np
-                # Reset column/row labels
-                new_column_labels = self.my_data.column_labels[min_column:max_column]
-                self.my_data.column_labels = new_column_labels
-                new_row_labels = self.my_data.row_labels[min_row:max_row]
-                self.my_data.row_labels = new_row_labels
-                if self.do_logging:
-                    logging.info(f"my new data: {np.array2string(self.my_data.data_np)}")
-                    logging.info(f"column labels: {self.my_data.column_labels}")
-                    logging.info(f"row labels: {self.my_data.row_labels}")
-            else:
-                # The values entered were not correct
+            # Get min and max row/column number from text fields and switch them to ints
+            # NOTE: Do not subtract 1 from the max row/column, b/c of the way the np slice works
+            try:
+                min_column = int(self.minColumn_txtbx.text()) - 1
+                max_column = int(self.maxColumn_txtbx.text())
+                min_row = int(self.minRow_txtbx.text()) - 1
+                max_row = int(self.maxRow_txtbx.text())
+            except ValueError:
+                # The values entered were not correct type
                 if self.do_logging:
                     logging.warning("Please enter integer values for rows/columns")
+                raise Exception("Only integer values allowed for range of rows and columns.")
+            # error checking
+            if min_column > max_column:
+                min_column = 0
+                max_column = self.my_data.data_np.shape[0]
+            if min_row > max_row:
+                min_row = 0
+                max_row = self.my_data.data_np.shape[1]
+
+            # Once you know all values are integers and in correct order
+            # Edit the data array
+            new_data_np = self.my_data.data_np[min_column:max_column, min_row:max_row]
+            self.my_data.data_np = new_data_np
+            # Reset column/row labels
+            new_column_labels = self.my_data.column_labels[min_column:max_column]
+            self.my_data.column_labels = new_column_labels
+            new_row_labels = self.my_data.row_labels[min_row:max_row]
+            self.my_data.row_labels = new_row_labels
+            if self.do_logging:
+                logging.info(f"my new data: {np.array2string(self.my_data.data_np)}")
+                logging.info(f"column labels: {self.my_data.column_labels}")
+                logging.info(f"row labels: {self.my_data.row_labels}")
 
         # Don't allow user to submit file again and enable the groups again
         self.operations_group.setDisabled(False)
@@ -377,8 +388,8 @@ class StatsOperator(QWidget):
         self.submit_bttn.setDisabled(True)
 
     def run_calculations(self):
-        """Iterate over user's selected calculations and run them with the Analyzer.
-        Save or display outputs according to user's choices.
+        """Iterate over user's selected calculations and run them with the Analyzer, \
+        save or display outputs according to user's choices. \
         The bulk of our logic goes here"""
         if self.do_logging:
             logging.info("running calculations!")
@@ -398,21 +409,21 @@ class StatsOperator(QWidget):
             if self.do_logging:
                 logging.info(f"running {format(calculation)}")
             if self.datatype == "Interval":
-                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Interval",
+                output = Analyzer.run_function(calculation, self.my_data.data_np,
+                                               data_type="Interval",
                                                display=self.display, save=self.save)
                 if self.do_logging:
                     logging.info(f"Results: {output}")
             elif self.datatype == "Ordinal":
-                output = Analyzer.run_function(calculation, self.my_data.data_np, data_type="Ordinal",
-                                               display=self.display, save=self.save)
+                output = Analyzer.run_function(calculation, self.my_data.data_np,
+                                               data_type="Ordinal", display=self.display,
+                                               save=self.save)
                 if calculation == "Mode":
+                    # Create graph with mode results
                     visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
                                          data_type='ordinal', save=self.save, display=self.display)
                 if self.do_logging:
                     logging.info(f"Results: {output}")
-                    # Create graph with mode results
-                    visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output, save=self.save,
-                                         display=self.display)
             else:
                 raise Exception("Bad datatype {}".format(self.datatype))
             # Save results
@@ -421,13 +432,14 @@ class StatsOperator(QWidget):
             if self.do_logging:
                 logging.info(f"operations list: {self.operations}")
             if self.datatype == "Interval":
-                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype, display=self.display,
-                                     save=self.save)
-                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype, display=self.display,
-                                     save=self.save)
+                visualize.plot_chart(self.my_data, "box plot", data_type=self.datatype,
+                                     display=self.display, save=self.save)
+                visualize.plot_chart(self.my_data, "Histogram", data_type=self.datatype,
+                                     display=self.display, save=self.save)
             if "Probability distribution" in self.operations:
-                visualize.plot_chart(self.my_data, "Probability Distribution", display=self.display,
-                                     save=self.save, data_type=self.datatype)
+                visualize.plot_chart(self.my_data, "Probability Distribution",
+                                     display=self.display, save=self.save,
+                                     data_type=self.datatype)
             if self.save:
                 visualize.build_csv(self.results, self.my_data.column_labels, self.datatype)
                 visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
@@ -436,9 +448,9 @@ class StatsOperator(QWidget):
         if self.do_logging:
             logging.info("Program Complete")
         return
-        
+
     def update_operations(self):
-        """continually check and review the operations boxes to update the
+        """continually check and review the operations boxes to update the \
         list of operations that will be called"""
         checkboxes = (
             self.mean_chckbx,
@@ -470,8 +482,10 @@ class StatsOperator(QWidget):
     # Additional window options
     def show_results_window(self):
         """Displays results summary from calculations to screen"""
-        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(self.datatype, self.results,
-                                                                               self.my_data.column_labels))
+        self.resultsWindow.result_lbl.setText(visualize.create_results_summary(
+            self.datatype, self.results,
+            self.my_data.column_labels)
+        )
         self.resultsWindow.start()
 
     def display_manual_entry_window(self):
@@ -534,17 +548,21 @@ class StatsOperator(QWidget):
 
     #  Toggle functions
     def set_datatype_interval(self):
+        """Toggles datatype to interval"""
         self.datatype = "Interval"
 
     def set_datatype_ordinal(self):
+        """Toggles datatype to ordinal"""
         self.datatype = "Ordinal"
 
     def toggle_display(self):
+        """Toggles display to on or off"""
         self.display = not self.display
         if self.do_logging:
             logging.info(f"display is set to: {self.display}")
 
     def toggle_save(self):
+        """Toggles save to on or off"""
         self.save = not self.save
         if self.do_logging:
             logging.info(f"save output is set to: {self.save}")
@@ -595,9 +613,11 @@ class DataInputWindow(QWidget):
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
+        self.do_logging = True
 
     def start(self, rows, cols, data_object):
         """Checks inputs and shows window
+
         :param rows: String, number of rows to add
         :param cols: String, number of columns to add
         :param data_object: Data.Data
