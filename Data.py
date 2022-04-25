@@ -88,21 +88,3 @@ class Data:
                 logging.error("No data added, data type wrong.")
 
 
-if __name__ == '__main__':
-
-    my_data = Data("Data/IntervalDataTest.csv", "interval")
-
-    if do_logging:
-        logging.info(np.array2string(my_data.data_np))
-    my_data = Data("GUI", "interval")
-    my_data.add_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
-                     ['question1', 'question2', 'question3', 'question4', 'question5'])
-    if do_logging:
-        logging.info(f"My data: {np.array2string(my_data.data_np)}")
-
-    my_data = Data("GUI", "ordinal")
-    my_data.add_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]], [], [])
-    if do_logging:
-        logging.info(f"My data: {np.array2string(my_data.data_np)}")
-
-
