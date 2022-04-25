@@ -86,7 +86,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs in output folder\n\n"
+                results_summary += "\tSee probability distribution graphs\n\n"
                 continue
             elif function == "Spearman rank correlation coefficient":
                 results_summary += f"\tSpearman coefficient: {results[function][0]}\n"
@@ -120,7 +120,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs\n\n"
+                results_summary += "\tSee probability distribution graphs in output folder\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):

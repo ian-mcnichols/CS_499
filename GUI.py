@@ -391,6 +391,8 @@ class StatsOperator(QWidget):
         """Iterate over user's selected calculations and run them with the Analyzer, \
         save or display outputs according to user's choices. \
         The bulk of our logic goes here"""
+        # Disable Calculate Results Button
+        self.calcResults_bttn.setDisabled(True)
         if self.do_logging:
             logging.info("running calculations!")
         if self.save:
@@ -404,6 +406,7 @@ class StatsOperator(QWidget):
                 logging.error("Cannot run without data numpy.")
             self.operations_group.setDisabled(True)
             return
+
         # For each selected calculation
         for calculation in self.operations:
             if self.do_logging:
