@@ -82,13 +82,6 @@ class Data:
             if do_logging:
                 logging.error("No data added, data type wrong.")
 
-    def add_result(self, function_ran, output):
-        """Adds function/result pair to results dictionary
-        :param function_ran: String, the function
-        :param output: the function's output
-        """
-        self.results.update({function_ran: output})
-
 
 if __name__ == '__main__':
 
