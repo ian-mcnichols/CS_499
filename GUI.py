@@ -3,7 +3,7 @@ import sys
 import numpy as np
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog, QMessageBox
 import logging
 import Data
 import Analyzer
@@ -595,6 +595,7 @@ class DataInputWindow(QWidget):
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
+        self.communication = MessageBox()
 
     def start(self, rows, cols, data_object):
         """Checks inputs and shows window
@@ -607,8 +608,9 @@ class DataInputWindow(QWidget):
             tmp = int(rows)
             tmp = int(cols)
         except ValueError:
-            if self.do_logging:
-                logging.warning("Warning, rows/cols not integers.")
+            self.communication.display("Warning: Rows/Columns not integer values")
+            #if self.do_logging:
+            #    logging.warning("Warning, rows/cols not integers.")
             return
         self.rows = int(rows)
         if self.rows > 50:
@@ -648,6 +650,16 @@ class DataInputWindow(QWidget):
         col_labels = ["Col {}".format(i+1) for i in range(self.cols)]
         self.data.add_data(user_input, col_labels, row_labels)
         self.w.close()
+
+
+class MessageBox(QMessageBox):
+    def __init__(self):
+        super().__init__()
+
+    def display(self, message):
+        self.setGeometry(300, 300, 300, 220)
+        self.setText(message)
+        self.show()
 
 
 if __name__ == "__main__":
