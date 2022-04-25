@@ -64,19 +64,3 @@ class Data:
 
     def add_result(self, function_ran, output):
         self.results.update({function_ran: output})
-
-
-if __name__ == '__main__':
-
-    import numpy as np
-    my_data = Data("Data/IntervalDataTest.csv", "interval")
-    print(my_data.data_np)
-    my_data = Data("GUI", "interval")
-    my_data.add_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
-                     ['question1', 'question2', 'question3', 'question4', 'question5'])
-    print("My data:", my_data.data_np)
-
-    my_data = Data("GUI", "ordinal")
-    my_data.add_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]], [], [])
-    print("My data:", my_data.data_np)
-
