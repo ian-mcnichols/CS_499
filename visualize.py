@@ -86,7 +86,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs\n\n"
+                results_summary += "\tSee probability distribution graphs in output folder\n\n"
                 continue
             elif function == "Spearman rank correlation coefficient":
                 results_summary += f"\tSpearman coefficient: {results[function][0]}\n"
@@ -213,7 +213,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             if do_logging:
                 logging.info(f"num rows: {rows}")
             for i in range(rows):
-                plt.figure()
+                fig = plt.figure()
                 # Get row as list
                 row = list(data.data_np[:, i])
                 row_values = []
@@ -226,6 +226,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
                 plt.title("Row {} Probability Distribution".format(i+1))
                 if save:
-                    plt.savefig("output/Row_{}_distribution".format(i+1))
+                    fig.savefig("output/Row_{}_distribution".format(i+1))
+                # Close plot to save memory
+                plt.close(fig)
     else:
         raise Exception("Invalid chart type {}".format(plot_type))
