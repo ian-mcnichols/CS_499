@@ -14,6 +14,9 @@ class Data:
             self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
+        """Loads data from a .csv file
+        :param filepath The string path to a .csv file
+        """
         with open(filepath, "r") as file:
             # Find file formatting from first line
             sections = file.readline()
