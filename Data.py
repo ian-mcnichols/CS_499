@@ -2,9 +2,13 @@ import numpy as np
 import logging
 do_logging = True
 
+
 class Data:
     def __init__(self, file_name, data_type):
-        # Initialize variables
+        """Initialize variables
+        :param file_name: String, a path to the .csv file or GUI if GUI input
+        :param data_type: Ordinal or Interval
+        """
         self.data_type = data_type
         self.data = None
         self.data_np = None
@@ -17,6 +21,10 @@ class Data:
             self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
+        """Loads data file
+
+        :param filepath: String to .csv data file
+        """
         with open(filepath, "r") as file:
             # Find file formatting from first line
             sections = file.readline()
@@ -33,7 +41,6 @@ class Data:
             file.close()
             # Strip down data to numpy with values, list of column labels, and list of row labels
             self._to_numpy()
-        return
 
     def _to_numpy(self):
         """Converts np.genfromtxt output to numpy array of data and row/column labels"""
@@ -51,12 +58,17 @@ class Data:
         if do_logging:
             logging.info(f"data {data_values}")
         # Save numpy array of data values
-        self.data_np = np.array(data) #np.dstack(data)[0]
+        self.data_np = np.array(data_values)
         if do_logging:
             logging.info(f"data: {np.array2string(self.data_np)}")
 
     def add_data(self, data, columns, rows):
-        """Adds data from list of lists"""
+        """Adds data from list of lists.
+
+        :param data: List of lists containing data values
+        :param columns: List of column labels
+        :param rows: List of row labels
+        """
         # Check that they're all the same length first
         for x in range(len(data) - 1):
             if len(data[x]) != len(data[x+1]):
@@ -74,26 +86,5 @@ class Data:
         except ValueError:
             if do_logging:
                 logging.error("No data added, data type wrong.")
-
-    def add_result(self, function_ran, output):
-        self.results.update({function_ran: output})
-
-
-if __name__ == '__main__':
-
-    my_data = Data("Data/IntervalDataTest.csv", "interval")
-
-    if do_logging:
-        logging.info(np.array2string(my_data.data_np))
-    my_data = Data("GUI", "interval")
-    my_data.add_data([['1', '1', '1,', '1', '1'], ['1', '2', '1', '2', '1']], ['pretest', 'posttest'],
-                     ['question1', 'question2', 'question3', 'question4', 'question5'])
-    if do_logging:
-        logging.info(f"My data: {np.array2string(my_data.data_np)}")
-
-    my_data = Data("GUI", "ordinal")
-    my_data.add_data([[1, 1, 1, 1], [2, 2, 2, 2], [3, 3, 3, 3], [4, 4, 4, 4]], [], [])
-    if do_logging:
-        logging.info(f"My data: {np.array2string(my_data.data_np)}")
 
 
