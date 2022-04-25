@@ -213,7 +213,7 @@ class StatsOperator(QWidget):
         self.vertLay.addWidget(self.prob_dist_chckbx)
         self.corr_coeff_chckbx = QCheckBox("Correlation coefficient")
         self.vertLay.addWidget(self.corr_coeff_chckbx)
-        self.spearman_chckbx = QCheckBox("Spearman rank correction coefficient")
+        self.spearman_chckbx = QCheckBox("Spearman rank correlation coefficient")
         self.vertLay.addWidget(self.spearman_chckbx)
 
     def data_range_options(self):

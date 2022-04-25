@@ -26,6 +26,33 @@ def build_csv(results, headers, data_type):
                                 row = [function + " Difference between first and last column"]
                             row.append(results[function][i])
                             write.writerow(row)
+                    elif function == "Spearman rank correlation coefficient":
+                        row = ["Spearman coefficient"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+
+                        row = ["Spearman p-value"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+                    elif function == "Least square line":
+                        row = ["LSRL slope:"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+
+                        row = ["LSRL y-intercept"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+                    elif function == "Percentiles":
+                        for percentile_list in results[function]:
+                            if type(percentile_list[0]) is list:  # List of lists of percentiles
+                                for i in range(len(percentile_list)):
+                                    row = [function + " " + headers[i]]
+                                    row.append(percentile_list[i])
+                                    write.writerow(row)
+                            else:  # Difference list
+                                row = [function + " Difference between first and last column"]
+                                row.append(results[function][-1])
+                                write.writerow(row)
                     else:
                         for result in results[function]:
                             row.append(result)
@@ -60,6 +87,22 @@ def create_results_summary(data_type, results, headers):
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
                 results_summary += "\tSee probability distribution graphs\n\n"
+                continue
+            elif function == "Spearman rank correlation coefficient":
+                results_summary += f"\tSpearman coefficient: {results[function][0]}\n"
+                results_summary += f"\tp-value: {results[function][1]}\n\n"
+                continue
+            elif function == "Least square line":
+                results_summary += f"\ty = {results[function][0]}x + ({results[function][1]})\n\n"
+                continue
+            elif function == "Percentiles":
+                for percentile_list in results[function]:
+                    if type(percentile_list[0]) is list:  # List of lists of percentiles
+                        for i in range(len(percentile_list)):
+                            results_summary += f"\t{headers[i]}: {percentile_list[i]}\n"
+                    else:  # Difference list
+                        results_summary += f"\tDifference between first and last column: {results[function][i]}\n"
+                results_summary += "\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):

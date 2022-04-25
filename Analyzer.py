@@ -227,7 +227,7 @@ def run_function(function_name, data, data_type="Interval", display=False,
         return run_probability_dist(data, datatype=data_type)
     elif function_name == "Correlation coefficient":
         return run_correlation_coeff(data)
-    elif function_name == "Spearman rank correction coefficient":
+    elif function_name == "Spearman rank correlation coefficient":
         return run_spearman_rank_corr_coeff(data)
     else:
         raise Exception("Function does not exist: {}".format(function_name))
