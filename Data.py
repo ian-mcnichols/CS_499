@@ -5,7 +5,10 @@ do_logging = True
 
 class Data:
     def __init__(self, file_name, data_type):
-        # Initialize variables
+        """Initialize variables
+        :param file_name: String, a path to the .csv file or GUI if GUI input
+        :param data_type: Ordinal or Interval
+        """
         self.data_type = data_type
         self.data = None
         self.data_np = None
@@ -19,6 +22,7 @@ class Data:
 
     def read_data_file(self, filepath):
         """Loads data file
+
         :param filepath: String to .csv data file
         """
         with open(filepath, "r") as file:
@@ -59,10 +63,11 @@ class Data:
             logging.info(f"data: {np.array2string(self.data_np)}")
 
     def add_data(self, data, columns, rows):
-        """Adds data from list of lists
+        """Adds data from list of lists.
+
         :param data: List of lists containing data values
-        :param columns: Column labels
-        :param rows: Row labels
+        :param columns: List of column labels
+        :param rows: List of row labels
         """
         # Check that they're all the same length first
         for x in range(len(data) - 1):
