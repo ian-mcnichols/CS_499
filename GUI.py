@@ -328,7 +328,6 @@ class StatsOperator(QWidget):
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
         if self.do_logging:
-            self.communicator.display("Loading file {}!".format(filename))
             logging.info("loading file {}!".format(filename))
         if not os.path.isfile(filename):
             self.communicator.display("File does not exist.")
