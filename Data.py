@@ -70,4 +70,8 @@ class Data:
             print("No data added, data type wrong.")
 
     def add_result(self, function_ran, output):
+        """Adds results from a function to the object's results dictionary
+        :param function_ran A string describing which function was run
+        :param output The output of that function
+        """
         self.results.update({function_ran: output})
