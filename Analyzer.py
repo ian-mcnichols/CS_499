@@ -201,10 +201,9 @@ def run_spearman_rank_corr_coeff(data):
 def run_function(function_name, data, data_type="Interval", display=False,
                  save=True):
     """Driver to run any stats operation given a function and data
-
     :param function_name: string, operation to run on the data
-    :param data : numpy array of data to run on
-    :param data_type : string, "ordinal" or "interval"
+    :param data: numpy array of data to run on
+    :param data_type: string, ordinal or interval
     :param display: boolean, whether to display plots
     :param save: boolean, whether to save plots
     :return: function corresponding to operation type
@@ -231,8 +230,3 @@ def run_function(function_name, data, data_type="Interval", display=False,
         return run_spearman_rank_corr_coeff(data)
     else:
         raise Exception("Function does not exist: {}".format(function_name))
-
-
-if __name__ == "__main__":
-    x = run_spearman_rank_corr_coeff([1, 1, 1, 1])
-    print(x)
