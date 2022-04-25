@@ -184,7 +184,5 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.title("Row {} Probability Distribution".format(i+1))
                 if save:
                     plt.savefig("output/Row_{}_distribution".format(i+1))
-                if display:
-                    plt.show()
     else:
         raise Exception("Invalid chart type {}".format(plot_type))
