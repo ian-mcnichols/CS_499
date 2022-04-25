@@ -8,3 +8,5 @@ _templates
 dist
 documentation
 build
+__pycache__
+output
