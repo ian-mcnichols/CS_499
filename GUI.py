@@ -325,13 +325,13 @@ class StatsOperator(QWidget):
             filename = str(QFileDialog.getOpenFileName(self, "Open File", "",
                                                        "All Files (*.csv)")[0])
             if filename == "":
-                self.communicator.display("No file added.")
+                self.communicator.display("No file added.", "Warning")
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
         if self.do_logging:
             logging.info("loading file {}!".format(filename))
         if not os.path.isfile(filename):
-            self.communicator.display("File does not exist.")
+            self.communicator.display("File does not exist.", "Critical")
             if self.do_logging:
                 logging.error("File does not exist.")
             return
@@ -401,12 +401,12 @@ class StatsOperator(QWidget):
         if self.save:
             os.makedirs("output/", exist_ok=True)
         if not self.data_loaded:
-            self.communicator.display("Cannot run without inputs loaded.")
+            self.communicator.display("Cannot run without inputs loaded.", "Warning")
             if self.do_logging:
                 logging.error("Cannot run without inputs loaded.")
             return
         elif self.my_data.data_np is None:
-            self.communicator.display("No data array loaded.")
+            self.communicator.display("No data array loaded.", "Warning")
             if self.do_logging:
                 logging.error("Cannot run without data numpy.")
             self.operations_group.setDisabled(True)
@@ -502,7 +502,7 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
         if self.row_txtbx.text() == "" or self.col_txtbx.text() == "":
-            self.communicator.display("No rows or columns entered.")
+            self.communicator.display("No rows or columns entered.", "Critical")
             if self.do_logging:
                 logging.error("no rows or columns entered.")
             return
@@ -686,9 +686,15 @@ class MessageBox(QMessageBox):
     def __init__(self):
         super().__init__()
 
-    def display(self, message):
+    def display(self, message, message_type="Information"):
         self.setGeometry(300, 300, 300, 220)
         self.setText(message)
+        if message_type == "Information":
+            self.setIcon(QMessageBox.Information)
+        elif message_type == "Warning":
+            self.setIcon(QMessageBox.Warning)
+        elif message_type == "Critical":
+            self.setIcon(QMessageBox.Critical)
         self.show()
 
 
