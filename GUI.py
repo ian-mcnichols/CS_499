@@ -610,6 +610,7 @@ class DataInputWindow(QWidget):
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
+        self.do_logging = True
 
     def start(self, rows, cols, data_object):
         """Checks inputs and shows window
