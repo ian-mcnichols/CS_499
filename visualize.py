@@ -26,6 +26,33 @@ def build_csv(results, headers, data_type):
                                 row = [function + " Difference between first and last column"]
                             row.append(results[function][i])
                             write.writerow(row)
+                    elif function == "Spearman rank correlation coefficient":
+                        row = ["Spearman coefficient"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+
+                        row = ["Spearman p-value"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+                    elif function == "Least square line":
+                        row = ["LSRL slope:"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+
+                        row = ["LSRL y-intercept"]
+                        row.append(results[function][0])
+                        write.writerow(row)
+                    elif function == "Percentiles":
+                        for percentile_list in results[function]:
+                            if type(percentile_list[0]) is list:  # List of lists of percentiles
+                                for i in range(len(percentile_list)):
+                                    row = [function + " " + headers[i]]
+                                    row.append(percentile_list[i])
+                                    write.writerow(row)
+                            else:  # Difference list
+                                row = [function + " Difference between first and last column"]
+                                row.append(results[function][-1])
+                                write.writerow(row)
                     else:
                         for result in results[function]:
                             row.append(result)
@@ -46,7 +73,7 @@ def build_csv(results, headers, data_type):
 def build_text(results, headers, data_type):
     output_file_name = "Results.txt"
     # Write results summary to text file
-    with open(output_file_name, 'w', newline='') as txt_file:
+    with open("output/" + output_file_name, 'w', newline='') as txt_file:
         txt_file.write(create_results_summary(data_type, results, headers))
     txt_file.close()
 
@@ -60,6 +87,22 @@ def create_results_summary(data_type, results, headers):
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
                 results_summary += "\tSee probability distribution graphs\n\n"
+                continue
+            elif function == "Spearman rank correlation coefficient":
+                results_summary += f"\tSpearman coefficient: {results[function][0]}\n"
+                results_summary += f"\tp-value: {results[function][1]}\n\n"
+                continue
+            elif function == "Least square line":
+                results_summary += f"\ty = {results[function][0]}x + ({results[function][1]})\n\n"
+                continue
+            elif function == "Percentiles":
+                for percentile_list in results[function]:
+                    if type(percentile_list[0]) is list:  # List of lists of percentiles
+                        for i in range(len(percentile_list)):
+                            results_summary += f"\t{headers[i]}: {percentile_list[i]}\n"
+                    else:  # Difference list
+                        results_summary += f"\tDifference between first and last column: {results[function][i]}\n"
+                results_summary += "\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
@@ -77,7 +120,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs"
+                results_summary += "\tSee probability distribution graphs\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
@@ -156,22 +199,22 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.figure()
                 temp = np.ndarray.tolist(column)
                 temp.sort()
-                plt.hist(temp, weights=np.ones(len(temp)) / len(temp))
+                plt.hist(temp, weights=np.ones(len(temp)) / len(temp), edgecolor='black')
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-                plt.title("Column {} Probability Distribution".format(idx))
+                plt.title("Column {} Probability Distribution".format(idx+1))
                 if save:
-                    plt.savefig("output/Col_{}_distribution".format(idx))
-            if display:
-                plt.show()
+                    plt.savefig("output/Col_{}_distribution".format(idx+1))
+                if display:
+                    plt.show()
         elif data_type.lower() == "ordinal":
             if do_logging:
                 logging.info("Plotting probability distribution")
             columns, rows = data.data_np.shape
             if do_logging:
-                logging.info("num rows:", rows)
+                logging.info(f"num rows: {rows}")
             for i in range(rows):
-                # Get row as list
                 plt.figure()
+                # Get row as list
                 row = list(data.data_np[:, i])
                 row_values = []
                 # Add number of responses for each index number to list
@@ -179,12 +222,10 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                     num_responses = row[j]
                     for x in range(num_responses):
                         row_values.append(j+1)
-                plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values))
+                plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values), edgecolor='black')
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
-                plt.title("Row {} Probability Distribution".format(i))
+                plt.title("Row {} Probability Distribution".format(i+1))
                 if save:
-                    plt.savefig("output/Row_{}_distribution".format(i))
-                if display:
-                    plt.show()
+                    plt.savefig("output/Row_{}_distribution".format(i+1))
     else:
         raise Exception("Invalid chart type {}".format(plot_type))

@@ -67,10 +67,9 @@ def run_mode(data, datatype="Interval", display=False, save=True):
     """Calculates the mode of a given dataset
 
     :param data: data to run the function on
-    :param datatype: "interval" or "ordinal"
-    :return: interval-the mode for each column of data for interval data and the mode of the difference between the
-                      first and last columns
-             ordinals-the mode for each row/question
+    :param datatype: interval or ordinal
+    :return: the mode for each column of data for interval data and the mode of the difference between the first \
+     and last columns, or the mode for each row if ordinal data
     """
     if datatype.lower() == "interval":
         results = []
@@ -98,7 +97,7 @@ def run_mode(data, datatype="Interval", display=False, save=True):
 
 
 def run_stand_dev(data):
-    """calculates the standard deviation of interval data
+    """Calculates the standard deviation of interval data
 
     :param data: data to run the function on
     :return: list, standard deviation of each column of data and the change in first and last column of data
@@ -116,7 +115,7 @@ def run_stand_dev(data):
 
 
 def run_variance(data):
-    """calculates the variance of interval data
+    """Calculates the variance of interval data
 
     :param data: data to run function on
     :return: list, variance of the each column of data and the change in first and last column of data
@@ -157,6 +156,7 @@ def run_percentiles(data):
 
 
 def run_probability_dist(data, datatype):
+    """A placeholder, probability distribution is solely a plotting problem"""
     return
 
 
@@ -183,12 +183,11 @@ def run_correlation_coeff(data):
 
 def run_spearman_rank_corr_coeff(data):
     """Calculates a Spearman rank-order correlation coefficient and the p-value to test for non-correlation.
+
     :param data: data to run function on
-    :return: rho : float or ndarray (2-D square) Spearman correlation matrix or correlation coefficient
-                    (if only 2 variables are given as parameters. Correlation matrix is square with length equal to
-                     total number of variables (columns or rows) in a and b combined.
-    :return: p-value : float The two-sided p-value for a hypothesis test whose null hypothesis is that two sets of
-                       data are uncorrelated, has same dimension as rho.
+    :return: float or ndarray (2-D square) Spearman correlation matrix or correlation coefficient \
+                    (if only 2 variables are given as parameters. Correlation matrix is square with length equal to \
+                     total number of variables (columns or rows) in a and b combined.)
     """
     results = [stats.spearmanr(data[0], data[-1])[0],
             stats.spearmanr(data[0], data[-1])[1]]
@@ -203,8 +202,8 @@ def run_function(function_name, data, data_type="Interval", display=False,
     """Driver to run any stats operation given a function and data
 
     :param function_name: string, operation to run on the data
-    :param data : numpy array of data to run on
-    :param data_type : string, "ordinal" or "interval"
+    :param data: numpy array of data to run on
+    :param data_type: string, ordinal or interval
     :param display: boolean, whether to display plots
     :param save: boolean, whether to save plots
     :return: function corresponding to operation type
@@ -227,12 +226,7 @@ def run_function(function_name, data, data_type="Interval", display=False,
         return run_probability_dist(data, datatype=data_type)
     elif function_name == "Correlation coefficient":
         return run_correlation_coeff(data)
-    elif function_name == "Spearman rank correction coefficient":
+    elif function_name == "Spearman rank correlation coefficient":
         return run_spearman_rank_corr_coeff(data)
     else:
         raise Exception("Function does not exist: {}".format(function_name))
-
-
-if __name__ == "__main__":
-    x = run_spearman_rank_corr_coeff([1, 1, 1, 1])
-    print(x)
