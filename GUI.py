@@ -448,7 +448,7 @@ class StatsOperator(QWidget):
         if self.do_logging:
             logging.info("Program Complete")
         return
-        
+
     def update_operations(self):
         """continually check and review the operations boxes to update the \
         list of operations that will be called"""

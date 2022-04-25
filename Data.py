@@ -6,6 +6,7 @@ do_logging = True
 class Data:
     def __init__(self, file_name, data_type):
         """Initialize variables
+        
         :param file_name: String, a path to the .csv file or GUI if GUI input
         :param data_type: Ordinal or Interval
         """
@@ -21,9 +22,9 @@ class Data:
             self.read_data_file(filepath=file_name)
 
     def read_data_file(self, filepath):
-        """Loads data file
-
-        :param filepath: String to .csv data file
+        """Loads data from a .csv file
+        
+        :param filepath: The string path to a .csv file
         """
         with open(filepath, "r") as file:
             # Find file formatting from first line
@@ -63,11 +64,10 @@ class Data:
             logging.info(f"data: {np.array2string(self.data_np)}")
 
     def add_data(self, data, columns, rows):
-        """Adds data from list of lists.
-
-        :param data: List of lists containing data values
-        :param columns: List of column labels
-        :param rows: List of row labels
+        """Adds data from list of lists
+        :param data: List of lists, containing rows and columns of data
+        :param columns: Number of columns
+        :param rows: Number of rows
         """
         # Check that they're all the same length first
         for x in range(len(data) - 1):
@@ -86,5 +86,12 @@ class Data:
         except ValueError:
             if do_logging:
                 logging.error("No data added, data type wrong.")
+
+    def add_result(self, function_ran, output):
+        """Adds results from a function to the object's results dictionary
+        :param function_ran: A string describing which function was run
+        :param output: The output of that function
+        """
+        self.results.update({function_ran: output})
 
 
