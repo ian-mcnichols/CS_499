@@ -685,9 +685,6 @@ class DataInputWindow(QWidget):
 
 
 class MessageBox(QMessageBox):
-    def __init__(self):
-        super().__init__()
-
     def display(self, message, message_type="Information"):
         """Sends a message to the user via MessageBox.
 
