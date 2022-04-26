@@ -555,6 +555,9 @@ class StatsOperator(QWidget):
         self.displayResults_chckbx.setChecked(True)
         self.saveResults_chckbx.setChecked(False)
 
+        # default data input
+        self.dataEntryWindow.init_ui()
+
         # default data type group
         self.interval_radiobttn.setChecked(True)
 
@@ -618,6 +621,9 @@ class DataInputWindow(QWidget):
     def __init__(self):
         self.app = QApplication([])
         super(DataInputWindow, self).__init__()
+        self.init_ui()
+
+    def init_ui(self):
         self.w = QWidget()  # Base widget
         self.w.resize(500, 300)  # Window default size
         self.w.setWindowTitle("SMART Manual Data Entry")  # Window title
