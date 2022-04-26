@@ -667,7 +667,7 @@ class DataInputWindow(QWidget):
         user_input = np.array([int(x.text()) for x in self.textBoxes])
         user_input = np.reshape(user_input, (self.rows, self.cols))
         row_labels = ["Row {}".format(i+1) for i in range(self.rows)]
-        col_labels = ["Col {}".format(i+1) for i in range(self.cols)]
+        col_labels = ["Column {}".format(i+1) for i in range(self.cols)]
         self.data.add_data(user_input, col_labels, row_labels)
         self.w.close()
 
