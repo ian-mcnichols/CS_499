@@ -38,7 +38,7 @@ data as a numpy array, the data type as a string, and the column/row labels as a
 > 
 > conda env create -f env.yml
 > 
-> conda activate 499
+> conda activate SMART
  
 ## Documentation:
 We use Sphinx to auto-generate documentation from docstrings. To run this, make sure
