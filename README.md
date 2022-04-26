@@ -50,12 +50,12 @@ Setup
 > 
 Answer any questions. Program name is "SMART"
 
+To generate .rst 
+>  sphinx-apidoc -o ./documentation .
+
 ### conf.py edits:
 * Add "sphinx.ext.autodoc" to the extensions list in conf.py
 * uncomment lines 13-15 'import os; import sys; sys.path.insert(0, os.path.abspath('.'))
-
-To generate .rst 
->  sphinx-apidoc -o ./documentation .
 
 To generate html
 > make html
