@@ -133,7 +133,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                display=True):
     if plot_type == "Vertical Bar Chart":
         # Set up size
-        fig, ax = plt.subplots(figsize=(10, 5), num="Ordinal Mode Chart")
+        fig, ax = plt.subplots(figsize=(10, 5), num="Ordinal Mode Plot")
         # Set y-labels from column labels
         y_labels = []
         y_ticks = []
@@ -147,9 +147,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         # Plot results
         plt.bar(row_labels, results)
         # Set up labels and title
-        plt.xlabel('Question Number')
-        plt.ylabel('Response Value')
-        plt.title("Most Common Response for Each Question")
+        plt.xlabel('Row')
+        plt.title("Most Common Result for Each Row")
         plt.xticks(range(min(row_labels), max(row_labels)+1, 1), rotation=45)
         plt.yticks(y_ticks)
         ax.set_yticklabels(y_labels)
@@ -185,8 +184,6 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             plt.hist(data.data_np[i], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                      edgecolor='black')
             plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
-            plt.xlabel("Scores")
-            plt.ylabel("Number of Results")
             plt.title(data.column_labels[i] + " Histogram")
             if save:
                 plt.savefig("output/ {} Histogram.jpg".format(data.column_labels[i]))
