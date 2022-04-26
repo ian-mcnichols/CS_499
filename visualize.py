@@ -111,20 +111,20 @@ def create_results_summary(data_type, results, headers):
                         results_summary += str(results[function][i]) + "\n"
                     else:
                         results_summary += "\tDifference between first and last column: "
-                        results_summary += str(results[function][i]) + "\n\n"
+                        results_summary += "{}\n\n".format(results[function][i])
             else:
                 results_summary += "\t" + str(results[function]) + "\n\n"
     # Data is ordinal
     else:
         # For each function run, add summary of results from that function
         for function in results:
-            results_summary += "Results from " + function + ":\n"
+            results_summary += "Results from {}:\n".format(function)
             if function == "Probability distribution":
                 results_summary += "\tSee probability distribution graphs in output folder\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
-                    results_summary += "\t #" + str(i + 1) + ": " + str(results[function][i]) + "\n"
+                    results_summary += "\t # {}: {}\n".format(i+1, results[function][i])
             results_summary += "\n\n"
     return results_summary
 
@@ -156,7 +156,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         plt.margins(x=0.005)
         plt.tight_layout()
         if save:
-            plt.savefig('output/' + 'Ordinal_Chart.jpg')
+            plt.savefig('output/Ordinal_Chart.jpg')
         if display:
             plt.show()
     elif plot_type == "box plot":
@@ -173,15 +173,15 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         num_labels, curr_labels = plt.xticks()
         # Set labels to column names
         plt.xticks(num_labels, labels)
-        plt.title("Box and Whisker Plot for " + data.data_type + " Data")
+        plt.title("Box and Whisker Plot for {} Data".format(data.data_type))
         if save:
-            plt.savefig('output/' + 'Box_and_Whisker.jpg')
+            plt.savefig('output/Box_and_Whisker.jpg')
         if display:
             plt.show()
     elif plot_type == "Histogram":
         # For each column, create a histogram
         for i in range(len(data.column_labels)):
-            plt.figure(data.column_labels[i] + " Histogram")
+            plt.figure("{} Histogram".format(data.column_labels[i]))
             plt.hist(data.data_np[i], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                      edgecolor='black')
             plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
@@ -189,7 +189,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             plt.ylabel("Number of Results")
             plt.title(data.column_labels[i] + " Histogram")
             if save:
-                plt.savefig("output/" + data.column_labels[i] + ' Histogram.jpg')
+                plt.savefig("output/ {} Histogram.jpg".format(data.column_labels[i]))
             if display:
                 plt.show()
     elif plot_type == "Probability Distribution":
