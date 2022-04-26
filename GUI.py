@@ -2,8 +2,9 @@ import os
 import sys
 import numpy as np
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
-    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog
+    QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog, QMessageBox
 import logging
 import Data
 import Analyzer
@@ -18,7 +19,8 @@ class StatsOperator(QWidget):
         super(StatsOperator, self).__init__()
         self.w = QWidget()  # Base widget
         self.w.setFixedSize(500, 850)  # Window is fixed size
-        self.w.setWindowTitle("Statistical Analyzer")  # Window title
+        self.w.setWindowTitle("SMART")  # Window title
+        self.app.setWindowIcon(QIcon('smart_logo.png'))     # app logo
         with open('style.qss', 'r') as f:
             style = f.read()
             # Set the stylesheet of the application
@@ -28,6 +30,7 @@ class StatsOperator(QWidget):
         self.my_data = None
         self.resultsWindow = ResultsDisplay()
         self.dataEntryWindow = DataInputWindow()
+        self.communicator = MessageBox()
         if LOGGING:
             logging.basicConfig(level=logging.INFO, filename='log.log', filemode='a',
                                 format='%(asctime)s  [%(filename)s:%(lineno)d] %(message)s')
@@ -324,11 +327,13 @@ class StatsOperator(QWidget):
             filename = str(QFileDialog.getOpenFileName(self, "Open File", "",
                                                        "All Files (*.csv)")[0])
             if filename == "":
+                self.communicator.display("No file added.", "Warning")
                 return
         self.fileName_txtbx.setPlaceholderText(filename)
         if LOGGING:
             logging.info("loading file {}!".format(filename))
         if not os.path.isfile(filename):
+            self.communicator.display("File does not exist.", "Critical")
             if LOGGING:
                 logging.error("File does not exist.")
             return
@@ -345,6 +350,7 @@ class StatsOperator(QWidget):
         self.data_loaded = True
         # If user has selected a range
         if self.partialRange_radiobttn.isChecked():
+
             # Get min and max row/column number from text fields and switch them to ints
             # NOTE: Do not subtract 1 from the max row/column, b/c of the way the np slice works
             try:
@@ -354,16 +360,19 @@ class StatsOperator(QWidget):
                 max_row = int(self.maxRow_txtbx.text())
             except ValueError:
                 # The values entered were not correct type
+                self.communicator.display("Please enter integer values for rows/columns")
                 if LOGGING:
                     logging.warning("Please enter integer values for rows/columns")
-                raise Exception("Only integer values allowed for range of rows and columns.")
+                return
             # error checking
             if min_column > max_column:
                 min_column = 0
                 max_column = self.my_data.data_np.shape[0]
+                self.communicator.display("Cannot have max column less than min column.", "Warning")
             if min_row > max_row:
                 min_row = 0
                 max_row = self.my_data.data_np.shape[1]
+                self.communicator.display("Cannot have max row less than min row.", "Warning")
 
             # Once you know all values are integers and in correct order
             # Edit the data array
@@ -398,10 +407,12 @@ class StatsOperator(QWidget):
         if self.save:
             os.makedirs("output/", exist_ok=True)
         if not self.data_loaded:
+            self.communicator.display("Cannot run without inputs loaded.", "Warning")
             if LOGGING:
                 logging.error("Cannot run without inputs loaded.")
             return
         elif self.my_data.data_np is None:
+            self.communicator.display("No data array loaded.", "Warning")
             if LOGGING:
                 logging.error("Cannot run without data numpy.")
             self.operations_group.setDisabled(True)
@@ -448,6 +459,7 @@ class StatsOperator(QWidget):
                 visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
             if self.display:
                 self.show_results_window()
+        self.communicator.display("Calculations complete!\nClick 'Do Another Calculation' to run again.")
         if LOGGING:
             logging.info("Program Complete")
         return
@@ -497,6 +509,7 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.rows = self.row_txtbx.text()
         self.dataEntryWindow.cols = self.col_txtbx.text()
         if self.row_txtbx.text() == "" or self.col_txtbx.text() == "":
+            self.communicator.display("No rows or columns entered.", "Critical")
             if LOGGING:
                 logging.error("no rows or columns entered.")
             return
@@ -578,7 +591,7 @@ class ResultsDisplay(QWidget):
         super(ResultsDisplay, self).__init__()
         self.w = QWidget()  # Base widget
         self.w.setFixedSize(900, 600)  # Window default size
-        self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
+        self.w.setWindowTitle("SMART Results")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.init_ui()
 
@@ -607,7 +620,7 @@ class DataInputWindow(QWidget):
         super(DataInputWindow, self).__init__()
         self.w = QWidget()  # Base widget
         self.w.resize(500, 300)  # Window default size
-        self.w.setWindowTitle("Statistical Analyzer Manual Data Entry")  # Window title
+        self.w.setWindowTitle("SMART Manual Data Entry")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.rows = 0
         self.cols = 0
@@ -616,6 +629,7 @@ class DataInputWindow(QWidget):
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
+        self.communicator = MessageBox()
 
     def start(self, rows, cols, data_object):
         """Checks inputs and shows window
@@ -629,6 +643,7 @@ class DataInputWindow(QWidget):
             tmp = int(rows)
             tmp = int(cols)
         except ValueError:
+            self.communicator.display("Warning: Rows/Columns not integer values")
             if LOGGING:
                 logging.warning("Warning, rows/cols not integers.")
             return
@@ -661,6 +676,7 @@ class DataInputWindow(QWidget):
         """Converts input to variables for data object"""
         for x in self.textBoxes:
             if x.text() == "":
+                self.communicator.display("Entry box empty. Cannot get inputs.")
                 if LOGGING:
                     logging.warning("Warning: Entry box empty. Cannot get inputs.")
                 return
@@ -672,6 +688,28 @@ class DataInputWindow(QWidget):
         self.w.close()
 
 
+class MessageBox(QMessageBox):
+    def display(self, message, message_type="Information"):
+        """Sends a message to the user via MessageBox.
+
+        :param message: The string to display to the user
+        :param message_type: How urgent the message is. Information, Warning, or Critical
+        """
+        self.setGeometry(300, 300, 300, 220)
+        if type(message) != str:
+            return
+        self.setText(message)
+        if message_type == "Information":
+            self.setIcon(QMessageBox.Information)
+        elif message_type == "Warning":
+            self.setIcon(QMessageBox.Warning)
+        elif message_type == "Critical":
+            self.setIcon(QMessageBox.Critical)
+        else:
+            self.setIcon(QMessageBox.Information)
+        self.show()
+
+
 if __name__ == "__main__":
-    myGUI = StatsOperator()
-    myGUI.start_GUI()
+    SMART_GUI = StatsOperator()
+    SMART_GUI.start_GUI()
