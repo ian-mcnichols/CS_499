@@ -689,6 +689,11 @@ class MessageBox(QMessageBox):
         super().__init__()
 
     def display(self, message, message_type="Information"):
+        """Sends a message to the user via MessageBox
+
+        :param message: The string to display to the user
+        :param message_type: How urgent the message is. Information, Warning, or Critical
+        """
         self.setGeometry(300, 300, 300, 220)
         if type(message) != str:
             return
