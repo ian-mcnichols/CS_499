@@ -101,7 +101,7 @@ def create_results_summary(data_type, results, headers):
                         for i in range(len(percentile_list)):
                             results_summary += f"\t{headers[i]}: {percentile_list[i]}\n"
                     else:  # Difference list
-                        results_summary += f"\tDifference between first and last column: {results[function][i]}\n"
+                        results_summary += f"\tDifference between first and last column: {percentile_list}\n"
                 results_summary += "\n"
                 continue
             if type(results[function]) is list:
@@ -111,20 +111,20 @@ def create_results_summary(data_type, results, headers):
                         results_summary += str(results[function][i]) + "\n"
                     else:
                         results_summary += "\tDifference between first and last column: "
-                        results_summary += str(results[function][i]) + "\n\n"
+                        results_summary += "{}\n\n".format(results[function][i])
             else:
                 results_summary += "\t" + str(results[function]) + "\n\n"
     # Data is ordinal
     else:
         # For each function run, add summary of results from that function
         for function in results:
-            results_summary += "Results from " + function + ":\n"
+            results_summary += "Results from {}:\n".format(function)
             if function == "Probability distribution":
                 results_summary += "\tSee probability distribution graphs in output folder\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
-                    results_summary += "\t #" + str(i + 1) + ": " + str(results[function][i]) + "\n"
+                    results_summary += "\t # {}: {}\n".format(i+1, results[function][i])
             results_summary += "\n\n"
     return results_summary
 
@@ -133,7 +133,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                display=True):
     if plot_type == "Vertical Bar Chart":
         # Set up size
-        fig, ax = plt.subplots(figsize=(15, 8))
+        fig, ax = plt.subplots(figsize=(10, 5), num="Ordinal Mode Plot")
         # Set y-labels from column labels
         y_labels = []
         y_ticks = []
@@ -147,16 +147,15 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         # Plot results
         plt.bar(row_labels, results)
         # Set up labels and title
-        plt.xlabel('Question Number')
-        plt.ylabel('Response Value')
-        plt.title("Most Common Response for Each Question")
+        plt.xlabel('Row')
+        plt.title("Most Common Result for Each Row")
         plt.xticks(range(min(row_labels), max(row_labels)+1, 1), rotation=45)
         plt.yticks(y_ticks)
         ax.set_yticklabels(y_labels)
         plt.margins(x=0.005)
         plt.tight_layout()
         if save:
-            plt.savefig('output/' + 'Ordinal_Chart.jpg')
+            plt.savefig('output/Ordinal_Chart.jpg')
         if display:
             plt.show()
     elif plot_type == "box plot":
@@ -167,29 +166,27 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             labels.append(data.column_labels[i])
             column_data.append(data.data_np[i])
         # Set up plot and display
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(num="Box and Whisker Plot")
         ax.boxplot(column_data)
         # Get current number of labels
         num_labels, curr_labels = plt.xticks()
         # Set labels to column names
         plt.xticks(num_labels, labels)
-        plt.title("Box and Whisker Plot for " + data.data_type + " Data")
+        plt.title("Box and Whisker Plot for {} Data".format(data.data_type))
         if save:
-            plt.savefig('output/' + 'Box_and_Whisker.jpg')
+            plt.savefig('output/Box_and_Whisker.jpg')
         if display:
             plt.show()
     elif plot_type == "Histogram":
         # For each column, create a histogram
         for i in range(len(data.column_labels)):
-            plt.figure()
+            plt.figure("{} Histogram".format(data.column_labels[i]))
             plt.hist(data.data_np[i], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                      edgecolor='black')
             plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
-            plt.xlabel("Scores")
-            plt.ylabel("Number of Results")
             plt.title(data.column_labels[i] + " Histogram")
             if save:
-                plt.savefig("output/" + data.column_labels[i] + ' Histogram.jpg')
+                plt.savefig("output/ {} Histogram.jpg".format(data.column_labels[i]))
             if display:
                 plt.show()
     elif plot_type == "Probability Distribution":
@@ -197,14 +194,14 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             if do_logging:
                 logging.info("Plotting probability distribution")
             for idx, column in enumerate(data.data_np):
-                plt.figure()
+                plt.figure("Column {} Probability Distribution".format(idx+1))
                 temp = np.ndarray.tolist(column)
                 temp.sort()
                 plt.hist(temp, weights=np.ones(len(temp)) / len(temp), edgecolor='black')
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
                 plt.title("Column {} Probability Distribution".format(idx+1))
                 if save:
-                    plt.savefig("output/Col_{}_distribution".format(idx+1))
+                    plt.savefig("output/Col_{}_distribution.jpg".format(idx+1))
                 if display:
                     plt.show()
         elif data_type.lower() == "ordinal":
@@ -214,7 +211,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
             if do_logging:
                 logging.info(f"num rows: {rows}")
             for i in range(rows):
-                plt.figure()
+                fig = plt.figure()
                 # Get row as list
                 row = list(data.data_np[:, i])
                 row_values = []
@@ -227,6 +224,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
                 plt.title("Row {} Probability Distribution".format(i+1))
                 if save:
-                    plt.savefig("output/Row_{}_distribution".format(i+1))
+                    fig.savefig("output/Row_{}_distribution.jpg".format(i+1))
+                # Close plot to save memory
+                plt.close(fig)
     else:
         raise Exception("Invalid chart type {}".format(plot_type))
