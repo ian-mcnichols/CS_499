@@ -120,7 +120,7 @@ def create_results_summary(data_type, results, headers):
         for function in results:
             results_summary += "Results from " + function + ":\n"
             if function == "Probability distribution":
-                results_summary += "\tSee probability distribution graphs\n\n"
+                results_summary += "\tSee probability distribution graphs in output folder\n\n"
                 continue
             if type(results[function]) is list:
                 for i in range(len(results[function])):
@@ -181,6 +181,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
     elif plot_type == "Histogram":
         # For each column, create a histogram
         for i in range(len(data.column_labels)):
+            plt.figure()
             plt.hist(data.data_np[i], bins=[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
                      edgecolor='black')
             plt.xticks([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])

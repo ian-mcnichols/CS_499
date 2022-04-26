@@ -454,7 +454,8 @@ class StatsOperator(QWidget):
                 visualize.build_text(self.results, self.my_data.column_labels, self.datatype)
             if self.display:
                 self.show_results_window()
-        self.communicator.display("Calculations complete! Hit 'Do Another Calculation to run again.")
+        if self.display is False:
+            self.communicator.display("Calculations complete!\nClick 'Do Another Calculation' to run again.")
         if self.do_logging:
             logging.info("Program Complete")
         return
