@@ -2,6 +2,7 @@ import os
 import sys
 import numpy as np
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QGridLayout, QGroupBox, QVBoxLayout, QCheckBox, \
     QRadioButton, QPushButton, QHBoxLayout, QScrollArea, QFileDialog
 import logging
@@ -16,7 +17,8 @@ class StatsOperator(QWidget):
         super(StatsOperator, self).__init__()
         self.w = QWidget()  # Base widget
         self.w.setFixedSize(500, 850)  # Window is fixed size
-        self.w.setWindowTitle("Statistical Analyzer")  # Window title
+        self.w.setWindowTitle("SMART")  # Window title
+        self.app.setWindowIcon(QIcon('smart_logo.png'))     # app logo
         with open('style.qss', 'r') as f:
             style = f.read()
             # Set the stylesheet of the application
@@ -575,7 +577,7 @@ class ResultsDisplay(QWidget):
         super(ResultsDisplay, self).__init__()
         self.w = QWidget()  # Base widget
         self.w.setFixedSize(900, 600)  # Window default size
-        self.w.setWindowTitle("Statistical Analyzer Results")  # Window title
+        self.w.setWindowTitle("SMART Results")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.init_ui()
 
@@ -604,7 +606,7 @@ class DataInputWindow(QWidget):
         super(DataInputWindow, self).__init__()
         self.w = QWidget()  # Base widget
         self.w.resize(500, 300)  # Window default size
-        self.w.setWindowTitle("Statistical Analyzer Manual Data Entry")  # Window title
+        self.w.setWindowTitle("SMART Manual Data Entry")  # Window title
         self.app.setStyle("Fusion")  # Style of app (choices are: Fusion, Windows, WindowsVista, Macintosh)
         self.rows = 0
         self.cols = 0
