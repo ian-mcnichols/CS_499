@@ -204,7 +204,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
                 plt.title("Column {} Probability Distribution".format(idx+1))
                 if save:
-                    plt.savefig("output/Col_{}_distribution".format(idx+1).jpg)
+                    plt.savefig("output/Col_{}_distribution.jpg".format(idx+1))
                 if display:
                     plt.show()
         elif data_type.lower() == "ordinal":
@@ -227,7 +227,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
                 plt.title("Row {} Probability Distribution".format(i+1))
                 if save:
-                    fig.savefig("output/Row_{}_distribution".format(i+1).jpg)
+                    fig.savefig("output/Row_{}_distribution.jpg".format(i+1))
                 # Close plot to save memory
                 plt.close(fig)
     else:
