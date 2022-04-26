@@ -68,5 +68,5 @@ Open in any html viewer.
 
 ## Alternative: .exe script (Development dependencies not required)
 
-* Navigate to releases: 
+* Navigate to releases: https://github.com/ian-mcnichols/CS_499/releases/tag/exe_files
 * Run the GUI exe corresponding to your operating system (Windows, Linux, or Mac)
