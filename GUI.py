@@ -624,7 +624,7 @@ class DataInputWindow(QWidget):
         self.submitData_bttn = QPushButton("Submit data")
         self.submitData_bttn.clicked.connect(self.grab_input)
         self.inputLayout = QGridLayout(self.w)
-        self.communication = MessageBox()
+        self.communicator = MessageBox()
         self.do_logging = True
 
     def start(self, rows, cols, data_object):
@@ -639,7 +639,7 @@ class DataInputWindow(QWidget):
             tmp = int(rows)
             tmp = int(cols)
         except ValueError:
-            self.communication.display("Warning: Rows/Columns not integer values")
+            self.communicator.display("Warning: Rows/Columns not integer values")
             #if self.do_logging:
             #    logging.warning("Warning, rows/cols not integers.")
             return
@@ -689,7 +689,7 @@ class MessageBox(QMessageBox):
         super().__init__()
 
     def display(self, message, message_type="Information"):
-        """Sends a message to the user via MessageBox
+        """Sends a message to the user via MessageBox.
 
         :param message: The string to display to the user
         :param message_type: How urgent the message is. Information, Warning, or Critical
