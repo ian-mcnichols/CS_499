@@ -35,7 +35,7 @@ data as a numpy array, the data type as a string, and the column/row labels as a
 > 
 > cd CS_499
 > 
-> conda create -f env.yml
+> conda env create -f env.yml
 > 
 > conda activate 499
  
