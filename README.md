@@ -48,6 +48,12 @@ Navigate inside the CS_499 folder where all the .py files are before running the
 To generate .rst 
 >  sphinx-apidoc -o ./documentation .
 
+Setup
+> sphinx-quickstart
+Answer any questions. Program name is "SMART"
+
+Add "sphinx.ext.autodoc" to the extensions list in conf.py
+
 To generate html
 > make html
 
