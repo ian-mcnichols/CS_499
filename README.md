@@ -45,14 +45,17 @@ We use Sphinx to auto-generate documentation from docstrings. To run this, make 
 you have Sphinx installed using pip install -U Sphinx or conda install -c anaconda sphinx.
 Navigate inside the CS_499 folder where all the .py files are before running the following.
 
-To generate .rst 
->  sphinx-apidoc -o ./documentation .
-
 Setup
 > sphinx-quickstart
+> 
 Answer any questions. Program name is "SMART"
 
-Add "sphinx.ext.autodoc" to the extensions list in conf.py
+### conf.py edits:
+* Add "sphinx.ext.autodoc" to the extensions list in conf.py
+* uncomment lines 13-15 'import os; import sys; sys.path.insert(0, os.path.abspath('.'))
+
+To generate .rst 
+>  sphinx-apidoc -o ./documentation .
 
 To generate html
 > make html
