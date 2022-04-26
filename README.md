@@ -68,4 +68,6 @@ Open in any html viewer.
 
 ## Alternative: .exe script (Development dependencies not required)
 
-Click and run GUI.exe file for the program to execute.
+* Windows: Click and run GUI_windows.exe file for the program to execute.
+* Linux: Click and run GUI_linux.exe file for the program to execute.
+
