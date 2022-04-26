@@ -23,7 +23,8 @@ This is the file to hold all data display/saving functionality.
 The class to read in or take in data from numpy array or csv/tab-delimited file. It holds the
 data as a numpy array, the data type as a string, and the column/row labels as arrays. 
 
-## Dependencies:
+## Development Dependencies:
+* conda
 * Python 3.x (3.6-3.9 is best)
 * Numpy
 * Scipy
@@ -56,6 +57,6 @@ Open in any html viewer.
 
 > python ./GUI.py
 
-## Alternative: .exe script
+## Alternative: .exe script (Development dependencies not required)
 
 Click and run GUI.exe file for the program to execute.
