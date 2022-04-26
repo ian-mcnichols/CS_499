@@ -697,6 +697,8 @@ class MessageBox(QMessageBox):
             self.setIcon(QMessageBox.Warning)
         elif message_type == "Critical":
             self.setIcon(QMessageBox.Critical)
+        else:
+            self.setIcon(QMessageBox.Information)
         self.show()
 
 
