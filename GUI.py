@@ -707,5 +707,5 @@ class MessageBox(QMessageBox):
 
 
 if __name__ == "__main__":
-    myGUI = StatsOperator()
-    myGUI.start_GUI()
+    SMART_GUI = StatsOperator()
+    SMART_GUI.start_GUI()
