@@ -690,6 +690,8 @@ class MessageBox(QMessageBox):
 
     def display(self, message, message_type="Information"):
         self.setGeometry(300, 300, 300, 220)
+        if type(message) != str:
+            return
         self.setText(message)
         if message_type == "Information":
             self.setIcon(QMessageBox.Information)
