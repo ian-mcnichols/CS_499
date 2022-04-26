@@ -101,7 +101,7 @@ def create_results_summary(data_type, results, headers):
                         for i in range(len(percentile_list)):
                             results_summary += f"\t{headers[i]}: {percentile_list[i]}\n"
                     else:  # Difference list
-                        results_summary += f"\tDifference between first and last column: {results[function][i]}\n"
+                        results_summary += f"\tDifference between first and last column: {results[function]}\n"
                 results_summary += "\n"
                 continue
             if type(results[function]) is list:
