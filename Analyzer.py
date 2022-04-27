@@ -57,13 +57,14 @@ def run_median(data, datatype="Interval"):
                     row_values.append(j)
             # Find median response for each row
             row_median = np.median(row_values)
+            # Add 1 to change from column starting at 0 to columns starting at 1
             results.append(row_median+1)
         return results
     else:
         raise Exception("Bad data type: {}".format(datatype))
 
 
-def run_mode(data, datatype="Interval", display=False, save=True):
+def run_mode(data, datatype="Interval"):
     """Calculates the mode of a given dataset
 
     :param data: data to run the function on
@@ -85,11 +86,11 @@ def run_mode(data, datatype="Interval", display=False, save=True):
     elif datatype.lower() == "ordinal":
         # Array to store mode for each question
         results_number = []
-        # Determine answer with highest number of responses for each question
+        # Determine answer (column) with highest number of responses for each question (row)
         columns, rows = data.shape
         for i in range(rows):
             row = list(data[:, i])
-            row_mode = max(row[1:])
+            row_mode = max(row)
             results_number.append(row.index(row_mode)+1)
         return results_number
     else:
@@ -136,7 +137,7 @@ def run_percentiles(data):
     """Calculates the percentiles of interval data
 
     :param data: data to run the function on
-    :return: [10] list of floats, the 10-100th percentile of each column of data and the change in first and last
+    :return: [10] list of floats, the 0-100th percentile of each column of data and the change in first and last
              columns of data
     """
     # Difference between the last column of data and the first column of data
@@ -197,8 +198,7 @@ def run_spearman_rank_corr_coeff(data):
     return results
 
 
-def run_function(function_name, data, data_type="Interval", display=False,
-                 save=True):
+def run_function(function_name, data, data_type="Interval"):
     """Driver to run any stats operation given a function and data
 
     :param function_name: string, operation to run on the data
@@ -213,7 +213,7 @@ def run_function(function_name, data, data_type="Interval", display=False,
     elif function_name == "Median":
         return run_median(data, datatype=data_type)
     elif function_name == "Mode":
-        return run_mode(data, datatype=data_type, display=display, save=save)
+        return run_mode(data, datatype=data_type)
     elif function_name == "Standard deviation":
         return run_stand_dev(data)
     elif function_name == "Variance":

@@ -138,8 +138,8 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
         y_labels = []
         y_ticks = []
         for i in range(len(data.column_labels)):
-            y_ticks.append(i)
-            y_labels.append(data.column_labels[i] + " - " + str(i))
+            y_ticks.append(i+1)
+            y_labels.append(data.column_labels[i])
         # Set x-labels from row labels
         row_labels = []
         for j in range(len(data.row_labels)):
