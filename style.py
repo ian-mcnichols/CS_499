@@ -6,26 +6,35 @@ QGroupBox:enabled {
     font: 20px;
 }
 
+QGroupBox:disabled {
+    color: #444444;
+    font: bold;
+    font: 20px;
+}
+
 QPushButton { font: 12px; }
 QPushButton:enabled { background: #0b7ecf; }
 QPushButton:disabled { background: #24394a; }
 QPushButton:hover {
     background: #009de0;
-    color: white;
+    color: black;
 }
 
 QLineEdit { color: black; font: 12px; }
-QLineEdit:enabled { color: black; background: white; }
-QLineEdit:disabled {color: black; background: white;}
+
+QLineEdit:enabled { color: black; background: white;}
 
 Qlabel { font: 12px; }
 QLabel:enabled { color: black; }
+QLabel:disabled { color: #444444; }
 
 QCheckBox { font: 12px;}
 QCheckBox:enabled { color: black; }
+QCheckBox:disabled { color: #444444; }
 QCheckBox:enabled:checked { color: #0b7ecf; }
 
 QRadioButton { font: 12px; }
 QRadioButton:enabled { color: black; }
-QRadioButton:checked { color: #0b7ecf; }
+QRadioButton:disabled { color: black; }
+QRadioButton:checked { color: black; color: #0b7ecf; }
 """
