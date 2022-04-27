@@ -13,14 +13,15 @@ QGroupBox:disabled {
 }
 
 QPushButton { font: 12px; }
-QPushButton:enabled { color: black; background: #0b7ecf; }
-QPushButton:disabled { color: black; background: #24394a; }
+QPushButton:enabled { background: #0b7ecf; }
+QPushButton:disabled { background: #24394a; }
 QPushButton:hover {
     background: #009de0;
     color: black;
 }
 
 QLineEdit { color: black; font: 12px; }
+
 QLineEdit:enabled { color: black; background: white;}
 
 Qlabel { font: 12px; }
