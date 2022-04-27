@@ -21,7 +21,7 @@ class StatsOperator(QWidget):
         self.w = QWidget()  # Base widget
         self.w.setFixedSize(500, 850)  # Window is fixed size
         self.w.setWindowTitle("SMART")  # Window title
-        self.app.setWindowIcon(QIcon('smart_logo.png'))     # app logo
+        #self.app.setWindowIcon(QIcon('smart_logo.png'))     # app logo
         # Set the stylesheet of the application
         self.app.setStyleSheet(style_string)
         self.initUI()
