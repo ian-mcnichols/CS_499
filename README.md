@@ -23,7 +23,8 @@ This is the file to hold all data display/saving functionality.
 The class to read in or take in data from numpy array or csv/tab-delimited file. It holds the
 data as a numpy array, the data type as a string, and the column/row labels as arrays. 
 
-## Dependencies:
+## Development Dependencies:
+* conda
 * Python 3.x (3.6-3.9 is best)
 * Numpy
 * Scipy
@@ -35,17 +36,26 @@ data as a numpy array, the data type as a string, and the column/row labels as a
 > 
 > cd CS_499
 > 
-> conda create -f env.yml
+> conda env create -f env.yml
 > 
-> conda activate 499
+> conda activate SMART
  
 ## Documentation:
 We use Sphinx to auto-generate documentation from docstrings. To run this, make sure
-you have Sphinx installed using pip install -U Sphinx or conda install -c anaconda sphinx.
+you have Sphinx installed using 'pip install -U Sphinx' or 'conda install -c anaconda sphinx'.
 Navigate inside the CS_499 folder where all the .py files are before running the following.
+
+Setup
+> sphinx-quickstart
+> 
+Answer any questions. Program name is "SMART"
 
 To generate .rst 
 >  sphinx-apidoc -o ./documentation .
+
+### conf.py edits:
+* Add "sphinx.ext.autodoc" to the extensions list in conf.py
+* uncomment lines 13-15 'import os; import sys; sys.path.insert(0, os.path.abspath('.'))'
 
 To generate html
 > make html
@@ -56,6 +66,7 @@ Open in any html viewer.
 
 > python ./GUI.py
 
-## Alternative: .exe script
+## Alternative: .exe script (Development dependencies not required)
 
-Click and run GUI.exe file for the program to execute.
+* Navigate to releases: https://github.com/ian-mcnichols/CS_499/releases/tag/exe_files
+* Run the GUI exe corresponding to your operating system (Windows, Linux, or Mac)
