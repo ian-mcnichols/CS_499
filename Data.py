@@ -76,7 +76,7 @@ class Data:
                     logging.error("No data added, dimensions wrong.")
                 return
         try:
-            self.data_np = np.dstack(data)[0].astype('float')
+            self.data_np = np.dstack(data)[0].astype('int')
             if len(columns) != self.data_np.shape[0]:
                 columns = ["Column {}".format(str(i+1)) for i in range(self.data_np.shape[0])]
             if len(rows) != self.data_np.shape[1]:

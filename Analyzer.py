@@ -53,7 +53,7 @@ def run_median(data, datatype="Interval"):
             # Add number of responses for each index number to list
             for j in range(len(row)):
                 num_responses = row[j]
-                for x in range(int(num_responses)):
+                for x in range(num_responses):
                     row_values.append(j)
             # Find median response for each row
             row_median = np.median(row_values)

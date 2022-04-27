@@ -218,7 +218,7 @@ def plot_chart(data, plot_type, results=None, data_type=None, save=True,
                 # Add number of responses for each index number to list
                 for j in range(len(row)):
                     num_responses = row[j]
-                    for x in range(num_responses):
+                    for x in range(int(num_responses)):
                         row_values.append(j+1)
                 plt.hist(row_values, weights=np.ones(len(row_values)) / len(row_values), edgecolor='black')
                 plt.gca().yaxis.set_major_formatter(PercentFormatter(1))
