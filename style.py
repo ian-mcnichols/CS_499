@@ -15,7 +15,7 @@ QPushButton:hover {
 }
 
 QLineEdit { font: 12px; }
-QLineEdit:enabled { background: white; }
+QLineEdit:enabled { color: black; background: white; }
 
 Qlabel { font: 12px; }
 QLabel:enabled { color: black; }
