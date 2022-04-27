@@ -684,7 +684,14 @@ class DataInputWindow(QWidget):
                 if LOGGING:
                     logging.warning("Warning: Entry box empty. Cannot get inputs.")
                 return
-        user_input = np.array([int(x.text()) for x in self.textBoxes])
+        try:
+            user_input = np.array([int(x.text()) for x in self.textBoxes])
+        except ValueError:
+            self.communicator.display("Input must be integer values.")
+            if LOGGING:
+                logging.warning("Input must be integer.")
+            self.w.close()
+            return
         user_input = np.reshape(user_input, (self.rows, self.cols))
         row_labels = ["Row {}".format(i+1) for i in range(self.rows)]
         col_labels = ["Column {}".format(i+1) for i in range(self.cols)]
