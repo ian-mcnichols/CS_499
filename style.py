@@ -7,7 +7,7 @@ QGroupBox:enabled {
 }
 
 QGroupBox:disabled {
-    color: #444444;
+    color: #bcbcbc;
     font: bold;
     font: 20px;
 }
@@ -26,11 +26,11 @@ QLineEdit:enabled { color: black; background: white;}
 
 Qlabel { font: 12px; }
 QLabel:enabled { color: black; }
-QLabel:disabled { color: #444444; }
+QLabel:disabled { color: #bcbcbc; }
 
 QCheckBox { font: 12px;}
 QCheckBox:enabled { color: black; }
-QCheckBox:disabled { color: #444444; }
+QCheckBox:disabled { color: #bcbcbc; }
 QCheckBox:enabled:checked { color: #0b7ecf; }
 
 QRadioButton { font: 12px; }
