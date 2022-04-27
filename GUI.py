@@ -10,7 +10,7 @@ import Data
 import Analyzer
 import visualize
 
-LOGGING = False
+LOGGING = True
 
 
 class StatsOperator(QWidget):
@@ -424,14 +424,12 @@ class StatsOperator(QWidget):
                 logging.info(f"running {format(calculation)}")
             if self.datatype == "Interval":
                 output = Analyzer.run_function(calculation, self.my_data.data_np,
-                                               data_type="Interval",
-                                               display=self.display, save=self.save)
+                                               data_type="Interval")
                 if LOGGING:
                     logging.info(f"Results: {output}")
             elif self.datatype == "Ordinal":
                 output = Analyzer.run_function(calculation, self.my_data.data_np,
-                                               data_type="Ordinal", display=self.display,
-                                               save=self.save)
+                                               data_type="Ordinal")
                 if calculation == "Mode":
                     # Create graph with mode results
                     visualize.plot_chart(self.my_data, "Vertical Bar Chart", results=output,
@@ -516,6 +514,7 @@ class StatsOperator(QWidget):
         self.dataEntryWindow.start(self.dataEntryWindow.rows,
                                    self.dataEntryWindow.cols,
                                    self.my_data)
+
         self.operations_group.setDisabled(False)
         self.output_group.setDisabled(False)
         self.data_loaded = True
