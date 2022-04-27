@@ -9,6 +9,7 @@ import logging
 import Data
 import Analyzer
 import visualize
+from style import style_string
 
 LOGGING = True
 
@@ -21,10 +22,8 @@ class StatsOperator(QWidget):
         self.w.setFixedSize(500, 850)  # Window is fixed size
         self.w.setWindowTitle("SMART")  # Window title
         self.app.setWindowIcon(QIcon('smart_logo.png'))     # app logo
-        with open('style.qss', 'r') as f:
-            style = f.read()
-            # Set the stylesheet of the application
-            self.app.setStyleSheet(style)
+        # Set the stylesheet of the application
+        self.app.setStyleSheet(style_string)
         self.initUI()
         self.set_defaults()
         self.my_data = None
