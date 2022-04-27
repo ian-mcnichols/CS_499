@@ -43,7 +43,17 @@ Folder containing test data.
 > conda env create -f env.yml
 > 
 > conda activate SMART
- 
+
+
+## Running the program:
+
+> python ./GUI.py
+
+## Alternative: .exe script (Development dependencies not required)
+
+* Navigate to releases: https://github.com/ian-mcnichols/CS_499/releases/tag/exe_files
+* Run the SMART file corresponding to your operating system (Windows, Linux)
+
 ## Documentation:
 We use Sphinx to auto-generate documentation from docstrings. To run this, make sure
 you have Sphinx installed using 'pip install -U Sphinx' or 'conda install -c anaconda sphinx'.
@@ -65,12 +75,3 @@ To generate html
 > make html
 
 Open in any html viewer.
-
-## Running the program:
-
-> python ./GUI.py
-
-## Alternative: .exe script (Development dependencies not required)
-
-* Navigate to releases: https://github.com/ian-mcnichols/CS_499/releases/tag/exe_files
-* Run the SMART file corresponding to your operating system (Windows, Linux)
