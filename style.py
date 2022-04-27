@@ -7,8 +7,8 @@ QGroupBox:enabled {
 }
 
 QPushButton { font: 12px; }
-QPushButton:enabled { background: #0b7ecf; }
-QPushButton:disabled { background: #24394a; }
+QPushButton:enabled { color: black; background: #0b7ecf; }
+QPushButton:disabled { color: black; background: #24394a; }
 QPushButton:hover {
     background: #009de0;
     color: white;
