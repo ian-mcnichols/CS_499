@@ -5,6 +5,7 @@
 * Analyzer.py
 * visualize.py
 * Data.py
+* Data/
 
 ### GUI.py
 This file runs all the other files and interacts with the user. Basically the 'driver' for
@@ -22,6 +23,9 @@ This is the file to hold all data display/saving functionality.
 ### Data.py
 The class to read in or take in data from numpy array or csv/tab-delimited file. It holds the
 data as a numpy array, the data type as a string, and the column/row labels as arrays. 
+
+### Data/
+Folder containing test data.
 
 ## Development Dependencies:
 * conda
